@@ -29,10 +29,10 @@ class AnnotationTree(ElementTree):
     def get_number(self):
         """Get the contents of the 'no' attribute of the root
 
-        Return the element number as a string.
+        Return the element number as an int.
 
         """
-        return self.getroot.get('no')
+        return int(self.getroot.get('no'))
 
     def get_bounding_box(self, element):
         """Get the bounding box of the root of the tree.
