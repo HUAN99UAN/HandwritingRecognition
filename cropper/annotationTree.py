@@ -4,11 +4,12 @@ import sys
 import xml.etree.ElementTree as xmlTree
 
 
-class AnnotationTree:
+class AnnotationTree(xmlTree):
 
     def __init__(self, file_path):
         self._file_path = file_path
         self._tree = WordsFileOpener(self._file_path).open()
+        super(AnnotationTree, self).__init__()
 
     @staticmethod
     def get_number(element):
