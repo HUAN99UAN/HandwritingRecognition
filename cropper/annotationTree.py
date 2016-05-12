@@ -26,23 +26,18 @@ class AnnotationTree(ElementTree):
             WordsFileVerifier(file_path).verify()
         super(AnnotationTree, self).__init__(element, file_path)
 
-    @staticmethod
-    def get_number(element):
-        """Get the contents of the 'no' attribute of *element*
-
-        *element* the element node of which we request the number
+    def get_number(self):
+        """Get the contents of the 'no' attribute of the root
 
         Return the element number as a string.
 
         """
-        return element.get('no')
+        return self.getroot.get('no')
 
     def get_bounding_box(self, element):
-        """Get the bounding box represented by *element*
+        """Get the bounding box of the root of the tree.
 
         The bounding box is returned in the representation required by *PIL.Image.crop()*.
-
-        *element* the element node of which we extract the bounding box.
 
         Return the bounding box as the tuple (left, rop, right, bottom).
         """
