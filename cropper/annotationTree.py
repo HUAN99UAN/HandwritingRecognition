@@ -7,9 +7,8 @@ import xml.etree.ElementTree as xmlTree
 class AnnotationTree(xmlTree):
 
     def __init__(self, file_path):
-        self._file_path = file_path
-        self._tree = WordsFileOpener(self._file_path).open()
         super(AnnotationTree, self).__init__()
+        self._tree = WordsFileOpener(file_path).open()
 
     @staticmethod
     def get_number(element):
