@@ -29,6 +29,10 @@ class WordsFile:
         for line in self._tree.getroot().iter('TextLine'):
             yield line
 
+    def word_generator(self, line_element):
+        for word in line_element().iter('Word'):
+            yield  word
+
 
 class WordsFileOpener:
     _words_file_extension = '.words'
