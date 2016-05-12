@@ -2,7 +2,7 @@ import os
 
 from PIL import Image
 
-import wordsFile
+import annotationTree
 import lineImage
 
 
@@ -22,7 +22,7 @@ class PageImage:
         lines = dict()
 
         for line in self.tree.line_generator():
-            number = wordsFile.WordsFile.get_number(line)
+            number = annotationTree.AnnotationTree.get_number(line)
             lines.update({
                 number: lineImage.LineImage(
                     number=number,

@@ -4,7 +4,7 @@ import sys
 import xml.etree.ElementTree as xmlTree
 
 
-class WordsFile:
+class AnnotationTree:
 
     def __init__(self, file_path):
         self._file_path = file_path

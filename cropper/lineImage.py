@@ -1,4 +1,4 @@
-import wordsFile
+import annotationTree
 
 
 class LineImage:
@@ -19,7 +19,7 @@ class LineImage:
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
         # image, or new images. Just to be safe they are copied.
         page_image_copy = self._page_image.image.copy()
-        bounding_box = wordsFile.WordsFile.get_bounding_box(self._tree)
+        bounding_box = annotationTree.AnnotationTree.get_bounding_box(self._tree)
         line_image = page_image_copy.crop(bounding_box)
         return line_image
 
