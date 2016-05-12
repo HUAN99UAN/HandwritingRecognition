@@ -10,6 +10,9 @@ class WordsFile:
         self._file_path = file_path
         self._tree = WordsFileOpener(self._file_path).open()
 
+    def get_image_file_name(self):
+        return self._tree.getroot().get('name')
+
 
 class WordsFileOpener:
     _words_file_extension = '.words'
