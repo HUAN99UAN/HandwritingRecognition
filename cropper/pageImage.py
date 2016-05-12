@@ -2,18 +2,40 @@ import os
 
 from PIL import Image
 
+import wordsFile
+import lineImage
+
 
 class PageImage:
 
-    def __init__(self, image_file, words_file):
-        self._words_file = words_file
-        self._image = ImageOpener(image_file).open()
-        self._lines = dict()
+    def __init__(self, image_file, tree):
+        self.tree = tree
+        self.image = ImageOpener(image_file).open()
+        self._lines = self._build_line_dict()
 
     def __getattr__(self, item):
         if item == '_image':
             raise AttributeError()
         return getattr(self._image, item)
+
+    def _build_line_dict(self):
+        lines = dict()
+        for line in self.tree.line_generator():
+            number = wordsFile.WordsFile.get_number(line)
+            lines.update({
+                number: lineImage.LineImage(
+                    number=number,
+                    page_image=self,
+                    tree=line
+                )
+            })
+        return lines
+
+    def __str__(self):
+        return ", ".join([
+            "{PageImage",
+            "number of lines: " + str(len(self._lines)),
+            "}"])
 
 
 class ImageOpener:
