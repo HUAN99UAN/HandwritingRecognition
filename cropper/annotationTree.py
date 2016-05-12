@@ -4,11 +4,11 @@ import sys
 import xml.etree.ElementTree as xmlTree
 
 
-class AnnotationTree(xmlTree):
+class AnnotationTree(xmlTree.ElementTree):
 
     def __init__(self, file_path):
-        super(AnnotationTree, self).__init__()
-        self._tree = WordsFileOpener(file_path).open()
+        super(xmlTree.ElementTree, self).__init__()
+        self._setroot(WordsFileOpener(file_path).open().getroot())
 
     @staticmethod
     def get_number(element):
@@ -23,10 +23,10 @@ class AnnotationTree(xmlTree):
             int(element.get('bottom'))
 
     def get_image_file_name(self):
-        return self._tree.getroot().get('name')
+        return self.getroot().get('name')
 
     def line_generator(self):
-        for line in self._tree.getroot().iter('TextLine'):
+        for line in self.getroot().iter('TextLine'):
             yield line
 
     def word_generator(self, line_element):
@@ -66,7 +66,7 @@ class WordsFileOpener:
             raise FileNotFoundError
         if not self._is_words_file():
             raise UnexpectedFileError(
-                "Expected af file with the extension {}".format(
+                "Expected a file with the extension {}".format(
                     WordsFileOpener._words_file_extension)
             )
 
