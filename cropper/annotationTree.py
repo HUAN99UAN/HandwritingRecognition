@@ -7,16 +7,38 @@ import xml.etree.ElementTree as xmlTree
 class AnnotationTree(xmlTree.ElementTree):
 
     def __init__(self, file_path):
+        """A words file element hierarchy.
+
+        This class represents the hierarchy of tagged elements in a words file.
+
+        *file_path* is the file path of the words file, note that it should have the extension '.words'.
+
+        """
         super(xmlTree.ElementTree, self).__init__()
         self._setroot(WordsFileOpener(file_path).open().getroot())
 
     @staticmethod
     def get_number(element):
+        """Get the contents of the 'no' attribute of *element*
+
+        *element* the element node of which we request the number
+
+        Return the element number as a string.
+
+        """
         print(element.get('bottom'))
         return element.get('no')
 
     @staticmethod
     def get_bounding_box(element):
+        """Get the bounding box represented by *element*
+
+        The bounding box is returned in the representation required by *PIL.Image.crop()*.
+
+        *element* the element node of which we extract the bounding box.
+
+        Return the bounding box as the tuple (left, rop, right, bottom).
+        """
         return \
             int(element.get('left')), \
             int(element.get('top')), \
@@ -24,14 +46,28 @@ class AnnotationTree(xmlTree.ElementTree):
             int(element.get('bottom'))
 
     def get_image_file_name(self):
+        """Get the image file name from the words file.
+
+        Return the image file name, without extension.
+        """
         return self.getroot().get('name')
 
     def lines(self):
+        """Find all subelements with the tag 'TextLine'
+
+        Return an iterable yielding all 'TextLine's in document order.
+
+        """
         for line in self.iterfind('TextLine'):
             yield line
 
-    def word_generator(self, line_element):
-        for word in line_element().iter('Word'):
+    def words(self):
+        """Find all subelements with the tag 'Word'
+
+        Return an iterable yielding all 'Words's in document order.
+
+        """
+        for word in self.iterfind('Word'):
             yield  word
 
 
