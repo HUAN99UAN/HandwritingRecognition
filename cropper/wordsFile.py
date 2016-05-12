@@ -11,6 +11,10 @@ class WordsFile:
         self._tree = WordsFileOpener(self._file_path).open()
 
     @staticmethod
+    def get_number(element):
+        return element.get('no')
+
+    @staticmethod
     def get_bounding_box(element):
         return \
             int(element.get('left')), \
