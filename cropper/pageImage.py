@@ -14,12 +14,13 @@ class PageImage:
         self._lines = self._build_line_dict()
 
     def __getattr__(self, item):
-        if item == '_image':
+        if item == 'image':
             raise AttributeError()
         return getattr(self._image, item)
 
     def _build_line_dict(self):
         lines = dict()
+
         for line in self.tree.line_generator():
             number = wordsFile.WordsFile.get_number(line)
             lines.update({

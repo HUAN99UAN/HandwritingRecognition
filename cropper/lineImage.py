@@ -13,7 +13,7 @@ class LineImage:
     def __getattr__(self, item):
         if item == '_image':
             raise AttributeError()
-        return getattr(self._image, item)
+        return getattr(self.image, item)
 
     def _extract_line_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
@@ -21,11 +21,11 @@ class LineImage:
         page_image_copy = self._page_image.image.copy()
         bounding_box = wordsFile.WordsFile.get_bounding_box(self._tree)
         line_image = page_image_copy.crop(bounding_box)
-        line_image.show()
         return line_image
 
     def _build_word_dict(self):
         words = dict()
+        print("BUILD _build_word_dict!!! Should be something like build_line_dict, but the tree is an xml element, instead of a wrapper on such an element. May be store it as the wrapper.")
         return words
 
     def __str__(self):
