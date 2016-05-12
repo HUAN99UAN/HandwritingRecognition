@@ -1,21 +1,30 @@
 import os
 import sys
 
-import xml.etree.ElementTree as xmlTree
+from xml.etree.ElementTree import ElementTree
 
 
-class AnnotationTree(xmlTree.ElementTree):
+class AnnotationTree(ElementTree):
+    """A words file element hierarchy.
 
-    def __init__(self, file_path):
-        """A words file element hierarchy.
+    This class represents the hierarchy of tagged elements in a words file. To initialise it either an
+    *element* or a *file_path* is required. If this is not the case a *MissingArgumentError* is raised. Calling
+    the constructor with *file_path* can cause the following exceptions:
+        *NonExistentFileError* the file does not exist, or the path does not point to a file.
+        *UnexpectedFileError* the does not have the extension of a words file.
 
-        This class represents the hierarchy of tagged elements in a words file.
+    *element* is an optional root element node,
+    *file* is an optional file handle or file name of an XML file whose
+    contents will be used to initialize the tree with.
 
-        *file_path* is the file path of the words file, note that it should have the extension '.words'.
+    """
+    def __init__(self, element=None, file_path=None):
+        if not(element or file_path):
+            raise MissingArgumentError("The AnnotationTree constructor requires either an element, or a filepath.")
 
-        """
-        super(xmlTree.ElementTree, self).__init__()
-        self._setroot(WordsFileOpener(file_path).open().getroot())
+        if file_path:
+            WordsFileVerifier(file_path).verify()
+        super(AnnotationTree, self).__init__(element, file_path)
 
     @staticmethod
     def get_number(element):
@@ -64,52 +73,59 @@ class AnnotationTree(xmlTree.ElementTree):
     def words(self):
         """Find all subelements with the tag 'Word'
 
-        Return an iterable yielding all 'Words's in document order.
+        Return an iterable yielding all 'Word's in document order.
 
         """
         for word in self.iterfind('Word'):
-            yield  word
+            yield word
+
+    def characters(self):
+        """Find all subelements with the tag 'Character'
+
+        Return an iterable yielding all 'Character's in document order.
+
+        """
+        for word in self.iterfind('Character'):
+            yield word
 
 
-class WordsFileOpener:
+class WordsFileVerifier:
     _words_file_extension = '.words'
 
     def __init__(self, file_path):
         self._file_path = file_path
 
-    def open(self):
-        tree = None
-        error_message = None
-        try:
-            self._file_can_be_opened()
-            tree = xmlTree.parse(self._file_path)
-        except xmlTree.ParseError:
-            error_message = "Parse error while parsing the file {}.".format(self._file_path)
-        except FileExistsError:
-            error_message = "The file {} does not exists.".format(self._file_path)
-        except FileNotFoundError:
-            error_message = "The file {} cannot be found.".format(self._file_path)
-        except UnexpectedFileError:
-            error_message = "Expected a file with the extension \'{}\'.".format(WordsFileOpener._words_file_extension)
-        finally:
-            if error_message:
-                sys.stderr.write(error_message)
-        return tree
-
-    def _file_can_be_opened(self):
-        if not os.path.exists(self._file_path):
-            raise FileExistsError
-        if not os.path.isfile(self._file_path):
-            raise FileNotFoundError
-        if not self._is_words_file():
-            raise UnexpectedFileError(
-                "Expected a file with the extension {}".format(
-                    WordsFileOpener._words_file_extension)
-            )
-
     def _is_words_file(self):
         (_, extension) = os.path.splitext(self._file_path)
-        return extension == WordsFileOpener._words_file_extension
+        return extension == WordsFileVerifier._words_file_extension
+
+    def verify(self):
+        if not (os.path.exists(self._file_path) and os.path.exists(self._file_path)):
+            raise FileNotFoundError(
+                "The file {} cannot be found.".format(
+                    self._file_path)
+            )
+        if self._is_words_file():
+            raise UnexpectedFileError(
+                "Expected a file with the extension {}".format(
+                    WordsFileVerifier._words_file_extension)
+            )
+
+
+class NonExistentFileError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class MissingArgumentError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
 
 
 class UnexpectedFileError(Exception):
