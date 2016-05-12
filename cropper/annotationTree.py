@@ -35,11 +35,9 @@ class AnnotationTree(ElementTree):
         Return the element number as a string.
 
         """
-        print(element.get('bottom'))
         return element.get('no')
 
-    @staticmethod
-    def get_bounding_box(element):
+    def get_bounding_box(self, element):
         """Get the bounding box represented by *element*
 
         The bounding box is returned in the representation required by *PIL.Image.crop()*.
@@ -49,10 +47,10 @@ class AnnotationTree(ElementTree):
         Return the bounding box as the tuple (left, rop, right, bottom).
         """
         return \
-            int(element.get('left')), \
-            int(element.get('top')), \
-            int(element.get('right')), \
-            int(element.get('bottom'))
+            int(self.getroot().get('left')), \
+            int(self.getroot().get('top')), \
+            int(self.getroot().get('right')), \
+            int(self.getroot().get('bottom'))
 
     def get_image_file_name(self):
         """Get the image file name from the words file.
