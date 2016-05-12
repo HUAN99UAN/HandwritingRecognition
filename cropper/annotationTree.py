@@ -12,6 +12,7 @@ class AnnotationTree(xmlTree.ElementTree):
 
     @staticmethod
     def get_number(element):
+        print(element.get('bottom'))
         return element.get('no')
 
     @staticmethod
@@ -26,7 +27,7 @@ class AnnotationTree(xmlTree.ElementTree):
         return self.getroot().get('name')
 
     def line_generator(self):
-        for line in self.getroot().iter('TextLine'):
+        for line in self.iterfind('TextLine'):
             yield line
 
     def word_generator(self, line_element):
