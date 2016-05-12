@@ -10,6 +10,14 @@ class WordsFile:
         self._file_path = file_path
         self._tree = WordsFileOpener(self._file_path).open()
 
+    @staticmethod
+    def get_bounding_box(element):
+        return \
+            int(element.get('left')), \
+            int(element.get('top')), \
+            int(element.get('right')), \
+            int(element.get('bottom'))
+
     def get_image_file_name(self):
         return self._tree.getroot().get('name')
 
