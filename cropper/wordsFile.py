@@ -13,6 +13,10 @@ class WordsFile:
     def get_image_file_name(self):
         return self._tree.getroot().get('name')
 
+    def line_generator(self):
+        for line in self._tree.getroot().iter('TextLine'):
+            yield line
+
 
 class WordsFileOpener:
     _words_file_extension = '.words'
