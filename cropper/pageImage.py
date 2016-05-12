@@ -27,7 +27,7 @@ class PageImage:
                 number: lineImage.LineImage(
                     number=number,
                     page_image=self,
-                    tree=line
+                    tree=annotationTree.AnnotationTree(line)
                 )
             })
         return lines
