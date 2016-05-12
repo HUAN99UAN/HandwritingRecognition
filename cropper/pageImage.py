@@ -21,7 +21,7 @@ class PageImage:
     def _build_line_dict(self):
         lines = dict()
 
-        for line in self.tree.line_generator():
+        for line in self.tree.lines():
             number = annotationTree.AnnotationTree.get_number(line)
             lines.update({
                 number: lineImage.LineImage(

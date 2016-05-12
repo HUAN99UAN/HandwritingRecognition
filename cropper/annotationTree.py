@@ -26,7 +26,7 @@ class AnnotationTree(xmlTree.ElementTree):
     def get_image_file_name(self):
         return self.getroot().get('name')
 
-    def line_generator(self):
+    def lines(self):
         for line in self.iterfind('TextLine'):
             yield line
 
