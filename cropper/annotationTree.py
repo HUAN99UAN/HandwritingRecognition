@@ -100,16 +100,17 @@ class WordsFileVerifier:
         return extension == WordsFileVerifier._words_file_extension
 
     def verify(self):
-        if not (os.path.exists(self._file_path) and os.path.exists(self._file_path)):
-            raise FileNotFoundError(
-                "The file {} cannot be found.".format(
-                    self._file_path)
-            )
-        if self._is_words_file():
+        if not self._is_words_file():
             raise UnexpectedFileError(
                 "Expected a file with the extension {}".format(
                     WordsFileVerifier._words_file_extension)
             )
+        if not (os.path.exists(self._file_path) and os.path.exists(self._file_path)):
+            raise NonExistentFileError(
+                "The file {} cannot be found.".format(
+                    self._file_path)
+            )
+
 
 
 class NonExistentFileError(Exception):
