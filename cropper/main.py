@@ -15,8 +15,7 @@ def parse_command_line_arguments():
     parser.add_argument("wordsFiles", nargs='+', type=str,
                         help="the words files, should be at least one file. Each words file should be associated with "
                              "an image in the imageDirectory.")
-    args = parser.parse_args()
-    return args.wordsFiles, args.imageDirectory
+    return parser.parse_args()
 
 
 def build_file_name(file_name, extension):
@@ -28,11 +27,11 @@ def build_file_path(path, file_name, extension=''):
 
 
 if __name__ == "__main__":
-    (words_files, image_directory) = parse_command_line_arguments()
-    for words_file in words_files:
+    cli_arguments = parse_command_line_arguments()
+    for words_file in cli_arguments.wordsFiles:
         tree = annotationTree.AnnotationTree(file_path=words_file)
         image_file_path = build_file_path(
-            path=image_directory,
+            path=cli_arguments.imageDirectory,
             file_name=tree.get_image_file_name(),
             extension=_image_file_extension
         )
