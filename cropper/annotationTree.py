@@ -34,7 +34,7 @@ class AnnotationTree(ElementTree):
         """
         return int(self.getroot().get('no'))
 
-    def get_bounding_box(self, element):
+    def get_bounding_box(self):
         """Get the bounding box of the root of the tree.
 
         The bounding box is returned in the representation required by *PIL.Image.crop()*.
