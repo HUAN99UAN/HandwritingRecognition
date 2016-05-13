@@ -4,7 +4,6 @@ import annotationTree
 import pageImage
 import os.path
 
-_image_file_extension = 'jpg'
 
 class DataSet:
 
@@ -19,19 +18,8 @@ class DataSet:
         })
 
     @staticmethod
-    def from_files(files, image_files_directory):
-        data_set = DataSet()
-        for words_file in files:
-            tree = annotationTree.AnnotationTree(file_path=words_file)
-            image_file_name = tree.get_image_file_name()
-            image_file_path = _build_file_path(
-                path=image_files_directory,
-                file_name=image_file_name,
-                extension=_image_file_extension
-            )
-            page_image = pageImage.PageImage(image_file_path, tree)
-            data_set.add(page_image, image_file_name)
-        return data_set
+    def from_files(words_files, image_files_directory):
+        return DataSetBuilder(words_files, image_files_directory).build()
 
     def __str__(self):
         return ", ".join([
@@ -39,8 +27,26 @@ class DataSet:
             "page images: [" + ", ".join(self._pages.keys()) + "]",
             "}"])
 
-def _build_file_name(file_name, extension):
-    return '.'.join([file_name, extension])
 
-def _build_file_path(path, file_name, extension=''):
-    return os.path.join(path, _build_file_name(file_name, extension))
+class DataSetBuilder:
+
+    def __init__(self, words_files, image_files_directory, image_file_extension = 'jpg'):
+        self._words_files = words_files
+        self._image_files_directory = image_files_directory
+        self._image_file_extension = image_file_extension
+
+    def _build_image_file_name(self, file_name):
+        return '.'.join([file_name, self._image_file_extension])
+
+    def _build_image_file_path(self, file_name):
+        return os.path.join(self._image_files_directory, self._build_image_file_name(file_name))
+
+    def build(self):
+        data_set = DataSet()
+        for words_file in self._words_files:
+            tree = annotationTree.AnnotationTree(file_path=words_file)
+            image_file_name = tree.get_image_file_name()
+            image_file_path = self._build_image_file_path(image_file_name,)
+            page_image = pageImage.PageImage(image_file_path, tree)
+            data_set.add(page_image, image_file_name)
+        return data_set
