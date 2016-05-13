@@ -10,8 +10,13 @@ class PageImage:
 
     def __init__(self, image_file, tree):
         self._tree = tree
+        self._image_file = image_file
         self.image = ImageOpener(image_file).open()
         self._lines = self._build_line_dict()
+
+    @property
+    def image_file(self):
+        return self._image_file
 
     def _build_line_dict(self):
         lines = dict()
