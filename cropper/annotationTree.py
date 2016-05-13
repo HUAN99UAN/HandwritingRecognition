@@ -15,7 +15,7 @@ class AnnotationTree(ElementTree):
 
     *element* is an optional root element node,
     *file* is an optional file handle or file name of an XML file whose
-    contents will be used to initialize the tree with.
+    contents will be used to initialize the _tree with.
 
     """
     def __init__(self, element=None, file_path=None):
@@ -40,7 +40,7 @@ class AnnotationTree(ElementTree):
         return self.getroot().get('text')
 
     def get_bounding_box(self):
-        """Get the bounding box of the root of the tree.
+        """Get the bounding box of the root of the _tree.
 
         The bounding box is returned in the representation required by *PIL.Image.crop()*.
 

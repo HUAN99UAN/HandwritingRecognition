@@ -9,14 +9,14 @@ import lineImage
 class PageImage:
 
     def __init__(self, image_file, tree):
-        self.tree = tree
+        self._tree = tree
         self.image = ImageOpener(image_file).open()
         self._lines = self._build_line_dict()
 
     def _build_line_dict(self):
         lines = dict()
 
-        for line in self.tree.lines():
+        for line in self._tree.lines():
             child_tree = annotationTree.AnnotationTree(line)
             number = child_tree.get_number()
             lines.update({
