@@ -24,20 +24,39 @@ class AnnotationTree(ElementTree):
         super(AnnotationTree, self).__init__(element, file_path)
 
     def get_number(self):
-        """Get the contents of the 'no' attribute of the root
+        """Get the contents of the 'no' attribute of the root.
+
+        This method raises a NoSuchAttributeError if the root of the *AnnotationTree* does not have
+        the attribute 'no'.
 
         Return the element number as an int.
 
         """
-        return int(self.getroot().get('no'))
+        number = self._get('no')
+        return int(number)
+
+    def _get(self, key):
+        value = self.getroot().get(key)
+        if not value:
+            raise NoSuchAttributeError(
+                key,
+                "The element '{}' does not have the attribute '{}'.".format(
+                    self.getroot().tag,
+                    key
+                )
+            )
+        return value
 
     def get_text(self):
-        """Get the contents of the 'text' attribute of the root
+        """Get the contents of the 'text' attribute of the root.
 
-        Return the element number as a string.
+        This method raises a NoSuchAttributeError if the root of the *AnnotationTree* does not have
+        the attribute 'text'.
+
+        Return the element text as a string.
 
         """
-        return self.getroot().get('text')
+        return self._get('text')
 
     def get_bounding_box(self):
         """Get the bounding box of the root of the _tree.
@@ -46,11 +65,19 @@ class AnnotationTree(ElementTree):
 
         Return the bounding box as the tuple (left, rop, right, bottom).
         """
-        return \
-            int(self.getroot().get('left')), \
-            int(self.getroot().get('top')), \
-            int(self.getroot().get('right')), \
-            int(self.getroot().get('bottom'))
+        try:
+            bounding_box = (
+                int(self._get('left')), \
+                int(self._get('top')), \
+                int(self._get('right')), \
+                int(self._get('bottom')))
+        except NoSuchAttributeError as exception:
+            raise NoSuchAttributeError(
+                exception.attribute,
+                'Could not build the bounding box of the element \'{}\', as it does not have the attribute \'{}\'.'.
+                format(self.getroot().tag, exception.attribute)
+            )
+        return bounding_box
 
     def get_image_file_name(self):
         """Get the image file name from the words file.
@@ -113,6 +140,14 @@ class WordsFileVerifier:
 class NonExistentFileError(Exception):
     def __init__(self, value):
         self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+class NoSuchAttributeError(Exception):
+    def __init__(self, attribute, value):
+        self.value = value
+        self.attribute = attribute
 
     def __str__(self):
         return repr(self.value)
