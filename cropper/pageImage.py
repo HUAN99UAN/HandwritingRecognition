@@ -22,7 +22,8 @@ class PageImage:
         lines = dict()
 
         for line in self.tree.lines():
-            number = annotationTree.AnnotationTree.get_number(line)
+            child_tree = annotationTree.AnnotationTree(line)
+            number = child_tree.get_number()
             lines.update({
                 number: lineImage.LineImage(
                     number=number,

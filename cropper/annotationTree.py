@@ -32,7 +32,7 @@ class AnnotationTree(ElementTree):
         Return the element number as an int.
 
         """
-        return int(self.getroot.get('no'))
+        return int(self.getroot().get('no'))
 
     def get_bounding_box(self, element):
         """Get the bounding box of the root of the tree.
