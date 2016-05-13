@@ -8,8 +8,8 @@ class AnnotationTree(ElementTree):
     """A words file element hierarchy.
 
     This class represents the hierarchy of tagged elements in a words file. To initialise it either an
-    *element* or a *file_path* is required. If this is not the case a *MissingArgumentError* is raised. Calling
-    the constructor with *file_path* can cause the following exceptions:
+    *element* or a *file_path* is required. Calling the constructor with *file_path* can cause the following
+    exceptions:
         *NonExistentFileError* the file does not exist, or the path does not point to a file.
         *UnexpectedFileError* the does not have the extension of a words file.
 
@@ -19,9 +19,6 @@ class AnnotationTree(ElementTree):
 
     """
     def __init__(self, element=None, file_path=None):
-        if not(element or file_path):
-            raise MissingArgumentError("The AnnotationTree constructor requires either an element, or a filepath.")
-
         if file_path:
             WordsFileVerifier(file_path).verify()
         super(AnnotationTree, self).__init__(element, file_path)
@@ -114,14 +111,6 @@ class WordsFileVerifier:
 
 
 class NonExistentFileError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class MissingArgumentError(Exception):
     def __init__(self, value):
         self.value = value
 
