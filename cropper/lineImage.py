@@ -10,11 +10,6 @@ class LineImage:
         self._number = number
         self._words = self._build_word_dict()
 
-    def __getattr__(self, item):
-        if item == '_image':
-            raise AttributeError()
-        return getattr(self.image, item)
-
     def _extract_line_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
         # image, or new images. Just to be safe they are copied.

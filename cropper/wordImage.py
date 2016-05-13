@@ -9,12 +9,6 @@ class WordImage:
         self._number = number
         self._characters = self._build_character_dict()
 
-
-    def __getattr__(self, item):
-        if item == '_image':
-            raise AttributeError()
-        return getattr(self.image, item)
-
     def _extract_word_image(self):
         word_image = None
         return word_image
