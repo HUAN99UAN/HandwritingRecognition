@@ -1,6 +1,9 @@
 import annotationTree
+import characterImage
+
 
 class WordImage:
+    """A image of a word with its meta information."""
 
     def __init__(self, number, line_image, tree):
         self._line_image = line_image
@@ -17,9 +20,18 @@ class WordImage:
         word_image = page_image_copy.crop(bounding_box)
         return word_image
 
-    def _build_character_dict(selfself):
+    def _build_character_dict(self):
         characters = dict()
-        print("_build_character_dict")
+        for character in self._tree.characters():
+            child_tree = annotationTree.AnnotationTree(character)
+            number = child_tree.get_number()
+            characters.update({
+                number : characterImage.CharacterImage(
+                    number=number,
+                    word_image=self,
+                    tree=annotationTree.AnnotationTree(element=character)
+                )
+            })
         return characters
 
     def __str__(self):
