@@ -1,7 +1,9 @@
 import annotationTree
 import wordImage
 
+
 class LineImage:
+    """A image of a line with its meta information."""
 
     def __init__(self, number, page_image, tree):
         self._page_image = page_image
