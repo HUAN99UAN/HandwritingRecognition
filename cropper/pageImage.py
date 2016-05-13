@@ -13,11 +13,6 @@ class PageImage:
         self.image = ImageOpener(image_file).open()
         self._lines = self._build_line_dict()
 
-    def __getattr__(self, item):
-        if item == 'image':
-            raise AttributeError()
-        return getattr(self._image, item)
-
     def _build_line_dict(self):
         lines = dict()
 
