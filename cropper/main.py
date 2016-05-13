@@ -1,7 +1,8 @@
 import argparse
 import os.path
 
-import wordsFile
+import annotationTree
+import pageImage
 
 _image_file_extension = 'jpg'
 
