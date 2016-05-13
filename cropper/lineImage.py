@@ -1,5 +1,5 @@
 import annotationTree
-
+import wordImage
 
 class LineImage:
 
@@ -25,7 +25,16 @@ class LineImage:
 
     def _build_word_dict(self):
         words = dict()
-        print("BUILD _build_word_dict!!! Should be something like build_line_dict, but the tree is an xml element, instead of a wrapper on such an element. May be store it as the wrapper.")
+        for word in self._tree.words():
+            child_tree = annotationTree.AnnotationTree(word)
+            number = child_tree.get_number()
+            words.update({
+                number: wordImage.WordImage(
+                    number=number,
+                    line_image=self,
+                    tree=child_tree
+                )
+            })
         return words
 
     def __str__(self):
@@ -33,4 +42,5 @@ class LineImage:
             "{LineImage",
             "number: " + self._number,
             "number of words: " + str(len(self._words)),
-            "}"])
+            "}"
+        ])
