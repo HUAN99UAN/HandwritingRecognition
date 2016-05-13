@@ -15,7 +15,6 @@ class CharacterImage:
         page_image_copy = self._word_image._line_image._page_image.image.copy()
         bounding_box = self._tree.get_bounding_box()
         character_image = page_image_copy.crop(bounding_box)
-        character_image.show()
         return character_image
 
     def __str__(self):
