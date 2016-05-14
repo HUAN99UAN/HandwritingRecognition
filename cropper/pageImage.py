@@ -4,19 +4,35 @@ from PIL import Image
 
 import annotationTree
 import lineImage
+import dataTree
 
 
-class PageImage:
-
+class PageImage(dataTree.Root):
+    """
+    Representation of a image with handwiriting.
+    """
     def __init__(self, image_file, tree):
+        """
+        Constructor for a *PageImage*.
+
+        Args:
+            *image_file* The complete path of the image file.
+            *tree* The *AnnotationTree* with this page as its root.
+        """
         self._tree = tree
-        self._image_file = image_file
-        self.image = ImageOpener(image_file).open()
-        self._lines = self._build_line_dict()
+        super(PageImage, self).__init__(
+            image=ImageOpener(image_file).open(),
+            description=image_file,
+        )
+        self.children = self._build_line_dict()
+
+    @property
+    def image(self):
+        return self._image
 
     @property
     def image_file(self):
-        return self._image_file
+        return self._description
 
     def _build_line_dict(self):
         lines = dict()
@@ -36,7 +52,8 @@ class PageImage:
     def __str__(self):
         return ", ".join([
             "{PageImage",
-            "number of lines: " + str(len(self._lines)),
+            "image file: " + self._description,
+            "lines: {" + " ".join(self._children.keys()) + "]",
             "}"])
 
 
