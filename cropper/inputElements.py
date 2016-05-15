@@ -61,7 +61,7 @@ class CharacterImage(dataTree.Leaf, SomethingImage):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
+        self._text = self._tree.get_text()
 
     def __repr__(self):
         return ", ".join([
