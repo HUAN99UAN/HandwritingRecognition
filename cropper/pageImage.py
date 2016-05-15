@@ -49,7 +49,7 @@ class PageImage(dataTree.Root):
             })
         return lines
 
-    def __str__(self):
+    def __repr__(self):
         return ", ".join([
             "{PageImage",
             "image file: " + self._description,

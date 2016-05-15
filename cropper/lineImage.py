@@ -49,7 +49,7 @@ class LineImage(dataTree.Node):
             })
         return words
 
-    def __str__(self):
+    def __repr__(self):
         return ", ".join([
             "{LineImage",
             "number: " + self._number,
