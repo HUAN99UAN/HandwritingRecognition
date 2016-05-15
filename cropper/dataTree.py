@@ -1,95 +1,82 @@
-class Element:
+class Node:
     """
-    Element of a tree.
+    Node of a tree.
 
-    *image* is the image stored in the element, *description* is a description of the element.
+    Arguments:
+        *description* description of the node
+        *parent* parent of the node
+        *children* dictionary with the description of the children as key, and the children as values.
     """
-    def __init__(self, image = None, description = None):
-        self._image = image
-        self._description = description
+    def __init__(self, **kwargs):
+        super(Node, self).__init__()
+        self._description = kwargs.get('description')
+        self.parent = kwargs.get('parent')
+        self.children = kwargs.get('children')
 
-    @property
-    def description(self):
-        return self._description
+    def get_root(self):
+        return self.parent.get_root()
 
-    @property
-    def image(self):
-        return self._image
+    def _repr_description(self):
+        return self._description if self._description else "None>"
 
-    def __repr__(self):
-        return ", ".join([
-            "{Element",
-            "description: " + self._description,
-            "}"
-        ])
+    def _repr_children(self):
+        return "[" + (" ".join(self.children.keys()) if self.children else "") + "]"
 
-
-class Root(Element):
-    """
-    Root of a tree.
-
-    *content* is the actual content of the root, *description* is a description of the element. The dict *children*
-    has as keys the description of the children and as values the children.
-    """
-    def __init__(self, image, description, children = None):
-        super(Root, self).__init__(image, description)
-        self._children = children
-
-    @property
-    def children(self):
-        return self._children
-
-    @children.setter
-    def children(self, value):
-        self._children = value
-
-    def __repr__(self):
-        return ", ".join([
-            "{Root",
-            "description: " + self._description,
-            "children: [" + " ".join(self._children.keys()) + "]",
-            "}"
-        ])
-
-
-class Node(Root):
-    """
-    Root of a tree.
-
-    *content* is the actual content of the root, *description* is a description of the element. The dict *children*
-    has as keys the description of the children and as values the children. *parent* contains a reference to the parent
-    of the node.
-    """
-    def __init__(self, image, description, parent, children=None):
-        super(Node, self).__init__(image, description, children)
-        self._parent = parent
+    def _repr_parent(self):
+        return self.parent._description if self.parent else "None"
 
     def __repr__(self):
         return ", ".join([
             "{Node",
-            "description: " + self._description,
-            "parent: " + self._parent.description,
-            "children: [" + " ".join(self._children.keys()) + "]",
+            "description: " + self._repr_description(),
+            "parent: " + self._repr_parent(),
+            "children: " + self._repr_children(),
             "}"
         ])
 
 
-class Leaf(Element):
+class Root(Node):
     """
-    Leaf of a tree.
+    Root of a tree.
 
-    *content* is the actual content of the root, *description* is a description of the element. *parent* contains a
-    reference to the parent
-    of the node.
+    Arguments
+        *description* description of the node
+        *children* dictionary with the description of the children as key, and the children as values.
     """
-    def __init__(self, image, description, parent):
-        super(Leaf, self).__init__(image, description)
-        self._parent = parent
+    def __init__(self, **kwargs):
+        kwargs['parent'] = None
+        super(Root, self).__init__(**kwargs)
+
+    def get_root(self):
+        return self
+
+    def __repr__(self):
+        return ", ".join([
+            "{Root",
+            "description: " + self._repr_description(),
+            "parent: " + self._repr_parent(),
+            "children: " + self._repr_children(),
+            "}"
+        ])
+
+
+class Leaf(Node):
+    """
+    Node of a tree.
+
+    Arguments:
+        *description* description of the node
+        *parent* parent of the node
+    """
+    def __init__(self, **kwargs):
+        kwargs['children'] = None
+        super(Leaf, self).__init__(**kwargs)
 
     def __repr__(self):
         return ", ".join([
             "{Leaf",
-            "description: " + self._description,
-            "parent: " + self._parent.description,
+            "description: " + self._repr_description(),
+            "parent: " + self._repr_parent(),
+            "children: " + self._repr_children(),
             "}"
         ])
