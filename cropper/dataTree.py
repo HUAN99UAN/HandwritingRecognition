@@ -1,3 +1,10 @@
+def delete_element_from_dict(key, dictionary):
+    try:
+        del dictionary[key]
+    except KeyError:
+        pass
+
+
 class Node:
     """
     Node of a tree.
@@ -5,8 +12,11 @@ class Node:
     def __init__(self, description=None, parent=None, children=dict(), **kwargs):
         """
         Constructor of the Node class
+        :param description: description of the node.
+        :param parent: parent of this node, type should be *Node* or *Root*
+        :param children: children of this node, type should be *Node* or *Leaf*
+        :param kwargs:
         """
-        print("Node")
         super().__init__(**kwargs)
         self._description = description
         self.parent = parent
@@ -47,9 +57,12 @@ class Root(Node):
     def __init__(self, description=None, children=dict(), **kwargs):
         """
         Constructor of the Root class
+        :param description: description of the node.
+        :param children: children of this node, type should be *Node* or *Leaf*
+        :param kwargs:
         """
-        print("Root")
-        del kwargs['parent']
+        delete_element_from_dict(key='parent', dictionary=kwargs)
+
         super().__init__(
             description=description,
             parent=None,
@@ -72,10 +85,11 @@ class Root(Node):
 class Leaf(Node):
     """
     Node of a tree.
+    :param description: description of the node.
+    :param parent: parent of this node, type should be *Node* or *Root*
     """
     def __init__(self, description=None, parent=None, **kwargs):
-        print("Leaf")
-        del kwargs['children']
+        delete_element_from_dict(dictionary=kwargs, key='children')
         super().__init__(
             description=description,
             parent=parent,

@@ -1,6 +1,7 @@
 from builtins import staticmethod
 
 import annotationTree
+import inputElements
 import pageImage
 import os.path
 
@@ -47,6 +48,12 @@ class DataSetBuilder:
             tree = annotationTree.AnnotationTree(file_path=words_file)
             image_file_name = tree.get_image_file_name()
             image_file_path = self._build_image_file_path(image_file_name,)
-            page_image = pageImage.PageImage(image_file_path, tree)
+            image = pageImage.ImageOpener(image_file_path).open()
+            page_image = inputElements.PageImage(
+                description=image_file_name,
+                image=image,
+                tree=tree
+            )
+            print(page_image)
             data_set.add(page_image, image_file_name)
         return data_set
