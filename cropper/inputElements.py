@@ -22,12 +22,12 @@ class SomethingImage:
         self._text = None
 
     def _build_children(self, getter, child_class_constructor):
-        children = dict()
+        self.children = dict()
 
         for element in getter(self._tree):
             child_tree = AnnotationTree(element)
             number = child_tree.get_number()
-            children.update({
+            self.children.update({
                 number: child_class_constructor(
                     tree=child_tree,
                     description=number,
@@ -35,7 +35,6 @@ class SomethingImage:
                     text=child_tree.get_text(default=None)
                 )
             })
-        return children
 
     def _repr_text(self):
         return self._text if self._text else "None"
@@ -79,7 +78,7 @@ class WordImage(dataTree.Node, SomethingImage):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._children = self._build_children(
+        self._build_children(
             getter=WordImage.annotation_tree_getter,
             child_class_constructor=WordImage.child_element_constructor
         )
@@ -100,7 +99,7 @@ class LineImage(dataTree.Node, SomethingImage):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._children = self._build_children(
+        self._build_children(
             getter=LineImage.annotation_tree_getter,
             child_class_constructor=LineImage.child_element_constructor
         )
@@ -130,7 +129,7 @@ class PageImage(dataTree.Root, SomethingImage):
             :param kwargs:
         """
         super().__init__(**kwargs)
-        self._children = self._build_children(
+        self._build_children(
             getter=PageImage.annotation_tree_getter,
             child_class_constructor=PageImage.child_element_constructor)
 
