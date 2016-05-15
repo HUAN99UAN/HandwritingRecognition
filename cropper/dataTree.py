@@ -2,18 +2,15 @@ class Node:
     """
     Node of a tree.
     """
-    def __init__(self, kwargs):
+    def __init__(self, description=None, parent=None, children=dict(), **kwargs):
         """
         Constructor of the Node class
-        :param kwargs: with the following keys:
-            *description* description of the node
-            *parent* parent of the node
-            *children* dictionary with the description of the children as key, and the children as values.
         """
-        super(Node, self).__init__()
-        self._description = kwargs.get('description')
-        self.parent = kwargs.get('parent')
-        self.children = kwargs.get('children')
+        print("Node")
+        super().__init__(**kwargs)
+        self._description = description
+        self.parent = parent
+        self.children = children
 
     def get_root(self):
         """
@@ -47,15 +44,17 @@ class Root(Node):
     """
     Root of a tree.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, description=None, children=dict(), **kwargs):
         """
         Constructor of the Root class
-        :param kwargs: with the following keys:
-            *description* description of the node
-            *children* dictionary with the description of the children as key, and the children as values.
         """
-        kwargs['parent'] = None
-        super(Root, self).__init__(**kwargs)
+        print("Root")
+        del kwargs['parent']
+        super().__init__(
+            description=description,
+            parent=None,
+            children=children,
+            **kwargs)
 
     def get_root(self):
         return self
@@ -74,15 +73,14 @@ class Leaf(Node):
     """
     Node of a tree.
     """
-    def __init__(self, **kwargs):
-        """
-        Constructor of the Root class
-        :param kwargs: with the following keys:
-            *description* description of the node
-            *parent* parent of the node
-        """
-        kwargs['children'] = None
-        super(Leaf, self).__init__(**kwargs)
+    def __init__(self, description=None, parent=None, **kwargs):
+        print("Leaf")
+        del kwargs['children']
+        super().__init__(
+            description=description,
+            parent=parent,
+            children=None,
+            **kwargs)
 
     def __repr__(self):
         return ", ".join([
