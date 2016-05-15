@@ -22,6 +22,7 @@ class LineImage(dataTree.Node):
             description=number,
             parent=page_image
         )
+        self.children = self._build_word_dict()
 
     @property
     def number(self):
