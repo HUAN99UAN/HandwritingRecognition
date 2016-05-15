@@ -1,23 +1,38 @@
 import annotationTree
 import wordImage
+import dataTree
 
 
-class LineImage:
+class LineImage(dataTree.Node):
     """A image of a line with its meta information."""
 
     def __init__(self, number, page_image, tree):
-        self._page_image = page_image
-        self._tree = tree
-        self.image = self._extract_line_image()
-        self._number = number
-        self._words = self._build_word_dict()
+        """
+        Constructor fot a *LineImage*, a class representing a line of handwriting.
 
-    def _extract_line_image(self):
+        Args:
+            *number* The number, i.e. description of the image.
+            *tree* The *AnnotationTree* with this page as its root.
+        """
+        self._tree = tree
+        super(LineImage, self).__init__(
+            image = self._extract_line_image(
+                source_image=page_image.image
+            ),
+            description=number,
+            parent=page_image
+        )
+
+    @property
+    def number(self):
+        return self._description
+
+    def _extract_line_image(self, source_image):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
         # image, or new images. Just to be safe they are copied.
-        page_image_copy = self._page_image.image.copy()
+        image_copy = source_image.copy()
         bounding_box = self._tree.get_bounding_box()
-        line_image = page_image_copy.crop(bounding_box)
+        line_image = image_copy.crop(bounding_box)
         return line_image
 
     def _build_word_dict(self):

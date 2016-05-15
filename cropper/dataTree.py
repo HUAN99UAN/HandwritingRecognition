@@ -4,13 +4,17 @@ class Element:
 
     *image* is the image stored in the element, *description* is a description of the element.
     """
-    def __init__(self, image, description):
+    def __init__(self, image = None, description = None):
         self._image = image
         self._description = description
 
     @property
     def description(self):
         return self._description
+
+    @property
+    def image(self):
+        return self._image
 
     def __repr__(self):
         return ", ".join([
@@ -48,7 +52,7 @@ class Root(Element):
         ])
 
 
-class Node(Element):
+class Node(Root):
     """
     Root of a tree.
 
@@ -56,10 +60,9 @@ class Node(Element):
     has as keys the description of the children and as values the children. *parent* contains a reference to the parent
     of the node.
     """
-    def __init__(self, image, description, parent, children):
-        super(Node, self).__init__(image, description)
+    def __init__(self, image, description, parent, children=None):
+        super(Node, self).__init__(image, description, children)
         self._parent = parent
-        self._children = children
 
     def __repr__(self):
         return ", ".join([
