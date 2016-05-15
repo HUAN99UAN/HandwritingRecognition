@@ -11,8 +11,9 @@ class WordImage(dataTree.Node):
         self._text = self._tree.get_text()
 
         super(WordImage, self).__init__(
-            # TODO nasty, fix this!
-            image=self._extract_word_image(line_image._parent.image),
+            image=self._extract_word_image(
+                # TODO nasty, fix this!
+                source_image=line_image._parent.image),
             description=number,
             parent=line_image
         )

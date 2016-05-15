@@ -78,10 +78,11 @@ class Leaf(Element):
     """
     Leaf of a tree.
 
-    *content* is the actual content of the root, *description* is a description of the element. *parent* contains a reference to the parent
+    *content* is the actual content of the root, *description* is a description of the element. *parent* contains a
+    reference to the parent
     of the node.
     """
-    def __init(self, image, description, parent):
+    def __init__(self, image, description, parent):
         super(Leaf, self).__init__(image, description)
         self._parent = parent
 
