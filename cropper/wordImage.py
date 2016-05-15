@@ -1,23 +1,27 @@
 import annotationTree
 import characterImage
+import dataTree
 
 
-class WordImage:
+class WordImage(dataTree.Node):
     """A image of a word with its meta information."""
 
     def __init__(self, number, line_image, tree):
-        self._line_image = line_image
         self._tree = tree
-        self._number = number
         self._text = self._tree.get_text()
-        self.image = self._extract_word_image()
-        self._characters = self._build_character_dict()
 
-    def _extract_word_image(self):
-        # TODO nasty, fix this!
-        page_image_copy = self._line_image._page_image.image.copy()
+        super(WordImage, self).__init__(
+            # TODO nasty, fix this!
+            image=self._extract_word_image(line_image._parent.image),
+            description=number,
+            parent=line_image
+        )
+        self.children = self._build_character_dict()
+
+    def _extract_word_image(self, source_image):
+        source_image_copy = source_image.copy()
         bounding_box = self._tree.get_bounding_box()
-        word_image = page_image_copy.crop(bounding_box)
+        word_image = source_image_copy.crop(bounding_box)
         return word_image
 
     def _build_character_dict(self):
