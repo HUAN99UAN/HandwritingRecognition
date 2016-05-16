@@ -85,6 +85,21 @@ class PageElementImage:
             extension=extension
         )
 
+    def _output_file_path(self, directory, extension=default_output_extension):
+        return os.path.join(directory, self._output_image_name(extension=extension))
+
+    def image_to_file(self, directory, extension=default_output_extension):
+        image_file_path = self._output_file_path(directory=directory, extension=extension)
+        try:
+            self.image.save(image_file_path)
+        except KeyError:
+            print("Could not write the file {} as the output format could not be determined.".format(
+                image_file_path), file=sys.stderr)
+        except IOError:
+            print("Could not write the file {} the created file may contain partial data.".format(
+                image_file_path), file=sys.stderr)
+
+
 class CharacterImage(tree.Leaf, PageElementImage):
 
     def __init__(self, **kwargs):
@@ -134,6 +149,13 @@ class LineImage(tree.Node, PageElementImage):
         for _, word in self.words():
             characters = characters + word.characters()
         return characters
+
+    def _output_image_name(self, extension=default_output_extension):
+        return '{type}_{description}.{extension}'.format(
+            type='line',
+            description=self._description,
+            extension=extension
+        )
 
     def __repr__(self):
         return "{LineImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
