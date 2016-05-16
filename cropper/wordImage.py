@@ -1,9 +1,9 @@
 import annotationTree
 import characterImage
-import dataTree
+import tree
 
 
-class WordImage(dataTree.Node):
+class WordImage(tree.Node):
     """A image of a word with its meta information."""
 
     def __init__(self, number, line_image, tree):

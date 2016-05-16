@@ -17,25 +17,28 @@ class Node:
         :param children: children of this node, type should be *Node* or *Leaf*
         :param kwargs:
         """
-        super().__init__(**kwargs)
         self._description = description
         self.parent = parent
         self.children = children
+        super().__init__(**kwargs)
 
     def get_root(self):
         """
         Get the root of the tree this node is part of.
 
-        :rtype: dataTree.Node
+        :rtype: tree.Node
         :return: the root node of the tree.
         """
         return self.parent.get_root()
+
+    def is_root(self):
+        return False
 
     def _repr_description(self):
         return self._description if self._description else "None>"
 
     def _repr_children(self):
-        return "[" + (" ".join(self.children.keys()) if self.children else "") + "]"
+        return "[" + (" ".join(str(self.children.keys())) if self.children else "") + "]"
 
     def _repr_parent(self):
         return self.parent._description if self.parent else "None"
@@ -71,6 +74,9 @@ class Root(Node):
 
     def get_root(self):
         return self
+
+    def is_root(self):
+        return True
 
     def __repr__(self):
         return ", ".join([

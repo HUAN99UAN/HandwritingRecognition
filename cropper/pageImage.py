@@ -4,10 +4,10 @@ from PIL import Image
 
 import annotationTree
 import lineImage
-import dataTree
+import tree
 
 
-class PageImage(dataTree.Root):
+class PageImage(tree.Root):
     """
     Representation of a image with handwiriting.
     """

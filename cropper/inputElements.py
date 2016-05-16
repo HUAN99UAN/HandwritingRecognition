@@ -1,4 +1,4 @@
-import dataTree
+import tree
 from annotationTree import AnnotationTree
 
 
@@ -56,22 +56,23 @@ class SomethingImage:
         ])
 
 
-class CharacterImage(dataTree.Leaf, SomethingImage):
+class CharacterImage(tree.Leaf, SomethingImage):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._text = self._tree.get_text()
+        self.image.show()
 
     def __repr__(self):
         return ", ".join([
             "{CharacterImage",
             "SomethingImage: " + SomethingImage.__repr__(self),
-            "Leaf: " + dataTree.Leaf.__repr__(self),
+            "Leaf: " + tree.Leaf.__repr__(self),
             "}"
         ])
 
 
-class WordImage(dataTree.Node, SomethingImage):
+class WordImage(tree.Node, SomethingImage):
 
     annotation_tree_getter = AnnotationTree.characters
     child_element_constructor = CharacterImage
@@ -87,12 +88,12 @@ class WordImage(dataTree.Node, SomethingImage):
         return ", ".join([
             "{WordImage",
             "SomethingImage: " + SomethingImage.__repr__(self),
-            "Node: " + dataTree.Node.__repr__(self),
+            "Node: " + tree.Node.__repr__(self),
             "}"
         ])
 
 
-class LineImage(dataTree.Node, SomethingImage):
+class LineImage(tree.Node, SomethingImage):
 
     annotation_tree_getter = AnnotationTree.words
     child_element_constructor = WordImage
@@ -108,12 +109,12 @@ class LineImage(dataTree.Node, SomethingImage):
         return ", ".join([
             "{LineImage",
             "SomethingImage: " + SomethingImage.__repr__(self),
-            "Node: " + dataTree.Node.__repr__(self),
+            "Node: " + tree.Node.__repr__(self),
             "}"
         ])
 
 
-class PageImage(dataTree.Root, SomethingImage):
+class PageImage(tree.Root, SomethingImage):
 
     annotation_tree_getter = AnnotationTree.lines
     child_element_constructor = LineImage
@@ -137,7 +138,7 @@ class PageImage(dataTree.Root, SomethingImage):
         return ", ".join([
             "{PageImage",
             "SomethingImage: " + SomethingImage.__repr__(self),
-            "Root: " + dataTree.Root.__repr__(self),
+            "Root: " + tree.Root.__repr__(self),
             "}"
         ])
 
