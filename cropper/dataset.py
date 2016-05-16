@@ -18,6 +18,24 @@ class DataSet:
             description: page_image
         })
 
+    def pages(self):
+        for key, page in self._pages.items():
+            yield (key, page)
+
+    def _page_element_iterator(self, getter):
+        for _, page in self.pages():
+            for key, element in getter(page):
+                yield (key, element)
+
+    def lines(self):
+        return self._page_element_iterator(inputElements.PageImage.lines)
+
+    def words(self):
+        return self._page_element_iterator(inputElements.PageImage.words)
+
+    def characters(self):
+        return self._page_element_iterator(inputElements.PageImage.characters)
+
     @staticmethod
     def from_files(words_files, image_files_directory):
         return DataSetBuilder(words_files, image_files_directory).build()
@@ -54,6 +72,5 @@ class DataSetBuilder:
                 image=image,
                 tree=tree
             )
-            print(page_image)
             data_set.add(page_image, image_file_name)
         return data_set
