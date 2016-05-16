@@ -78,12 +78,7 @@ class PageElementImage:
         return "{PageElementImage - " + PageElementImage._repr_properties(self) + "}"
 
     def _output_image_name(self, element_type='', extension=default_output_extension):
-        return '{type}_{number}_{text}.{extension}'.format(
-            type=element_type,
-            number=self._description,
-            text=self._text,
-            extension=extension
-        )
+        pass
 
     def _output_file_path(self, directory, extension=default_output_extension):
         return os.path.join(directory, self._output_image_name(extension=extension))
@@ -106,6 +101,13 @@ class CharacterImage(tree.Leaf, PageElementImage):
         super().__init__(**kwargs)
         self._text = self._tree.get_text()
 
+    def _output_image_name(self, extension=default_output_extension):
+        return '{type}_{description}.{extension}'.format(
+            type='word',
+            description=self._description,
+            extension=extension
+        )
+
     def __repr__(self):
         return "{CharacterImage - " + PageElementImage.__repr__(self) + " " + tree.Leaf.__repr__(self) + "}"
 
@@ -124,6 +126,13 @@ class WordImage(tree.Node, PageElementImage):
 
     def characters(self):
         return list(self.children.items())
+
+    def _output_image_name(self, extension=default_output_extension):
+        return '{type}_{description}.{extension}'.format(
+            type='word',
+            description=self._description,
+            extension=extension
+        )
 
     def __repr__(self):
         return "{WordImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
