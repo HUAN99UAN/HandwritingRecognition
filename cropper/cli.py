@@ -6,6 +6,18 @@ import dataset
 default_output_extension = "jpg"
 
 
+class VerifyOutputExtensionAction(argparse.Action):
+    @staticmethod
+    def _is_valid_output_extension(extension):
+        Image.init()
+        return extension.upper() in Image.SAVE.keys()
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        if not VerifyOutputExtensionAction._is_valid_output_extension(values):
+            raise ValueError("The extension {} is  not supported.".format(values))
+        setattr(namespace, self.dest, values)
+
+
 def parse_command_line_arguments():
     parser = argparse.ArgumentParser()
 
@@ -18,6 +30,7 @@ def parse_command_line_arguments():
                         help='The words files, should be at least one file. Each words file should be associated with '
                              'an image in the imageDirectory.')
     parser.add_argument('--outputExtension', type=str, default=default_output_extension,
+                        action=VerifyOutputExtensionAction,
                         help='The extension of the cropped output images. Accepted extension are: {extensions}.'.format(
                             extensions=", ".join(Image.SAVE.keys())))
     return parser.parse_args()
