@@ -75,7 +75,7 @@ class PageElementImage:
         ])
 
     def __repr__(self):
-        return "{PageElementImage - " + self._repr_properties() + "}"
+        return "{PageElementImage - " + PageElementImage._repr_properties(self) + "}"
 
 
 class CharacterImage(tree.Leaf, PageElementImage):
