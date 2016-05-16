@@ -77,6 +77,13 @@ class PageElementImage:
     def __repr__(self):
         return "{PageElementImage - " + PageElementImage._repr_properties(self) + "}"
 
+    def _output_image_name(self, element_type='', extension=default_output_extension):
+        return '{type}_{number}_{text}.{extension}'.format(
+            type=element_type,
+            number=self._description,
+            text=self._text,
+            extension=extension
+        )
 
 class CharacterImage(tree.Leaf, PageElementImage):
 
@@ -166,6 +173,13 @@ class PageImage(tree.Root, PageElementImage):
         for _, line in self.lines():
             characters = characters + line.characters()
         return characters
+
+    def _output_image_name(self, extension=default_output_extension):
+        return '{type}_{description}.{extension}'.format(
+            type='page',
+            description=self._description,
+            extension=extension
+        )
 
     def __repr__(self):
         return "{PageImage - " + PageElementImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
