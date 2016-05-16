@@ -7,6 +7,11 @@ from annotationTree import AnnotationTree
 default_output_extension = "jpg"
 
 
+def create_directory(directory_path):
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path, exist_ok=False)
+
+
 class PageElementImage:
     """Representation of an element of a page of handwriting."""
 
@@ -85,6 +90,12 @@ class PageElementImage:
             extension=extension
         )
 
+    def _output_directory_name(self):
+        return '{type}_{description}'.format(
+            type=self.type_description,
+            description=self._description
+        )
+
     def _output_file_path(self, directory, extension=default_output_extension):
         return os.path.join(directory, self._output_image_name(extension=extension))
 
@@ -99,6 +110,13 @@ class PageElementImage:
             print("Could not write the file {} the created file may contain partial data.".format(
                 image_file_path), file=sys.stderr)
 
+    def images_to_file(self, directory, element_getter, extension=default_output_extension):
+        directory_path = os.path.join(directory, self._output_directory_name())
+        create_directory(directory_path)
+        self.image_to_file(directory=directory_path, extension=extension)
+        for _, element in element_getter(self):
+            element.images_to_file(directory=directory_path, extension=extension)
+
 
 class CharacterImage(tree.Leaf, PageElementImage):
 
@@ -108,8 +126,8 @@ class CharacterImage(tree.Leaf, PageElementImage):
         super().__init__(**kwargs)
         self._text = self._tree.get_text()
 
-    def _output_image_name(self, extension=default_output_extension):
-        return PageElementImage._output_image_name(self, element_type='character', extension=extension)
+    def images_to_file(self, directory, getter=None, extension=default_output_extension):
+        return self.image_to_file(directory=directory, extension=extension)
 
     def __repr__(self):
         return "{CharacterImage - " + PageElementImage.__repr__(self) + " " + tree.Leaf.__repr__(self) + "}"
@@ -131,6 +149,11 @@ class WordImage(tree.Node, PageElementImage):
     def characters(self):
         return list(self.children.items())
 
+    def images_to_file(self, directory, getter=None, extension=default_output_extension):
+        super(WordImage, self).images_to_file(
+            directory=directory,
+            element_getter=WordImage.characters,
+            extension=extension)
 
     def __repr__(self):
         return "{WordImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
@@ -157,6 +180,12 @@ class LineImage(tree.Node, PageElementImage):
         for _, word in self.words():
             characters = characters + word.characters()
         return characters
+
+    def images_to_file(self, directory, getter=None, extension=default_output_extension):
+        super(LineImage, self).images_to_file(
+            directory=directory,
+            element_getter=LineImage.words,
+            extension=extension)
 
     def __repr__(self):
         return "{LineImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
@@ -197,6 +226,12 @@ class PageImage(tree.Root, PageElementImage):
         for _, line in self.lines():
             characters = characters + line.characters()
         return characters
+
+    def images_to_file(self, directory, getter=None, extension=default_output_extension):
+        super(PageImage, self).images_to_file(
+            directory=directory,
+            element_getter=PageImage.lines,
+            extension=extension)
 
     def __repr__(self):
         return "{PageImage - " + PageElementImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
