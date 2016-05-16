@@ -35,13 +35,13 @@ class Node:
         return False
 
     def _repr_description(self):
-        return self._description if self._description else "None>"
+        return str(self._description) if self._description else "<None>"
 
     def _repr_children(self):
         return "[" + " ,".join([str(key) for key in self.children.keys()]) + "]"
 
     def _repr_parent(self):
-        return self.parent._description if self.parent else "None"
+        return str(self.parent._description) if self.parent else "None"
 
     def _repr_properties(self):
         return ", ".join([
@@ -94,7 +94,7 @@ class Leaf(Node):
         super().__init__(
             description=description,
             parent=parent,
-            children=None,
+            children=dict(),
             **kwargs)
 
     def __repr__(self):

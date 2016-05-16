@@ -1,5 +1,10 @@
+import sys
+import os.path
+
 import tree
 from annotationTree import AnnotationTree
+
+default_output_extension = "jpg"
 
 
 class PageElementImage:
@@ -47,6 +52,15 @@ class PageElementImage:
         bounding_box = self._tree.get_bounding_box()
         return source_image_copy.crop(bounding_box)
 
+    def lines(self):
+        return list()
+
+    def words(self):
+        return list()
+
+    def characters(self):
+        return list()
+
     def _repr_text(self):
         return self._text if self._text else "<None>"
 
@@ -90,6 +104,9 @@ class WordImage(tree.Node, PageElementImage):
             child_class_constructor=WordImage.child_element_constructor
         )
 
+    def characters(self):
+        return list(self.children.items())
+
     def __repr__(self):
         return "{WordImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
 
@@ -105,6 +122,15 @@ class LineImage(tree.Node, PageElementImage):
             getter=LineImage.annotation_tree_getter,
             child_class_constructor=LineImage.child_element_constructor
         )
+
+    def words(self):
+        return list(self.children.items())
+
+    def characters(self):
+        characters = list()
+        for _, word in self.words():
+            characters = characters + word.characters()
+        return characters
 
     def __repr__(self):
         return "{LineImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
@@ -129,6 +155,21 @@ class PageImage(tree.Root, PageElementImage):
         self._build_children(
             getter=PageImage.annotation_tree_getter,
             child_class_constructor=PageImage.child_element_constructor)
+
+    def lines(self):
+        return list(self.children.items())
+
+    def words(self):
+        words = list()
+        for _, line in self.lines():
+            words = words + line.words()
+        return words
+
+    def characters(self):
+        characters = list()
+        for _, line in self.lines():
+            characters = characters + line.characters()
+        return characters
 
     def __repr__(self):
         return "{PageImage - " + PageElementImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
