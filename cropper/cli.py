@@ -2,6 +2,7 @@ import argparse
 
 import dataset
 
+
 def parse_command_line_arguments():
     parser = argparse.ArgumentParser()
 
@@ -17,4 +18,3 @@ if __name__ == "__main__":
     data_set = dataset.DataSet.from_files(
         cli_arguments.wordsFiles,
         cli_arguments.imageDirectory)
-    print(data_set)
