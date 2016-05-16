@@ -2,7 +2,7 @@ import tree
 from annotationTree import AnnotationTree
 
 
-class SomethingImage:
+class PageElementImage:
     """Representation of an element of a page of handwriting."""
 
     annotation_tree_getter = None
@@ -65,20 +65,20 @@ class SomethingImage:
         ])
 
     def __repr__(self):
-        return "{SomeThingImage - " + self._repr_properties() + "}"
+        return "{PageElementImage - " + self._repr_properties() + "}"
 
 
-class CharacterImage(tree.Leaf, SomethingImage):
+class CharacterImage(tree.Leaf, PageElementImage):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._text = self._tree.get_text()
 
     def __repr__(self):
-        return "{CharacterImage - " + SomethingImage.__repr__(self) + " " + tree.Leaf.__repr__(self) + "}"
+        return "{CharacterImage - " + PageElementImage.__repr__(self) + " " + tree.Leaf.__repr__(self) + "}"
 
 
-class WordImage(tree.Node, SomethingImage):
+class WordImage(tree.Node, PageElementImage):
 
     annotation_tree_getter = AnnotationTree.characters
     child_element_constructor = CharacterImage
@@ -91,10 +91,10 @@ class WordImage(tree.Node, SomethingImage):
         )
 
     def __repr__(self):
-        return "{WordImage - " + SomethingImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
+        return "{WordImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
 
 
-class LineImage(tree.Node, SomethingImage):
+class LineImage(tree.Node, PageElementImage):
 
     annotation_tree_getter = AnnotationTree.words
     child_element_constructor = WordImage
@@ -107,10 +107,10 @@ class LineImage(tree.Node, SomethingImage):
         )
 
     def __repr__(self):
-        return "{LineImage - " + SomethingImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
+        return "{LineImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
 
 
-class PageImage(tree.Root, SomethingImage):
+class PageImage(tree.Root, PageElementImage):
 
     annotation_tree_getter = AnnotationTree.lines
     child_element_constructor = LineImage
@@ -131,4 +131,4 @@ class PageImage(tree.Root, SomethingImage):
             child_class_constructor=PageImage.child_element_constructor)
 
     def __repr__(self):
-        return "{PageImage - " + SomethingImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
+        return "{PageImage - " + PageElementImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
