@@ -65,14 +65,10 @@ class PageElementImage:
         return self._text if self._text else "<None>"
 
     def _repr_image(self):
-        return (", ".join([
-            "{Image",
-            "format: " + self._image.format,
-            "}"
-        ])) if self._image else str(None)
+        return '{Image}' if self._image else '<none>'
 
     def _repr_properties(self):
-        return ",".join([
+        return ", ".join([
             "image: " + self._repr_image(),
             "tree: " + self._tree.__repr__(),
             "text: " + self._repr_text(),
