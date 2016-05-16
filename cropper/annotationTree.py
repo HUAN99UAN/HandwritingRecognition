@@ -1,5 +1,4 @@
 import os
-import sys
 
 from xml.etree.ElementTree import ElementTree
 
@@ -47,16 +46,27 @@ class AnnotationTree(ElementTree):
             )
         return value
 
-    def get_text(self):
+    def get_text(self, *args, **kwargs):
         """Get the contents of the 'text' attribute of the root.
 
         This method raises a NoSuchAttributeError if the root of the *AnnotationTree* does not have
-        the attribute 'text'.
+        the attribute 'text', if no *default* is provided.
 
         Return the element text as a string.
-
+        :param default: default return value if the element does not have the attribute 'text'. If no default value is
+        passed a NoSuchAttributeError is raised instead.
+        :return: the text attribute of the root of the annotation tree.
         """
-        return self._get('text')
+        try:
+            text = self._get('text')
+        except NoSuchAttributeError as error:
+            if args:
+                text = args[0]
+            elif 'default' in kwargs:
+                text = kwargs.get('default')
+            else:
+                raise error
+        return text
 
     def get_bounding_box(self):
         """Get the bounding box of the root of the _tree.
@@ -67,9 +77,9 @@ class AnnotationTree(ElementTree):
         """
         try:
             bounding_box = (
-                int(self._get('left')), \
-                int(self._get('top')), \
-                int(self._get('right')), \
+                int(self._get('left')),
+                int(self._get('top')),
+                int(self._get('right')),
                 int(self._get('bottom')))
         except NoSuchAttributeError as exception:
             raise NoSuchAttributeError(
@@ -113,6 +123,13 @@ class AnnotationTree(ElementTree):
         for word in self.iterfind('Character'):
             yield word
 
+    def __repr__(self):
+        return ", ".join([
+            "{ElementTree",
+            "root tag: " + self._root.tag,
+            "}"
+        ])
+
 
 class WordsFileVerifier:
     _words_file_extension = '.words'
@@ -143,6 +160,7 @@ class NonExistentFileError(Exception):
 
     def __str__(self):
         return repr(self.value)
+
 
 class NoSuchAttributeError(Exception):
     def __init__(self, attribute, value):
