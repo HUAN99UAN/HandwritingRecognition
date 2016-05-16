@@ -2,6 +2,8 @@ import argparse
 
 import dataset
 
+default_output_extension = "jpg"
+
 
 def parse_command_line_arguments():
     parser = argparse.ArgumentParser()
