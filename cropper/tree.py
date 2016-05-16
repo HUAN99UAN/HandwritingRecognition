@@ -38,19 +38,20 @@ class Node:
         return self._description if self._description else "None>"
 
     def _repr_children(self):
-        return "[" + (" ".join(str(self.children.keys())) if self.children else "") + "]"
+        return "[" + " ,".join([str(key) for key in self.children.keys()]) + "]"
 
     def _repr_parent(self):
         return self.parent._description if self.parent else "None"
 
-    def __repr__(self):
+    def _repr_properties(self):
         return ", ".join([
-            "{Node",
             "description: " + self._repr_description(),
             "parent: " + self._repr_parent(),
             "children: " + self._repr_children(),
-            "}"
         ])
+
+    def __repr__(self):
+        return "{Node - " + self._repr_properties() + "}"
 
 
 class Root(Node):
@@ -79,13 +80,7 @@ class Root(Node):
         return True
 
     def __repr__(self):
-        return ", ".join([
-            "{Root",
-            "description: " + self._repr_description(),
-            "parent: " + self._repr_parent(),
-            "children: " + self._repr_children(),
-            "}"
-        ])
+        return "{Root - " + self._repr_properties() + "}"
 
 
 class Leaf(Node):
@@ -103,10 +98,4 @@ class Leaf(Node):
             **kwargs)
 
     def __repr__(self):
-        return ", ".join([
-            "{Leaf",
-            "description: " + self._repr_description(),
-            "parent: " + self._repr_parent(),
-            "children: " + self._repr_children(),
-            "}"
-        ])
+        return "{Leaf - " + self._repr_properties() + "}"

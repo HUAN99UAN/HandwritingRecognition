@@ -48,7 +48,7 @@ class SomethingImage:
         return source_image_copy.crop(bounding_box)
 
     def _repr_text(self):
-        return self._text if self._text else "None"
+        return self._text if self._text else "<None>"
 
     def _repr_image(self):
         return (", ".join([
@@ -57,14 +57,15 @@ class SomethingImage:
             "}"
         ])) if self._image else str(None)
 
-    def __repr__(self):
-        return ", ".join([
-            "{SomethingImage",
+    def _repr_properties(self):
+        return ",".join([
             "image: " + self._repr_image(),
             "tree: " + self._tree.__repr__(),
             "text: " + self._repr_text(),
-            "}"
         ])
+
+    def __repr__(self):
+        return "{SomeThingImage - " + self._repr_properties() + "}"
 
 
 class CharacterImage(tree.Leaf, SomethingImage):
@@ -74,12 +75,7 @@ class CharacterImage(tree.Leaf, SomethingImage):
         self._text = self._tree.get_text()
 
     def __repr__(self):
-        return ", ".join([
-            "{CharacterImage",
-            "SomethingImage: " + SomethingImage.__repr__(self),
-            "Leaf: " + tree.Leaf.__repr__(self),
-            "}"
-        ])
+        return "{CharacterImage - " + SomethingImage.__repr__(self) + " " + tree.Leaf.__repr__(self) + "}"
 
 
 class WordImage(tree.Node, SomethingImage):
@@ -95,12 +91,7 @@ class WordImage(tree.Node, SomethingImage):
         )
 
     def __repr__(self):
-        return ", ".join([
-            "{WordImage",
-            "SomethingImage: " + SomethingImage.__repr__(self),
-            "Node: " + tree.Node.__repr__(self),
-            "}"
-        ])
+        return "{WordImage - " + SomethingImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
 
 
 class LineImage(tree.Node, SomethingImage):
@@ -116,12 +107,7 @@ class LineImage(tree.Node, SomethingImage):
         )
 
     def __repr__(self):
-        return ", ".join([
-            "{LineImage",
-            "SomethingImage: " + SomethingImage.__repr__(self),
-            "Node: " + tree.Node.__repr__(self),
-            "}"
-        ])
+        return "{LineImage - " + SomethingImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
 
 
 class PageImage(tree.Root, SomethingImage):
@@ -145,11 +131,4 @@ class PageImage(tree.Root, SomethingImage):
             child_class_constructor=PageImage.child_element_constructor)
 
     def __repr__(self):
-        return ", ".join([
-            "{PageImage",
-            "SomethingImage: " + SomethingImage.__repr__(self),
-            "Root: " + tree.Root.__repr__(self),
-            "}"
-        ])
-
-
+        return "{PageImage - " + SomethingImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
