@@ -78,7 +78,11 @@ class PageElementImage:
         return "{PageElementImage - " + PageElementImage._repr_properties(self) + "}"
 
     def _output_image_name(self, element_type='', extension=default_output_extension):
-        pass
+        return '{type}_{description}.{extension}'.format(
+            type=element_type,
+            description=self._description,
+            extension=extension
+        )
 
     def _output_file_path(self, directory, extension=default_output_extension):
         return os.path.join(directory, self._output_image_name(extension=extension))
@@ -102,11 +106,7 @@ class CharacterImage(tree.Leaf, PageElementImage):
         self._text = self._tree.get_text()
 
     def _output_image_name(self, extension=default_output_extension):
-        return '{type}_{description}.{extension}'.format(
-            type='word',
-            description=self._description,
-            extension=extension
-        )
+        return PageElementImage._output_image_name(self, element_type='character', extension=extension)
 
     def __repr__(self):
         return "{CharacterImage - " + PageElementImage.__repr__(self) + " " + tree.Leaf.__repr__(self) + "}"
@@ -128,11 +128,7 @@ class WordImage(tree.Node, PageElementImage):
         return list(self.children.items())
 
     def _output_image_name(self, extension=default_output_extension):
-        return '{type}_{description}.{extension}'.format(
-            type='word',
-            description=self._description,
-            extension=extension
-        )
+        return PageElementImage._output_image_name(self, element_type='word', extension=extension)
 
     def __repr__(self):
         return "{WordImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
@@ -160,11 +156,7 @@ class LineImage(tree.Node, PageElementImage):
         return characters
 
     def _output_image_name(self, extension=default_output_extension):
-        return '{type}_{description}.{extension}'.format(
-            type='line',
-            description=self._description,
-            extension=extension
-        )
+        return PageElementImage._output_image_name(self, element_type='line', extension=extension)
 
     def __repr__(self):
         return "{LineImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
@@ -206,11 +198,7 @@ class PageImage(tree.Root, PageElementImage):
         return characters
 
     def _output_image_name(self, extension=default_output_extension):
-        return '{type}_{description}.{extension}'.format(
-            type='page',
-            description=self._description,
-            extension=extension
-        )
+        return PageElementImage._output_image_name(self, element_type='page', extension=extension)
 
     def __repr__(self):
         return "{PageImage - " + PageElementImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
