@@ -12,6 +12,7 @@ class PageElementImage:
 
     annotation_tree_getter = None
     child_element_constructor = None
+    type_description = None
 
     def __init__(self, image=None, tree=None, text=None, **kwargs):
         """
@@ -77,9 +78,9 @@ class PageElementImage:
     def __repr__(self):
         return "{PageElementImage - " + PageElementImage._repr_properties(self) + "}"
 
-    def _output_image_name(self, element_type='', extension=default_output_extension):
+    def _output_image_name(self, extension=default_output_extension):
         return '{type}_{description}.{extension}'.format(
-            type=element_type,
+            type=self.type_description,
             description=self._description,
             extension=extension
         )
@@ -101,6 +102,8 @@ class PageElementImage:
 
 class CharacterImage(tree.Leaf, PageElementImage):
 
+    type_description = 'character'
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._text = self._tree.get_text()
@@ -116,6 +119,7 @@ class WordImage(tree.Node, PageElementImage):
 
     annotation_tree_getter = AnnotationTree.characters
     child_element_constructor = CharacterImage
+    type_description = 'word'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -127,8 +131,6 @@ class WordImage(tree.Node, PageElementImage):
     def characters(self):
         return list(self.children.items())
 
-    def _output_image_name(self, extension=default_output_extension):
-        return PageElementImage._output_image_name(self, element_type='word', extension=extension)
 
     def __repr__(self):
         return "{WordImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
@@ -138,6 +140,7 @@ class LineImage(tree.Node, PageElementImage):
 
     annotation_tree_getter = AnnotationTree.words
     child_element_constructor = WordImage
+    type_description = 'line'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -155,9 +158,6 @@ class LineImage(tree.Node, PageElementImage):
             characters = characters + word.characters()
         return characters
 
-    def _output_image_name(self, extension=default_output_extension):
-        return PageElementImage._output_image_name(self, element_type='line', extension=extension)
-
     def __repr__(self):
         return "{LineImage - " + PageElementImage.__repr__(self) + " " + tree.Node.__repr__(self) + "}"
 
@@ -166,6 +166,7 @@ class PageImage(tree.Root, PageElementImage):
 
     annotation_tree_getter = AnnotationTree.lines
     child_element_constructor = LineImage
+    type_description = 'page'
 
     def __init__(self, **kwargs):
         """
@@ -196,9 +197,6 @@ class PageImage(tree.Root, PageElementImage):
         for _, line in self.lines():
             characters = characters + line.characters()
         return characters
-
-    def _output_image_name(self, extension=default_output_extension):
-        return PageElementImage._output_image_name(self, element_type='page', extension=extension)
 
     def __repr__(self):
         return "{PageImage - " + PageElementImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
