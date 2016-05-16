@@ -18,7 +18,7 @@ class PageElementImage:
         """
         super().__init__(**kwargs)
         self._tree = tree
-        self._text = None
+        self._text = text
         self._image = image if image else self._extract_sub_image()
 
     @property
