@@ -17,9 +17,13 @@ class SomethingImage:
         :param kwargs:
         """
         super().__init__(**kwargs)
-        self._image = image
         self._tree = tree
         self._text = None
+        self._image = image if image else self._extract_sub_image()
+
+    @property
+    def image(self):
+        return self._image
 
     def _build_children(self, getter, child_class_constructor):
         self.children = dict()
@@ -36,15 +40,22 @@ class SomethingImage:
                 )
             })
 
+    def _extract_sub_image(self):
+        # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
+        # image, or new images. Just to be safe they are copied.
+        source_image_copy = self.get_root().image.copy()
+        bounding_box = self._tree.get_bounding_box()
+        return source_image_copy.crop(bounding_box)
+
     def _repr_text(self):
         return self._text if self._text else "None"
 
     def _repr_image(self):
-        return ", ".join([
+        return (", ".join([
             "{Image",
             "format: " + self._image.format,
             "}"
-        ])
+        ])) if self._image else str(None)
 
     def __repr__(self):
         return ", ".join([
@@ -61,7 +72,6 @@ class CharacterImage(tree.Leaf, SomethingImage):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._text = self._tree.get_text()
-        self.image.show()
 
     def __repr__(self):
         return ", ".join([
