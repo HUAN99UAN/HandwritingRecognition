@@ -36,6 +36,10 @@ class DataSet:
     def characters(self):
         return self._page_element_iterator(inputElements.PageImage.characters)
 
+    def to_cropped_images_hierarchy(self, directory, extension):
+        for _, page in self.pages():
+            page.images_to_file(directory=directory, extension=extension, element_getter=extension)
+
     @staticmethod
     def from_files(words_files, image_files_directory):
         return DataSetBuilder(words_files, image_files_directory).build()
