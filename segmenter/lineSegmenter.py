@@ -15,6 +15,13 @@ class LineSegmenter:
             stroke_width=Stroke.compute_width()
         )
 
+    def paint_strokes(self, image = None):
+        if not image:
+            image = self._image
+        for stroke in self._strokes:
+            stroke.paint(image)
+        return image
+
 
 class Stroke(shapes.Rectangle):
     """
