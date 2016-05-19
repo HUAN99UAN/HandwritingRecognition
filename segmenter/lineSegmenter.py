@@ -12,16 +12,16 @@ class LineSegmenter:
     segmentation of unconstrained Oriya text." Sadhana 31.6 (2006): 755-769.
     """
 
-    def __init__(self, image, white_threshold = 240, number_of_most_frequent_values = 5):
+    def __init__(self, image, white_threshold=240, number_of_most_frequent_values=5):
         self._image = image
         self._strokes = Stroke.strokes_in_image(
             image=self._image,
             stroke_width=Stroke.compute_width()
         )
-        self._line_height = None
-
         self._white_threshold = white_threshold
         self._number_of_most_frequent_values = number_of_most_frequent_values
+
+        self._line_height = None
         self._lines = list()
 
     def _compute_piece_wise_separating_lines(self, white_threshold):
@@ -78,7 +78,9 @@ class LineSegmenter:
         pass
 
     def _join_right_to_left(self):
-        pass
+        self._lines = [JoinedPieceWiseSeparatingLines(self._strokes, stroke)
+                       for stroke
+                       in self._strokes]
 
     def _paint_stroke_property(self, stroke_paint_function, image):
         image = image or self._image
@@ -86,10 +88,10 @@ class LineSegmenter:
             stroke_paint_function(stroke, image)
         return image
 
-    def paint_strokes(self, image = None):
+    def paint_strokes(self, image=None):
         return self._paint_stroke_property(stroke_paint_function=Stroke.paint, image=image)
 
-    def paint_piece_wise_separating_lines(self, image = None):
+    def paint_piece_wise_separating_lines(self, image=None):
         return self._paint_stroke_property(stroke_paint_function=Stroke.paint_piece_wise_separating_lines, image=image)
 
 
@@ -112,7 +114,7 @@ class Stroke(shapes.Rectangle):
             pwl.distance_to(next_pwl)
             for (pwl, next_pwl)
             in zip(self._psl, self._psl[1:])
-        ]
+            ]
 
     def has_piece_wise_separating_lines(self):
         return len(self._psl) > 0
@@ -126,15 +128,16 @@ class Stroke(shapes.Rectangle):
         :param white_threshold: any element with a grayscale value greater than white is considered white.
 
         """
+
         def get_first_of_consecutive_values(array):
             # [1, 2, 3, 5, 6, 8] -> [1, 5, 8]"
             if len(array) is 1:
                 return array
             else:
                 return [current
-                    for (previous, current)
-                    in zip(array, array[1:])
-                    if current - previous != 1]
+                        for (previous, current)
+                        in zip(array, array[1:])
+                        if current - previous != 1]
 
         white_line_idx = self._find_white_lines(white_threshold=white_threshold)
         psl_idx = get_first_of_consecutive_values(white_line_idx)
@@ -158,6 +161,7 @@ class Stroke(shapes.Rectangle):
         """
         Remove a psl' if the distance between it and its neighbour is smaller than line_height_mode
         """
+
         def distance_within_range(distance):
             return distance >= line_height_mode
 
@@ -179,6 +183,9 @@ class Stroke(shapes.Rectangle):
         for line in self._psl:
             line.paint_on(image)
         return image
+
+    def join(self, other):
+        pass
 
     @staticmethod
     def compute_width():
@@ -204,7 +211,6 @@ class Stroke(shapes.Rectangle):
 
 
 class PieceWiseSeparatingLine(shapes.HorizontalLine):
-
     def __init__(self, x1, x2, y):
         super(PieceWiseSeparatingLine, self).__init__(x1, x2, y)
 
@@ -214,8 +220,11 @@ class PieceWiseSeparatingLine(shapes.HorizontalLine):
 
 class JoinedPieceWiseSeparatingLines:
 
-    def __init__(self):
-        self._psls = list()
+    def __init__(self, strokes, initial_psl):
+        self._psls = self._build_right_to_left(strokes, initial_psl)
 
-    def add(self, value):
-        self._psls.append(value)
+    @staticmethod
+    def _build_right_to_left(self, strokes, initial_psl):
+        plsls = list()
+        
+        return plsls
