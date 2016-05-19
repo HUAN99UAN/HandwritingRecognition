@@ -2,11 +2,11 @@ from typing import Sequence
 
 import PIL
 
-from utils import Point, Color, IntFloat
+from utils import Point, IntFloat
 
 
 class Shape:
-    def paint_on(self, image:PIL.Image) -> None:
+    def paint_on(self, image):
         pass
 
     def __repr__(self):
@@ -14,44 +14,44 @@ class Shape:
 
 
 class Rectangle(Shape):
-    def __init__(self, top_left: Point, bottom_right: Point) -> 'Rectangle':
+    def __init__(self, top_left, bottom_right):
         self._top_left = top_left
         self._bottom_right = bottom_right
 
     @property
-    def left(self) -> IntFloat:
+    def left(self):
         return self._top_left.x
 
     @property
-    def right(self) -> IntFloat:
+    def right(self):
         return self._bottom_right.x
 
     @property
-    def bottom(self) -> IntFloat:
+    def bottom(self):
         return self._bottom_right.y
 
     @property
-    def top(self) -> IntFloat:
+    def top(self):
         return self._top_left.y
 
     @property
-    def top_left(self) -> Point:
+    def top_left(self):
         return self._top_left
 
     @property
-    def top_right(self) -> Point:
+    def top_right(self):
         return Point(x=self.right, y=self.top)
 
     @property
-    def bottom_left(self) -> Point:
+    def bottom_left(self):
         return Point(x=self.left, y=self.bottom)
 
     @property
-    def bottom_right(self) -> Point:
+    def bottom_right(self):
         return self._bottom_right
 
     @property
-    def points(self) -> Sequence[Point]:
+    def points(self):
         return [
             self.top_left,
             self.top_right,
@@ -62,7 +62,7 @@ class Rectangle(Shape):
     def _pil_points(self):
         return [self.top_left, self.bottom_right]
 
-    def paint(self, image : PIL.Image) -> None:
+    def paint_on(self, image):
         painter = PIL.ImageDraw.Draw(image)
         # Cannot control the color of the image, no matter what I do.
         painter.rectangle(
