@@ -252,7 +252,13 @@ class JoinedPieceWiseSeparatingLines:
         self._psls = self._build_right_to_left(strokes, initial_psl)
 
     @staticmethod
-    def _build_right_to_left(strokes, initial_psl):
-        plsls = list()
+    def _build_right_to_left(strokes, initial_stroke, initial_psl):
+        current_stroke = initial_stroke
+        current_psl = initial_psl
+        plsls = [current_psl]
+        while current_stroke.left_neighbour:
+            # current_psl = current.join(current.left_neighbour, current_psl)
+            # current_stroke = current.left_neighbour
+            plsls.append(current_psl)
         raise NotImplementedError
         return plsls
