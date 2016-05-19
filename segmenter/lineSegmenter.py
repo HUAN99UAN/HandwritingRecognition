@@ -1,5 +1,3 @@
-import PIL
-
 from utils import Point
 import shapes
 
