@@ -111,7 +111,7 @@ class Stroke(shapes.Rectangle):
 
         white_line_idx = self._find_white_lines(white_threshold=white_threshold)
         psl_idx = get_first_of_consecutive_values(white_line_idx)
-        self._psl = [shapes.HorizontalLine(x1=self.left, x2=self.right, y=y) for y in psl_idx]
+        self._psl = [PieceWiseSeparatingLine(x1=self.left, x2=self.right, y=y) for y in psl_idx]
 
     def _find_white_lines(self, white_threshold):
         """
@@ -178,3 +178,9 @@ class Stroke(shapes.Rectangle):
             Stroke(left_x=left, right_x=right, image=image)
             for (left, right) in coordinates]
         return strokes
+
+
+class PieceWiseSeparatingLine(shapes.HorizontalLine):
+
+    def __init__(self, x1, x2, y):
+        super(PieceWiseSeparatingLine, self).__init__(x1, x2, y)
