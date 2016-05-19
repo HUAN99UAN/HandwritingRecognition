@@ -45,10 +45,6 @@ class Line(Shape):
     def y2(self):
         return self._p2.y
 
-    @classmethod
-    def horizontal_line(cls, x1, x2, y):
-        return Line(Point(x1, y), Point(x2, y))
-
     def _pil_points(self):
         return [self.p1, self.p2]
 
@@ -57,6 +53,19 @@ class Line(Shape):
         # Cannot get the colors to work, so we'll just live with grey for now.
         painter.line(self._pil_points(), fill=None, width=1)
         del painter
+
+
+class HorizontalLine(Line):
+
+    def __init__(self, x1, x2, y):
+        super(HorizontalLine, self).__init__(Point(x1, y), Point(x2, y))
+
+    @property
+    def y(self):
+        return self._p1.y
+
+    def distance_to(self, other):
+        return abs(self.y - other.y)
 
 
 class Rectangle(Shape):

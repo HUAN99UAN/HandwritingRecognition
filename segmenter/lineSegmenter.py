@@ -72,7 +72,7 @@ class Stroke(shapes.Rectangle):
 
         white_line_idx = self._find_white_lines(white_threshold=white_threshold)
         pbl_idx = get_first_of_consecutive_values(white_line_idx)
-        self._pwl = [shapes.Line.horizontal_line(x1=self.left, x2=self.right, y=y) for y in pbl_idx]
+        pwl = [shapes.HorizontalLine(x1=self.left, x2=self.right, y=y) for y in pbl_idx]
 
     def _find_white_lines(self, white_threshold):
         """
