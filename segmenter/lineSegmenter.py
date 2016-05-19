@@ -1,5 +1,9 @@
 import PIL
 
+from utils import Point
+import shapes
+
+
 class LineSegmenter:
     """
     Class that segments lines based on the algorithm described in Tripathy, Nilamadhaba, and Umapada Pal. "Handwriting
@@ -42,10 +46,9 @@ class Stroke:
         an average word has. The last is easily computed based on the training data. But the first is more difficult. For
         now we just say that strokes have some document independent width.
         """
-
         return 100
 
     @classmethod
-    def strokes_in_image(cls, image: PIL.Image, stroke_width: int) -> list('Stroke'):
+    def strokes_in_image(cls, image, stroke_width):
         strokes = list()
         return strokes
