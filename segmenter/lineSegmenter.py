@@ -30,10 +30,25 @@ class LineSegmenter:
 
     def segment(self):
         self._compute_piece_wise_separating_lines(self._white_threshold)
+        self._remove_empty_margin_strokes()
         self._line_height = self._compute_line_height()
         self._filter_piece_wise_separating_lines(self._line_height)
         self._join_right_to_left()
         self._join_left_to_right()
+
+    def _remove_empty_margin_strokes(self):
+        self._remove_empty_left_margin_strokes()
+        self._remove_empty_right_margin_strokes()
+
+    def _remove_empty_left_margin_strokes(self):
+        if not self._strokes[0].has_piece_wise_separating_lines():
+            self._strokes.remove(0)
+            self._remove_empty_left_margin_strokes()
+
+    def _remove_empty_right_margin_strokes(self):
+        if not self._strokes[-1].has_piece_wise_separating_lines():
+            self._strokes.pop()
+            self._remove_empty_right_margin_strokes()
 
     def _get_line_heights(self):
         line_heights = list()
@@ -98,6 +113,9 @@ class Stroke(shapes.Rectangle):
             for (pwl, next_pwl)
             in zip(self._psl, self._psl[1:])
         ]
+
+    def has_piece_wise_separating_lines(self):
+        return len(self._psl) > 0
 
     def compute_piece_wise_separating_lines(self, white_threshold):
         """

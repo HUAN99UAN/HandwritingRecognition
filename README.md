@@ -15,3 +15,4 @@ Handles the segmentation of a textblock into lines, words and characters.
 Line segmentation is done with the method described in Tripathy, Nilamadhaba, and Umapada Pal. "Handwriting segmentation of unconstrained Oriya text." Sadhana 31.6 (2006): 755-769. With the following changes:
 
 * Instead of choosing the mode of the lineheights we use the min of the n most frequent line heights. Ussing the mode of the line heights, removed nearly all piece wise separating lines.
+* After computing the list of potential stripes we recursively remove all stripes that have no piece wise separating lines.
