@@ -18,6 +18,8 @@ class LineSegmenter:
             image=self._image,
             stroke_width=Stroke.compute_width()
         )
+        self._line_height = None
+
         self._white_threshold = white_threshold
         self._number_of_most_frequent_values = number_of_most_frequent_values
 
@@ -27,7 +29,8 @@ class LineSegmenter:
 
     def segment(self):
         self._compute_piece_wise_separating_lines(self._white_threshold)
-        self._filter_piece_wise_separating_lines(self._compute_line_height())
+        self._line_height = self._compute_line_height()
+        self._filter_piece_wise_separating_lines(self._line_height)
 
     def _get_line_heights(self):
         line_heights = list()
