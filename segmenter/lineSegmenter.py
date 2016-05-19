@@ -17,7 +17,7 @@ class LineSegmenter:
             stroke_width=Stroke.compute_width()
         )
 
-    def compute_piece_wise_separating_lines(self):
+    def _compute_piece_wise_separating_lines(self):
         for stroke in self._strokes:
             stroke.compute_piece_wise_separating_lines()
 
@@ -27,6 +27,12 @@ class LineSegmenter:
             stroke_paint_function(stroke, image)
         return image
 
+    def _compute_line_height_mode(self):
+        line_heights = list()
+        for stroke in self._strokes:
+            line_heights.extend(stroke.pwl_distances)
+        mode = None # take the mode of line_heights
+        return mode
     def paint_strokes(self, image = None):
         return self._paint_stroke_property(stroke_paint_function=Stroke.paint, image=image)
 
@@ -52,6 +58,14 @@ class Stroke(shapes.Rectangle):
         array = np.array(self._image)
         return array.take(list(range(self.left, self.right)), 1)
 
+    @property
+    def pwl_distances(self):
+        return [
+            pwl.distance_to(next_pwl)
+            for (pwl, next_pwl)
+            in zip(self._pwl, self._pwl[1:])
+        ]
+
     def compute_piece_wise_separating_lines(self, white_threshold = 240):
         """
         Compute the piece wise separating lines, consider any gray scale value greater than white as white.
@@ -74,6 +88,7 @@ class Stroke(shapes.Rectangle):
         white_line_idx = self._find_white_lines(white_threshold=white_threshold)
         pbl_idx = get_first_of_consecutive_values(white_line_idx)
         pwl = [shapes.HorizontalLine(x1=self.left, x2=self.right, y=y) for y in pbl_idx]
+        self._pwl = pwl
 
     def _find_white_lines(self, white_threshold):
         """
