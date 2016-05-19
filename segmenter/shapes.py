@@ -64,9 +64,6 @@ class Rectangle(Shape):
 
     def paint_on(self, image):
         painter = PIL.ImageDraw.Draw(image)
-        # Cannot control the color of the image, no matter what I do.
-        painter.rectangle(
-            rectangle=self._pil_points(),
-            fill=None, outline=None
-        )
+        # Cannot get the colors to work, so we'll just live with grey for now.
+        painter.rectangle(self._pil_points(), fill=None, outline=None)
         del painter
