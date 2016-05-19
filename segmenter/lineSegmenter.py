@@ -18,15 +18,17 @@ class LineSegmenter:
         )
 
 
-class Stroke:
+class Stroke(shapes.Rectangle):
     """
     Representation of the strokes in the image used for the line segmentation.
     """
 
-    def __init__(self, width):
-        self._width = width
-        self._left_coordinate = None
-        self._right_coordinate = None
+    def __init__(self, left_x_coordinate, right_x_coordinate, image):
+        super(Stroke, self).__init__(
+            top_left=Point(left_x_coordinate, 0),
+            bottom_right=Point(right_x_coordinate, image.height)
+        )
+        self._image = image
 
     # @staticmethod
     # def stroke_coordinates(stroke_width, image_width):
@@ -38,6 +40,11 @@ class Stroke:
     # import math
     #     image_width = self._image.size[1]
     #     return math.ceil(image_width / stroke_width)
+
+    def paint(self, image=None):
+        if not image:
+            image = self._image
+        self.paint_on(image)
 
     @staticmethod
     def compute_width():
