@@ -12,13 +12,14 @@ class LineSegmenter:
     segmentation of unconstrained Oriya text." Sadhana 31.6 (2006): 755-769.
     """
 
-    def __init__(self, image, white_threshold = 240):
+    def __init__(self, image, white_threshold = 240, number_of_most_frequent_values = 5):
         self._image = image
         self._strokes = Stroke.strokes_in_image(
             image=self._image,
             stroke_width=Stroke.compute_width()
         )
-        self._white_threshold = 240
+        self._white_threshold = white_threshold
+        self._number_of_most_frequent_values = number_of_most_frequent_values
 
     def _compute_piece_wise_separating_lines(self, white_threshold):
         for stroke in self._strokes:
@@ -34,16 +35,17 @@ class LineSegmenter:
             line_heights.extend(stroke.distances_between_piece_wise_separating_lines())
         return line_heights
 
-    def _compute_line_height(self, number_of_most_frequent_values = 5):
+    def _compute_line_height(self):
         def get_minimum_of_most_frequent_values():
+            counter = Counter(line_heights)
             return min(
                 [height
                  for (height, _)
-                 in Counter.most_common(number_of_most_frequent_values)]
+                 in counter.most_common(self._number_of_most_frequent_values)]
             )
 
         line_heights = self._get_line_heights()
-        # according to the paper we should use the mode of the line heights, however that gave crappy results.
+        # according to the paper we should use the mode of the line heights, but the results were crappy.
         line_height = get_minimum_of_most_frequent_values()
         return line_height
 
