@@ -9,8 +9,54 @@ class Shape:
     def paint_on(self, image):
         pass
 
+    def pil_points(self):
+        pass
+
     def __repr__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
+
+
+class Line(Shape):
+    def __init__(self, p1, p2):
+        self._p1 = p1
+        self._p2 = p2
+
+    @property
+    def p1(self):
+        return self._p1
+
+    @property
+    def p2(self):
+        return self._p2
+
+    @property
+    def x1(self):
+        return self._p1.x
+
+    @property
+    def x2(self):
+        return self._p2.x
+
+    @property
+    def y1(self):
+        return self._p1.y
+
+    @property
+    def y2(self):
+        return self._p2.y
+
+    @classmethod
+    def horizontal_line(cls, x1, x2, y):
+        return Line(Point(x1, y), Point(x2, y))
+
+    def _pil_points(self):
+        return [self.p1, self.p2]
+
+    def paint_on(self, image):
+        painter = PIL.ImageDraw.Draw(image)
+        # Cannot get the colors to work, so we'll just live with grey for now.
+        painter.line(self._pil_points(), fill=None, width=1)
+        del painter
 
 
 class Rectangle(Shape):
@@ -52,20 +98,11 @@ class Rectangle(Shape):
 
     @property
     def width(self):
-        return self.right - self.left
+        return abs(self.right - self.left)
     
     @property
     def height(self):
-        return self.top - self.bottom
-
-    @property
-    def points(self):
-        return [
-            self.top_left,
-            self.top_right,
-            self.bottom_right,
-            self.bottom_left
-        ]
+        return abs(self.bottom - self.top)
 
     def _pil_points(self):
         return [self.top_left, self.bottom_right]
