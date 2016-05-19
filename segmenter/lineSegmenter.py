@@ -1,5 +1,4 @@
-import math
-
+import PIL
 
 class LineSegmenter:
     """
@@ -9,20 +8,10 @@ class LineSegmenter:
 
     def __init__(self, image):
         self._image = image
-        self._strokes = self._compute_strokes()
-
-    def _compute_strokes(self):
-        strokes = list()
-        stroke_width = Stroke.compute_width()
-        # image_width = self._image.size[1]
-        image_width = 10
-        for stroke_width in Stroke.stroke_widths(stroke_width, image_width):
-            print(stroke_width)
-        return strokes
-
-    def _number_of_strokes(self, stroke_width):
-        image_width = self._image.size[1]
-        return math.ceil(image_width / stroke_width)
+        self._strokes = Stroke.strokes_in_image(
+            image=self._image,
+            stroke_width=Stroke.compute_width()
+        )
 
 
 class Stroke:
@@ -32,14 +21,31 @@ class Stroke:
 
     def __init__(self, width):
         self._width = width
+        self._left_coordinate = None
+        self._right_coordinate = None
 
-    @staticmethod
-    def stroke_widths(stroke_width, image_width):
-        number_of_normal_strokes = math.floor(image_width / stroke_width)
-        odd_stroke_size = image_width % stroke_width
-        odd_stroke = [odd_stroke_size] if odd_stroke_size is not 0 else list()
-        return ([stroke_width] * number_of_normal_strokes) + odd_stroke
+    # @staticmethod
+    # def stroke_coordinates(stroke_width, image_width):
+    #     left = list(range(0, image_width, stroke_width))
+    #     right = left[1:] + [image_width]
+    #     return zip(left, right)
+
+    # def _number_of_strokes(self, stroke_width):
+    # import math
+    #     image_width = self._image.size[1]
+    #     return math.ceil(image_width / stroke_width)
 
     @staticmethod
     def compute_width():
-        return 3
+        """
+        The paper takes the mode of the width of the bottom reservoirs and multiplies that with the number of characters
+        an average word has. The last is easily computed based on the training data. But the first is more difficult. For
+        now we just say that strokes have some document independent width.
+        """
+
+        return 100
+
+    @classmethod
+    def strokes_in_image(cls, image: PIL.Image, stroke_width: int) -> list('Stroke'):
+        strokes = list()
+        return strokes
