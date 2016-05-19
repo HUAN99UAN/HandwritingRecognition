@@ -1,6 +1,8 @@
 import numpy as np
 
+from collections import Counter
 from utils import Point
+import utils
 import shapes
 
 
@@ -21,26 +23,26 @@ class LineSegmenter:
         for stroke in self._strokes:
             stroke.compute_piece_wise_separating_lines()
 
+    def segment(self):
+        self._compute_piece_wise_separating_lines()
+        self._filter_piece_wise_separating_lines(self._compute_line_height_mode())
+
+    def _compute_line_height_mode(self):
+        line_heights = list()
+        for stroke in self._strokes:
+            line_heights.extend(stroke.pwl_distances())
+        mode = utils.mode(line_heights)
+        return mode
+
+    def _filter_piece_wise_separating_lines(self, line_height_mode):
+        for stroke in self.strokes:
+            stroke.filter_piece_wise_separating_lines(line_height_mode)
+
     def _paint_stroke_property(self, stroke_paint_function, image):
         image = image or self._image
         for stroke in self._strokes:
             stroke_paint_function(stroke, image)
         return image
-
-    def segment(self):
-        self._compute_piece_wise_separating_lines()
-        self._compute_line_height_mode()
-        self._filter_piece_wise_separating_lines()
-
-    def _compute_line_height_mode(self):
-        line_heights = list()
-        for stroke in self._strokes:
-            line_heights.extend(stroke.pwl_distances)
-        mode = None # take the mode of line_heights
-        return mode
-
-    def _filter_piece_wise_separating_lines(self):
-        pass
 
     def paint_strokes(self, image = None):
         return self._paint_stroke_property(stroke_paint_function=Stroke.paint, image=image)
@@ -60,14 +62,9 @@ class Stroke(shapes.Rectangle):
             bottom_right=Point(right_x, image.height)
         )
         self._image = image
-        self._pwl = list()
+        self._np_array = np.array(self._image).take(list(range(self.left, self.right)), 1)
+        self._pwl = None
 
-    @property
-    def as_numpy_array(self):
-        array = np.array(self._image)
-        return array.take(list(range(self.left, self.right)), 1)
-
-    @property
     def pwl_distances(self):
         return [
             pwl.distance_to(next_pwl)
@@ -105,13 +102,16 @@ class Stroke(shapes.Rectangle):
 
         Return indices of lines where all pixels values are greater than the white threshold.
         """
-        array = self.as_numpy_array
+        array = self._np_array
         white_line_logical = np.apply_along_axis(
             all,
             1,
             array > white_threshold
         )
         return np.array(range(0, len(white_line_logical)))[white_line_logical]
+
+    def filter_piece_wise_separating_lines(self, line_height_mode):
+        pass
 
     def paint(self, image=None):
         image = image or self._image
