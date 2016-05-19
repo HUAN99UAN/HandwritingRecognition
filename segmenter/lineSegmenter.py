@@ -30,12 +30,12 @@ class LineSegmenter:
     def _compute_line_height_mode(self):
         line_heights = list()
         for stroke in self._strokes:
-            line_heights.extend(stroke.pwl_distances())
+            line_heights.extend(stroke.distances_between_piece_wise_separating_lines())
         mode = utils.mode(line_heights)
         return mode
 
     def _filter_piece_wise_separating_lines(self, line_height_mode):
-        for stroke in self.strokes:
+        for stroke in self._strokes:
             stroke.filter_piece_wise_separating_lines(line_height_mode)
 
     def _paint_stroke_property(self, stroke_paint_function, image):
@@ -63,20 +63,20 @@ class Stroke(shapes.Rectangle):
         )
         self._image = image
         self._np_array = np.array(self._image).take(list(range(self.left, self.right)), 1)
-        self._pwl = None
+        self._psl = None
 
-    def pwl_distances(self):
+    def distances_between_piece_wise_separating_lines(self):
         return [
             pwl.distance_to(next_pwl)
             for (pwl, next_pwl)
-            in zip(self._pwl, self._pwl[1:])
+            in zip(self._psl, self._psl[1:])
         ]
 
     def compute_piece_wise_separating_lines(self, white_threshold = 240):
         """
         Compute the piece wise separating lines, consider any gray scale value greater than white as white.
 
-        The computed piece wise separating lines are stored in self._pwl.
+        The computed piece wise separating lines are stored in self._psl.
 
         :param white_threshold: any element with a grayscale value greater than white is considered white.
 
@@ -92,9 +92,8 @@ class Stroke(shapes.Rectangle):
                     if current - previous != 1]
 
         white_line_idx = self._find_white_lines(white_threshold=white_threshold)
-        pbl_idx = get_first_of_consecutive_values(white_line_idx)
-        pwl = [shapes.HorizontalLine(x1=self.left, x2=self.right, y=y) for y in pbl_idx]
-        self._pwl = pwl
+        psl_idx = get_first_of_consecutive_values(white_line_idx)
+        self._psl = [shapes.HorizontalLine(x1=self.left, x2=self.right, y=y) for y in psl_idx]
 
     def _find_white_lines(self, white_threshold):
         """
@@ -111,7 +110,22 @@ class Stroke(shapes.Rectangle):
         return np.array(range(0, len(white_line_logical)))[white_line_logical]
 
     def filter_piece_wise_separating_lines(self, line_height_mode):
-        pass
+        """
+        Remove a psl' if the distance between it and its neighbour is smaller than line_height_mode
+        """
+        try:
+            filtered_pbl = [self._psl.pop(0)]
+            for (previous_idx, current_idx) in zip(range(0, len(self._psl)), range(1, len(self._psl))):
+                previous = self._psl[previous_idx]
+                current = self._psl[current_idx]
+                distance = previous.distance_to(current)
+                if distance < line_height_mode:
+                    filtered_pbl.pop()
+                filtered_pbl.append(current)
+            self._psl = filtered_pbl
+        except IndexError:
+            # psl was an empty list, probably the first or last Stroken on a page, just leave it as an empty list.
+            pass
 
     def paint(self, image=None):
         image = image or self._image
@@ -120,7 +134,7 @@ class Stroke(shapes.Rectangle):
 
     def paint_piece_wise_separating_lines(self, image=None):
         image = image or self._image
-        for line in self._pwl:
+        for line in self._psl:
             line.paint_on(image)
         return image
 

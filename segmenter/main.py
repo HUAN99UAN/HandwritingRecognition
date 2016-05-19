@@ -40,15 +40,12 @@ class ImageOpener:
             sys.exit(-1)
         return image
 
-
 if __name__ == '__main__':
-    # image_path = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmenter/test.jpg'
     image_path = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmenter/final.jpg'
     image = ImageOpener(image_file_path=image_path).open()
     l = lineSegmenter.LineSegmenter(image=image)
-    l._compute_piece_wise_separating_lines()
+    l.segment()
 
     image = l.paint_strokes()
     image = l.paint_piece_wise_separating_lines(image)
     image.show()
-

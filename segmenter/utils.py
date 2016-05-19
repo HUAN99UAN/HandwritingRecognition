@@ -11,4 +11,4 @@ def mode(lst):
     """
     from collections import Counter
     counter = Counter(lst)
-    return counter.most_common(1)[0]
+    return counter.most_common(1).pop(0)[0]
