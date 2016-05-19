@@ -62,6 +62,7 @@ class Stroke(shapes.Rectangle):
 
         """
         def get_first_of_consecutive_values(array):
+            # [1, 2, 3, 5, 6, 8] -> [1, 5, 8]"
             if len(array) is 1:
                 return array
             else:
