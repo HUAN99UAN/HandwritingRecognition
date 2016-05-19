@@ -161,17 +161,13 @@ class Stroke(shapes.Rectangle):
         def distance_within_range(distance):
             return distance >= line_height_mode
 
-        try:
-            filtered_pbl = [self._psl[0]]
-            for (previous_idx, current_idx) in zip(range(0, len(self._psl)), range(1, len(self._psl))):
-                previous = self._psl[previous_idx]
-                current = self._psl[current_idx]
-                if distance_within_range(previous.distance_to(current)):
-                    filtered_pbl.append(current)
-            self._psl = filtered_pbl
-        except IndexError:
-            # psl was an empty list, probably the first or last Stroken on a page, just leave it as an empty list.
-            pass
+        filtered_pbl = [self._psl[0]]
+        for (previous_idx, current_idx) in zip(range(0, len(self._psl)), range(1, len(self._psl))):
+            previous = self._psl[previous_idx]
+            current = self._psl[current_idx]
+            if distance_within_range(previous.distance_to(current)):
+                filtered_pbl.append(current)
+        self._psl = filtered_pbl
 
     def paint(self, image=None):
         image = image or self._image
