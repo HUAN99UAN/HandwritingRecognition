@@ -1,8 +1,6 @@
-from typing import Sequence
-
 import PIL
 
-from utils import Point, IntFloat
+from utils import Point
 
 
 class Shape:
