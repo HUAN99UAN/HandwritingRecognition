@@ -24,10 +24,6 @@ class LineSegmenter:
         self._line_height = None
         self._lines = list()
 
-    def _compute_piece_wise_separating_lines(self, white_threshold):
-        for stroke in self._strokes:
-            stroke.compute_piece_wise_separating_lines(white_threshold)
-
     def segment(self):
         self._compute_piece_wise_separating_lines(self._white_threshold)
         self._remove_empty_margin_strokes()
@@ -36,18 +32,24 @@ class LineSegmenter:
         self._join_right_to_left()
         self._join_left_to_right()
 
+    def _compute_piece_wise_separating_lines(self, white_threshold):
+        for stroke in self._strokes:
+            stroke.compute_piece_wise_separating_lines(white_threshold)
+
     def _remove_empty_margin_strokes(self):
         self._remove_empty_left_margin_strokes()
         self._remove_empty_right_margin_strokes()
 
     def _remove_empty_left_margin_strokes(self):
         if not self._strokes[0].has_piece_wise_separating_lines():
-            self._strokes.remove(0)
+            removed_stroke = self._strokes.pop(0)
+            removed_stroke.right_neighbour.left_neighbour = None
             self._remove_empty_left_margin_strokes()
 
     def _remove_empty_right_margin_strokes(self):
         if not self._strokes[-1].has_piece_wise_separating_lines():
-            self._strokes.pop()
+            removed_stroke = self._strokes.pop()
+            removed_stroke.left_neighbour.right_neighbour = None
             self._remove_empty_right_margin_strokes()
 
     def _get_line_heights(self):
@@ -75,7 +77,7 @@ class LineSegmenter:
             stroke.filter_piece_wise_separating_lines(line_height)
 
     def _join_left_to_right(self):
-        pass
+        raise NotImplementedError
 
     def _join_right_to_left(self):
         self._lines = [JoinedPieceWiseSeparatingLines(self._strokes, stroke)
@@ -100,7 +102,7 @@ class Stroke(shapes.Rectangle):
     Representation of the strokes in the image used for the line segmentation.
     """
 
-    def __init__(self, left_x, right_x, image):
+    def __init__(self, left_x, right_x, image, left_neighbour = None, right_neighbour = None):
         super(Stroke, self).__init__(
             top_left=Point(left_x, 0),
             bottom_right=Point(right_x, image.height)
@@ -108,6 +110,28 @@ class Stroke(shapes.Rectangle):
         self._image = image
         self._np_array = np.array(self._image).take(list(range(self.left, self.right)), 1)
         self._psl = None
+        self._left_neighbour = left_neighbour
+        self._right_neighbour = right_neighbour
+
+    @property
+    def left_neighbour(self):
+        return self._left_neighbour
+
+    @left_neighbour.setter
+    def left_neighbour(self, value):
+        self._left_neighbour = value
+        if value and (not value.right_neighbour):
+            value.right_neighbour = self
+
+    @property
+    def right_neighbour(self):
+        return self._right_neighbour
+
+    @right_neighbour.setter
+    def right_neighbour(self, value):
+        self._right_neighbour = value
+        if value and (not value.left_neighbour):
+            value.left_neighbour = self
 
     def distances_between_piece_wise_separating_lines(self):
         return [
@@ -185,7 +209,7 @@ class Stroke(shapes.Rectangle):
         return image
 
     def join(self, other):
-        pass
+        raise NotImplementedError
 
     @staticmethod
     def compute_width():
@@ -203,19 +227,23 @@ class Stroke(shapes.Rectangle):
             right = left[1:] + [image.width]
             return list(zip(left, right))
 
+        def set_neighbours():
+            neighbour_pairs = zip(strokes, strokes[1:])
+            for (stroke, right_neighbour) in neighbour_pairs:
+                stroke.right_neighbour = right_neighbour
+
         coordinates = compute_coordinates()
         strokes = [
             Stroke(left_x=left, right_x=right, image=image)
             for (left, right) in coordinates]
+
+        set_neighbours()
         return strokes
 
 
 class PieceWiseSeparatingLine(shapes.HorizontalLine):
     def __init__(self, x1, x2, y):
         super(PieceWiseSeparatingLine, self).__init__(x1, x2, y)
-
-    def join(self, other):
-        pass
 
 
 class JoinedPieceWiseSeparatingLines:
@@ -224,7 +252,7 @@ class JoinedPieceWiseSeparatingLines:
         self._psls = self._build_right_to_left(strokes, initial_psl)
 
     @staticmethod
-    def _build_right_to_left(self, strokes, initial_psl):
+    def _build_right_to_left(strokes, initial_psl):
         plsls = list()
-        
+        raise NotImplementedError
         return plsls
