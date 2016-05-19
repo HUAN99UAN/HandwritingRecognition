@@ -51,6 +51,14 @@ class Rectangle(Shape):
         return self._bottom_right
 
     @property
+    def width(self):
+        return self.right - self.left
+    
+    @property
+    def height(self):
+        return self.top - self.bottom
+
+    @property
     def points(self):
         return [
             self.top_left,
