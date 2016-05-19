@@ -22,6 +22,7 @@ class LineSegmenter:
 
         self._white_threshold = white_threshold
         self._number_of_most_frequent_values = number_of_most_frequent_values
+        self._lines = list()
 
     def _compute_piece_wise_separating_lines(self, white_threshold):
         for stroke in self._strokes:
@@ -31,6 +32,8 @@ class LineSegmenter:
         self._compute_piece_wise_separating_lines(self._white_threshold)
         self._line_height = self._compute_line_height()
         self._filter_piece_wise_separating_lines(self._line_height)
+        self._join_right_to_left()
+        self._join_left_to_right()
 
     def _get_line_heights(self):
         line_heights = list()
@@ -52,9 +55,15 @@ class LineSegmenter:
         line_height = get_minimum_of_most_frequent_values()
         return line_height
 
-    def _filter_piece_wise_separating_lines(self, line_height_mode):
+    def _filter_piece_wise_separating_lines(self, line_height):
         for stroke in self._strokes:
-            stroke.filter_piece_wise_separating_lines(74)
+            stroke.filter_piece_wise_separating_lines(line_height)
+
+    def _join_left_to_right(self):
+        pass
+
+    def _join_right_to_left(self):
+        pass
 
     def _paint_stroke_property(self, stroke_paint_function, image):
         image = image or self._image
@@ -184,3 +193,15 @@ class PieceWiseSeparatingLine(shapes.HorizontalLine):
 
     def __init__(self, x1, x2, y):
         super(PieceWiseSeparatingLine, self).__init__(x1, x2, y)
+
+    def join(self, other):
+        pass
+
+
+class JoinedPieceWiseSeparatingLines:
+
+    def __init__(self):
+        self._psls = list()
+
+    def add(self, value):
+        self._psls.append(value)
