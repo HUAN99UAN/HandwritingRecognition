@@ -1,7 +1,10 @@
 import os
 import sys
 
-from PIL import Image
+from PIL import Image, ImageDraw
+
+import lineSegmenter
+from utils import Point
 
 
 class NonExistentFileError(Exception):
@@ -39,12 +42,13 @@ class ImageOpener:
 
 
 if __name__ == '__main__':
-    image_path_otsu_5 = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmenter/otsu_closing5.jpg'
-    image_path_otsu_5_dilated_40 = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmenter/square.jpg'
+    # image_path = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmenter/test.jpg'
+    image_path = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmenter/final.jpg'
+    image = ImageOpener(image_file_path=image_path).open()
+    l = lineSegmenter.LineSegmenter(image=image)
+    l.compute_piece_wise_separating_lines()
 
-    image_otsu_5 = ImageOpener(image_file_path=image_path_otsu_5).open()
-    image_otsu_5_dilated_40 = ImageOpener(image_file_path=image_path_otsu_5_dilated_40).open()
-    image_otsu_5_dilated_40.show()
-
-    # pass image to textBlockSegmenter
+    image = l.paint_strokes()
+    image = l.paint_piece_wise_separating_lines(image)
+    image.show()
 
