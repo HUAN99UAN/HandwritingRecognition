@@ -12,31 +12,44 @@ class LineSegmenter:
     segmentation of unconstrained Oriya text." Sadhana 31.6 (2006): 755-769.
     """
 
-    def __init__(self, image):
+    def __init__(self, image, white_threshold = 240):
         self._image = image
         self._strokes = Stroke.strokes_in_image(
             image=self._image,
             stroke_width=Stroke.compute_width()
         )
+        self._white_threshold = 240
 
-    def _compute_piece_wise_separating_lines(self):
+    def _compute_piece_wise_separating_lines(self, white_threshold):
         for stroke in self._strokes:
-            stroke.compute_piece_wise_separating_lines()
+            stroke.compute_piece_wise_separating_lines(white_threshold)
 
     def segment(self):
-        self._compute_piece_wise_separating_lines()
-        self._filter_piece_wise_separating_lines(self._compute_line_height_mode())
+        self._compute_piece_wise_separating_lines(self._white_threshold)
+        self._filter_piece_wise_separating_lines(self._compute_line_height())
 
-    def _compute_line_height_mode(self):
+    def _get_line_heights(self):
         line_heights = list()
         for stroke in self._strokes:
             line_heights.extend(stroke.distances_between_piece_wise_separating_lines())
-        mode = utils.mode(line_heights)
-        return mode
+        return line_heights
+
+    def _compute_line_height(self, number_of_most_frequent_values = 5):
+        def get_minimum_of_most_frequent_values():
+            return min(
+                [height
+                 for (height, _)
+                 in Counter.most_common(number_of_most_frequent_values)]
+            )
+
+        line_heights = self._get_line_heights()
+        # according to the paper we should use the mode of the line heights, however that gave crappy results.
+        line_height = get_minimum_of_most_frequent_values()
+        return line_height
 
     def _filter_piece_wise_separating_lines(self, line_height_mode):
         for stroke in self._strokes:
-            stroke.filter_piece_wise_separating_lines(line_height_mode)
+            stroke.filter_piece_wise_separating_lines(74)
 
     def _paint_stroke_property(self, stroke_paint_function, image):
         image = image or self._image
@@ -72,7 +85,7 @@ class Stroke(shapes.Rectangle):
             in zip(self._psl, self._psl[1:])
         ]
 
-    def compute_piece_wise_separating_lines(self, white_threshold = 240):
+    def compute_piece_wise_separating_lines(self, white_threshold):
         """
         Compute the piece wise separating lines, consider any gray scale value greater than white as white.
 
@@ -113,15 +126,16 @@ class Stroke(shapes.Rectangle):
         """
         Remove a psl' if the distance between it and its neighbour is smaller than line_height_mode
         """
+        def distance_within_range(distance):
+            return distance >= line_height_mode
+
         try:
-            filtered_pbl = [self._psl.pop(0)]
+            filtered_pbl = [self._psl[0]]
             for (previous_idx, current_idx) in zip(range(0, len(self._psl)), range(1, len(self._psl))):
                 previous = self._psl[previous_idx]
                 current = self._psl[current_idx]
-                distance = previous.distance_to(current)
-                if distance < line_height_mode:
-                    filtered_pbl.pop()
-                filtered_pbl.append(current)
+                if distance_within_range(previous.distance_to(current)):
+                    filtered_pbl.append(current)
             self._psl = filtered_pbl
         except IndexError:
             # psl was an empty list, probably the first or last Stroken on a page, just leave it as an empty list.
