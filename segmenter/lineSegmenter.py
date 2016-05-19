@@ -27,12 +27,21 @@ class LineSegmenter:
             stroke_paint_function(stroke, image)
         return image
 
+    def segment(self):
+        self._compute_piece_wise_separating_lines()
+        self._compute_line_height_mode()
+        self._filter_piece_wise_separating_lines()
+
     def _compute_line_height_mode(self):
         line_heights = list()
         for stroke in self._strokes:
             line_heights.extend(stroke.pwl_distances)
         mode = None # take the mode of line_heights
         return mode
+
+    def _filter_piece_wise_separating_lines(self):
+        pass
+
     def paint_strokes(self, image = None):
         return self._paint_stroke_property(stroke_paint_function=Stroke.paint, image=image)
 

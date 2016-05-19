@@ -46,7 +46,7 @@ if __name__ == '__main__':
     image_path = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmenter/final.jpg'
     image = ImageOpener(image_file_path=image_path).open()
     l = lineSegmenter.LineSegmenter(image=image)
-    l.compute_piece_wise_separating_lines()
+    l._compute_piece_wise_separating_lines()
 
     image = l.paint_strokes()
     image = l.paint_piece_wise_separating_lines(image)
