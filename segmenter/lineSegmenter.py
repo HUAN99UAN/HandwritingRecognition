@@ -28,28 +28,18 @@ class Stroke(shapes.Rectangle):
     Representation of the strokes in the image used for the line segmentation.
     """
 
-    def __init__(self, left_x_coordinate, right_x_coordinate, image):
+    def __init__(self, left_x, right_x, image):
         super(Stroke, self).__init__(
-            top_left=Point(left_x_coordinate, 0),
-            bottom_right=Point(right_x_coordinate, image.height)
+            top_left=Point(left_x, 0),
+            bottom_right=Point(right_x, image.height)
         )
         self._image = image
-
-    # @staticmethod
-    # def stroke_coordinates(stroke_width, image_width):
-    #     left = list(range(0, image_width, stroke_width))
-    #     right = left[1:] + [image_width]
-    #     return zip(left, right)
-
-    # def _number_of_strokes(self, stroke_width):
-    # import math
-    #     image_width = self._image.size[1]
-    #     return math.ceil(image_width / stroke_width)
 
     def paint(self, image=None):
         if not image:
             image = self._image
         self.paint_on(image)
+        return image
 
     @staticmethod
     def compute_width():
@@ -58,9 +48,17 @@ class Stroke(shapes.Rectangle):
         an average word has. The last is easily computed based on the training data. But the first is more difficult. For
         now we just say that strokes have some document independent width.
         """
-        return 100
+        return 250
 
     @classmethod
     def strokes_in_image(cls, image, stroke_width):
-        strokes = list()
+        def compute_coordinates():
+            left = list(range(0, image.width, stroke_width))
+            right = left[1:] + [image.width]
+            return list(zip(left, right))
+
+        coordinates = compute_coordinates()
+        strokes = [
+            Stroke(left_x=left, right_x=right, image=image)
+            for (left, right) in coordinates]
         return strokes
