@@ -45,6 +45,6 @@ if __name__ == '__main__':
     l = lineSegmenter.LineSegmenter(image=image)
     l.segment()
 
-    image = l.paint_strokes()
+    image = l.paint_stripes()
     image = l.paint_piece_wise_separating_lines(image)
     image.show()

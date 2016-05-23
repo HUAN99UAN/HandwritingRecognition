@@ -14,9 +14,9 @@ class LineSegmenter:
 
     def __init__(self, image, white_threshold=240, number_of_most_frequent_values=5):
         self._image = image
-        self._strokes = Stroke.strokes_in_image(
+        self._stripes = Stripe.stripes_in_image(
             image=self._image,
-            stroke_width=Stroke.compute_width()
+            stripe_width=Stripe.compute_width()
         )
         self._white_threshold = white_threshold
         self._number_of_most_frequent_values = number_of_most_frequent_values
@@ -26,37 +26,37 @@ class LineSegmenter:
 
     def segment(self):
         self._compute_piece_wise_separating_lines(self._white_threshold)
-        self._remove_empty_margin_strokes()
+        self._remove_empty_margin_stripe()
         self._line_height = self._compute_line_height()
         self._filter_piece_wise_separating_lines(self._line_height)
         self._join_right_to_left()
-        self._join_left_to_right()
+        # self._join_left_to_right()
         #last filter
 
     def _compute_piece_wise_separating_lines(self, white_threshold):
-        for stroke in self._strokes:
-            stroke.compute_piece_wise_separating_lines(white_threshold)
+        for stripe in self._stripes:
+            stripe.compute_piece_wise_separating_lines(white_threshold)
 
-    def _remove_empty_margin_strokes(self):
-        self._remove_empty_left_margin_strokes()
-        self._remove_empty_right_margin_strokes()
+    def _remove_empty_margin_stripe(self):
+        self._remove_empty_left_margin_stripes()
+        self._remove_empty_right_margin_stripes()
 
-    def _remove_empty_left_margin_strokes(self):
-        if not self._strokes[0].has_piece_wise_separating_lines():
-            removed_stroke = self._strokes.pop(0)
-            removed_stroke.right_neighbour.left_neighbour = None
-            self._remove_empty_left_margin_strokes()
+    def _remove_empty_left_margin_stripes(self):
+        if not self._stripes[0].has_piece_wise_separating_lines():
+            removed_stripe = self._stripes.pop(0)
+            removed_stripe.right_neighbour.left_neighbour = None
+            self._remove_empty_left_margin_stripes()
 
-    def _remove_empty_right_margin_strokes(self):
-        if not self._strokes[-1].has_piece_wise_separating_lines():
-            removed_stroke = self._strokes.pop()
-            removed_stroke.left_neighbour.right_neighbour = None
-            self._remove_empty_right_margin_strokes()
+    def _remove_empty_right_margin_stripes(self):
+        if not self._stripes[-1].has_piece_wise_separating_lines():
+            removed_stripe = self._stripes.pop()
+            removed_stripe.left_neighbour.right_neighbour = None
+            self._remove_empty_right_margin_stripes()
 
     def _get_line_heights(self):
         line_heights = list()
-        for stroke in self._strokes:
-            line_heights.extend(stroke.distances_between_piece_wise_separating_lines())
+        for stripe in self._stripes:
+            line_heights.extend(stripe.distances_between_piece_wise_separating_lines())
         return line_heights
 
     def _compute_line_height(self):
@@ -74,8 +74,8 @@ class LineSegmenter:
         return line_height
 
     def _filter_piece_wise_separating_lines(self, line_height):
-        for stroke in self._strokes:
-            stroke.filter_piece_wise_separating_lines(line_height)
+        for stripe in self._stripes:
+            stripe.filter_piece_wise_separating_lines(line_height)
 
     def _join_left_to_right(self):
         raise NotImplementedError
@@ -83,26 +83,26 @@ class LineSegmenter:
     def _join_right_to_left(self):
         raise NotImplementedError
 
-    def _paint_stroke_property(self, stroke_paint_function, image):
+    def _paint_stripe_property(self, stripe_paint_function, image):
         image = image or self._image
-        for stroke in self._strokes:
-            stroke_paint_function(stroke, image)
+        for stripe in self._stripes:
+            stripe_paint_function(stripe, image)
         return image
 
-    def paint_strokes(self, image=None):
-        return self._paint_stroke_property(stroke_paint_function=Stroke.paint, image=image)
+    def paint_stripes(self, image=None):
+        return self._paint_stripe_property(stripe_paint_function=Stripe.paint, image=image)
 
     def paint_piece_wise_separating_lines(self, image=None):
-        return self._paint_stroke_property(stroke_paint_function=Stroke.paint_piece_wise_separating_lines, image=image)
+        return self._paint_stripe_property(stripe_paint_function=Stripe.paint_piece_wise_separating_lines, image=image)
 
 
-class Stroke(shapes.Rectangle):
+class Stripe(shapes.Rectangle):
     """
-    Representation of the strokes in the image used for the line segmentation.
+    Representation of the stripes in the image used for the line segmentation.
     """
 
     def __init__(self, left_x, right_x, image, left_neighbour = None, right_neighbour = None):
-        super(Stroke, self).__init__(
+        super(Stripe, self).__init__(
             top_left=Point(left_x, 0),
             bottom_right=Point(right_x, image.height)
         )
@@ -168,7 +168,7 @@ class Stroke(shapes.Rectangle):
 
     def _find_white_lines(self, white_threshold):
         """
-        Find the lines in this stroke where there are only white pixels.
+        Find the lines in this stripe where there are only white pixels.
 
         Return indices of lines where all pixels values are greater than the white threshold.
         """
@@ -212,29 +212,29 @@ class Stroke(shapes.Rectangle):
         """
         The paper takes the mode of the width of the bottom reservoirs and multiplies that with the number of characters
         an average word has. The last is easily computed based on the training data. But the first is more difficult. For
-        now we just say that strokes have some document independent width.
+        now we just say that stripes have some document independent width.
         """
         return 120
 
     @classmethod
-    def strokes_in_image(cls, image, stroke_width):
+    def stripes_in_image(cls, image, stripe_width):
         def compute_coordinates():
-            left = list(range(0, image.width, stroke_width))
+            left = list(range(0, image.width, stripe_width))
             right = left[1:] + [image.width]
             return list(zip(left, right))
 
         def set_neighbours():
-            neighbour_pairs = zip(strokes, strokes[1:])
-            for (stroke, right_neighbour) in neighbour_pairs:
-                stroke.right_neighbour = right_neighbour
+            neighbour_pairs = zip(stripes, stripes[1:])
+            for (stripe, right_neighbour) in neighbour_pairs:
+                stripe.right_neighbour = right_neighbour
 
         coordinates = compute_coordinates()
-        strokes = [
-            Stroke(left_x=left, right_x=right, image=image)
+        stripes = [
+            Stripe(left_x=left, right_x=right, image=image)
             for (left, right) in coordinates]
 
         set_neighbours()
-        return strokes
+        return stripes
 
 
 class PieceWiseSeparatingLine(shapes.HorizontalLine):
@@ -244,6 +244,6 @@ class PieceWiseSeparatingLine(shapes.HorizontalLine):
 
 class JoinedPieceWiseSeparatingLines:
 
-    def __init__(self, strokes):
+    def __init__(self, stripes):
         self._psls = None
         raise NotImplementedError
