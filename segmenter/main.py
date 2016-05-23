@@ -28,7 +28,6 @@ class ImageOpener:
             )
 
     def open(self):
-        image = None
         try:
             self.verify_image_file()
             image = Image.open(self.image_file_path)

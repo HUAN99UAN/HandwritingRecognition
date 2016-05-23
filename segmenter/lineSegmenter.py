@@ -31,6 +31,7 @@ class LineSegmenter:
         self._filter_piece_wise_separating_lines(self._line_height)
         self._join_right_to_left()
         self._join_left_to_right()
+        #last filter
 
     def _compute_piece_wise_separating_lines(self, white_threshold):
         for stroke in self._strokes:
