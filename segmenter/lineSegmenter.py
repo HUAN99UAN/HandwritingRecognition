@@ -238,8 +238,39 @@ class Stripe(shapes.Rectangle):
 
 
 class PieceWiseSeparatingLine(shapes.HorizontalLine):
+
     def __init__(self, x1, x2, y):
         super(PieceWiseSeparatingLine, self).__init__(x1, x2, y)
+        self._left_neighbour = None
+        self._right_neighbour = None
+
+    @property
+    def left_neighbour(self):
+        return self._left_neighbour
+
+    @left_neighbour.setter
+    def left_neighbour(self, value):
+        self._left_neighbour = value
+        if value and (not value.right_neighbour):
+            value.right_neighbour = self
+
+    @property
+    def right_neighbour(self):
+        return self._right_neighbour
+
+    @right_neighbour.setter
+    def right_neighbour(self, value):
+        self._right_neighbour = value
+        if value and (not value.left_neighbour):
+            value.left_neighbour = self
+
+    @property
+    def is_joined_on_the_left(self):
+        return self.left_neighbour is not None
+
+    @property
+    def is_joined_on_the_right(self):
+        return self.right_neighbour is not None
 
 
 class JoinedPieceWiseSeparatingLines:
