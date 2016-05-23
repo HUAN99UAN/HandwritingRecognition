@@ -216,8 +216,11 @@ class Stripe(shapes.Rectangle):
         new_psls = list()
         for psl in self._psl:
             if not psl.is_joined_on_the_left:
-                print("Not Connected!")
-                new_psl = psl.join_to_psl_in(self.left_neighbour)
+                new_psl = psl.join_to_psl_in_stripe(self.left_neighbour)
+                if new_psls:
+                    new_psl.append(new_psl)
+        self._psl.extend(new_psls)
+
     def find_psl_at_height(self, height, tolerance):
         distances = [(psl, abs(psl.y - height)) for psl in self._psl]
         closest_psl = min(distances, key=operator.itemgetter(1))
@@ -299,6 +302,15 @@ class PieceWiseSeparatingLine(shapes.HorizontalLine):
     @property
     def is_joined_on_the_right(self):
         return self.right_neighbour is not None
+
+    def join_to_psl_in_stripe(self, stripe):
+        neighbour_psl = stripe.find_psl_at_height(height=self.y, tolerance=_parameters.get('line_height') / 2.0)
+        if neighbour_psl:
+            self.left_neighbour = neighbour_psl
+            return
+        else:
+            pass
+            # TODO Implement
 
 
 class JoinedPieceWiseSeparatingLines:
