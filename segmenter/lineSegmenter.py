@@ -81,7 +81,8 @@ class LineSegmenter:
         raise NotImplementedError
 
     def _join_right_to_left(self):
-        raise NotImplementedError
+        for stripe in reversed(self._stripes):
+            stripe.join_piece_wise_separating_lines()
 
     def _paint_stripe_property(self, stripe_paint_function, image):
         image = image or self._image
@@ -199,6 +200,13 @@ class Stripe(shapes.Rectangle):
             if distance_within_range(previous.distance_to(current)):
                 filtered_pbl.append(current)
         self._psl = filtered_pbl
+
+    def join_piece_wise_separating_lines(self):
+        new_psls = list()
+        for psl in self._psl:
+            if not psl.is_joined_on_the_left:
+                print("Not Connected!")
+                new_psl = psl.join_to_psl_in(self.left_neighbour)
 
     def paint(self, image=None):
         image = image or self._image
