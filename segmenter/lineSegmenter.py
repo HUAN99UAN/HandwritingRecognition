@@ -326,17 +326,9 @@ class PieceWiseSeparatingLine(shapes.HorizontalLine):
             return np.all(line > _parameters['white_threshold'])
 
         if is_white(stripe.line_at(self.y)):
-            pass
+            raise NotImplementedError('create psl that connects to current psl through this stripe')
         else:
-            pass
-
-
-        # if complete line is white
-            #create psl that connects to current psl through this stripe
-        # else
-            #build psl pixel by pixel
-
-
+            raise NotImplementedError('build psl pixel by pixel')
 
 
 class JoinedPieceWiseSeparatingLines:
