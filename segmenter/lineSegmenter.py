@@ -1,8 +1,9 @@
+import operator
+from collections import Counter
+
 import numpy as np
 
-from collections import Counter
 from utils import Point
-import utils
 import shapes
 
 _default_parameters = {
