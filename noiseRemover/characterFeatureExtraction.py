@@ -51,6 +51,12 @@ class characterFeatureExtraction:
 
 		return vector
 
+	def hist_feature(self, img):
+		hist_y = np.sum(img, axis=1)
+		hist_x = np.sum(img, axis=0)
+
+		return {'hist_x': hist_x, 'hist_y': hist_y}
+
 
 	def invert_image(self, img):
 
@@ -74,7 +80,9 @@ if __name__ == '__main__':
 
 	#print c.horizontal_celled_prj_feature(regions)
 
-	print c.crossing_feature(tmp)
+	# print c.crossing_feature(tmp)
+
+	data = c.hist_feature(tmp)
 
 	# x = cluster.vq.kmeans(cluster.vq.whiten(smth), 5)
 
