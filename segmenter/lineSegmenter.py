@@ -301,6 +301,13 @@ class JoinedPieceWiseSeparatingLines:
     def __init__(self, stripes):
         self._psls = None
         raise NotImplementedError
+
+    def paint(self, image):
+        for psl in self._psls:
+            psl.paint_on(image)
+        return image
+
+
 class Lines:
 
     def __init__(self):
