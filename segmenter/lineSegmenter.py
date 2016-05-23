@@ -80,9 +80,7 @@ class LineSegmenter:
         raise NotImplementedError
 
     def _join_right_to_left(self):
-        self._lines = [JoinedPieceWiseSeparatingLines(self._strokes, stroke)
-                       for stroke
-                       in self._strokes]
+        raise NotImplementedError
 
     def _paint_stroke_property(self, stroke_paint_function, image):
         image = image or self._image
@@ -208,9 +206,6 @@ class Stroke(shapes.Rectangle):
             line.paint_on(image)
         return image
 
-    def join(self, other):
-        raise NotImplementedError
-
     @staticmethod
     def compute_width():
         """
@@ -248,17 +243,6 @@ class PieceWiseSeparatingLine(shapes.HorizontalLine):
 
 class JoinedPieceWiseSeparatingLines:
 
-    def __init__(self, strokes, initial_psl):
-        self._psls = self._build_right_to_left(strokes, initial_psl)
-
-    @staticmethod
-    def _build_right_to_left(strokes, initial_stroke, initial_psl):
-        current_stroke = initial_stroke
-        current_psl = initial_psl
-        plsls = [current_psl]
-        while current_stroke.left_neighbour:
-            # current_psl = current.join(current.left_neighbour, current_psl)
-            # current_stroke = current.left_neighbour
-            plsls.append(current_psl)
+    def __init__(self, strokes):
+        self._psls = None
         raise NotImplementedError
-        return plsls
