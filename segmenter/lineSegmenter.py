@@ -211,6 +211,11 @@ class Stripe(shapes.Rectangle):
             if not psl.is_joined_on_the_left:
                 print("Not Connected!")
                 new_psl = psl.join_to_psl_in(self.left_neighbour)
+    def find_psl_at_height(self, height, tolerance):
+        distances = [(psl, abs(psl.y - height)) for psl in self._psl]
+        closest_psl = min(distances, key=operator.itemgetter(1))
+        return_value = closest_psl[0] if closest_psl[1] < tolerance else None
+        return return_value
 
     def paint(self, image=None):
         image = image or self._image
