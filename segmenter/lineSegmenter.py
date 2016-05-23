@@ -155,6 +155,9 @@ class Stripe(shapes.Rectangle):
     def piece_wise_separating_lines(self):
         return self._psl
 
+    def line_at(self, height):
+        return self._np_array.take([height], axis=0)
+
     def distances_between_piece_wise_separating_lines(self):
         return [
             pwl.distance_to(next_pwl)
@@ -315,8 +318,25 @@ class PieceWiseSeparatingLine(shapes.HorizontalLine):
             self.left_neighbour = neighbour_psl
             return
         else:
+            new_psl = self._extend_in_to_stripe(stripe)
+            return new_psl
+
+    def _extend_in_to_stripe(self, stripe):
+        def is_white(line):
+            return np.all(line > _parameters['white_threshold'])
+
+        if is_white(stripe.line_at(self.y)):
             pass
-            # TODO Implement
+        else:
+            pass
+
+
+        # if complete line is white
+            #create psl that connects to current psl through this stripe
+        # else
+            #build psl pixel by pixel
+
+
 
 
 class JoinedPieceWiseSeparatingLines:
