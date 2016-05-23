@@ -7,9 +7,9 @@ from utils import Point
 import shapes
 
 _default_parameters = {
-    'white_threshold' : 240,
-    'number_of_most_frequent_values' : 5,
-    'line_height' : 0
+    'white_threshold': 240,
+    'number_of_most_frequent_values': 5,
+    'line_height': 0
 }
 
 _parameters = _default_parameters.copy()
