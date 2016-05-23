@@ -5,6 +5,13 @@ from utils import Point
 import utils
 import shapes
 
+_default_parameters = {
+    'white_threshold' : 240,
+    'number_of_most_frequent_values' : 5,
+    'line_height' : 0
+}
+
+_parameters = _default_parameters.copy()
 
 class LineSegmenter:
     """
@@ -12,23 +19,20 @@ class LineSegmenter:
     segmentation of unconstrained Oriya text." Sadhana 31.6 (2006): 755-769.
     """
 
-    def __init__(self, image, white_threshold=240, number_of_most_frequent_values=5):
+    def __init__(self, image, **parameters):
         self._image = image
         self._stripes = Stripe.stripes_in_image(
             image=self._image,
             stripe_width=Stripe.compute_width()
         )
-        self._white_threshold = white_threshold
-        self._number_of_most_frequent_values = number_of_most_frequent_values
-
-        self._line_height = None
+        _default_parameters.update(parameters)
         self._lines = list()
 
     def segment(self):
-        self._compute_piece_wise_separating_lines(self._white_threshold)
+        self._compute_piece_wise_separating_lines(_parameters.get('white_threshold'))
         self._remove_empty_margin_stripe()
-        self._line_height = self._compute_line_height()
-        self._filter_piece_wise_separating_lines(self._line_height)
+        _parameters['line_height'] = self._compute_line_height()
+        self._filter_piece_wise_separating_lines()
         self._join_right_to_left()
         # self._join_left_to_right()
         #last filter
@@ -65,7 +69,7 @@ class LineSegmenter:
             return min(
                 [height
                  for (height, _)
-                 in counter.most_common(self._number_of_most_frequent_values)]
+                 in counter.most_common(_parameters.get('number_of_most_frequent_values'))]
             )
 
         line_heights = self._get_line_heights()
@@ -73,9 +77,9 @@ class LineSegmenter:
         line_height = get_minimum_of_most_frequent_values()
         return line_height
 
-    def _filter_piece_wise_separating_lines(self, line_height):
+    def _filter_piece_wise_separating_lines(self):
         for stripe in self._stripes:
-            stripe.filter_piece_wise_separating_lines(line_height)
+            stripe.filter_piece_wise_separating_lines()
 
     def _join_left_to_right(self):
         raise NotImplementedError
@@ -185,13 +189,13 @@ class Stripe(shapes.Rectangle):
         )
         return np.array(range(0, len(white_line_logical)))[white_line_logical]
 
-    def filter_piece_wise_separating_lines(self, line_height_mode):
+    def filter_piece_wise_separating_lines(self):
         """
         Remove a psl' if the distance between it and its neighbour is smaller than line_height_mode
         """
 
         def distance_within_range(distance):
-            return distance >= line_height_mode
+            return distance >= _parameters.get('line_height')
 
         filtered_pbl = [self._psl[0]]
         for (previous_idx, current_idx) in zip(range(0, len(self._psl)), range(1, len(self._psl))):
