@@ -14,6 +14,7 @@ _default_parameters = {
 
 _parameters = _default_parameters.copy()
 
+
 class LineSegmenter:
     """
     Class that segments lines based on the algorithm described in Tripathy, Nilamadhaba, and Umapada Pal. "Handwriting
@@ -29,6 +30,12 @@ class LineSegmenter:
         _default_parameters.update(parameters)
         self._lines = list()
 
+    @property
+    def piece_wise_separating_lines(self):
+        psls = list()
+        [psls.extend(stripe.piece_wise_separating_lines) for stripe in self._stripes]
+        return psls
+
     def segment(self):
         self._compute_piece_wise_separating_lines(_parameters.get('white_threshold'))
         self._remove_empty_margin_stripe()
@@ -36,8 +43,8 @@ class LineSegmenter:
         self._filter_piece_wise_separating_lines()
         self._join_right_to_left()
         # self._join_left_to_right()
-        #last filter
-        self._lines = Lines.from_stripes(self._stripes)
+        # last filter
+        self._lines = Lines.from_psls(self.piece_wise_separating_lines)
 
     def _compute_piece_wise_separating_lines(self, white_threshold):
         for stripe in self._stripes:
@@ -113,7 +120,7 @@ class Stripe(shapes.Rectangle):
     Representation of the stripes in the image used for the line segmentation.
     """
 
-    def __init__(self, left_x, right_x, image, left_neighbour = None, right_neighbour = None):
+    def __init__(self, left_x, right_x, image, left_neighbour=None, right_neighbour=None):
         super(Stripe, self).__init__(
             top_left=Point(left_x, 0),
             bottom_right=Point(right_x, image.height)
@@ -215,7 +222,7 @@ class Stripe(shapes.Rectangle):
     def join_piece_wise_separating_lines(self):
         new_psls = list()
         for psl in self._psl:
-            if not psl.is_joined_on_the_left:
+            if not psl.is_joined_on_the_left and self.left_neighbour:
                 new_psl = psl.join_to_psl_in_stripe(self.left_neighbour)
                 if new_psls:
                     new_psl.append(new_psl)
@@ -269,7 +276,6 @@ class Stripe(shapes.Rectangle):
 
 
 class PieceWiseSeparatingLine(shapes.HorizontalLine):
-
     def __init__(self, x1, x2, y):
         super(PieceWiseSeparatingLine, self).__init__(x1, x2, y)
         self._left_neighbour = None
@@ -314,19 +320,33 @@ class PieceWiseSeparatingLine(shapes.HorizontalLine):
 
 
 class JoinedPieceWiseSeparatingLines:
+    def __init__(self):
+        self._psls = list()
 
-    def __init__(self, stripes):
-        self._psls = None
-        raise NotImplementedError
+    def add_psl(self, psl):
+        self._psls.append(psl)
 
     def paint(self, image):
         for psl in self._psls:
             psl.paint_on(image)
         return image
 
+    @property
+    def piece_wise_separating_lines(self):
+        return self._psls
+
+    @staticmethod
+    def from_initial_psl(psl):
+        line = JoinedPieceWiseSeparatingLines()
+        current_psl = psl
+        line.add_psl(current_psl)
+        while current_psl.right_neighbour:
+            current_psl = current_psl.right_neighbour
+            line.add_psl(current_psl)
+        return line
+
 
 class Lines:
-
     def __init__(self):
         self._lines = list()
 
@@ -334,7 +354,15 @@ class Lines:
         for line in self._lines:
             line.paint(image)
 
+    def add_line(self, line):
+        self._lines.append(line)
+
     @staticmethod
-    def from_stripes(stripes):
-        psls = list()
-        [psls.update(stripe.piece_wise_separating_lines) for stripe in stripes]
+    def from_psls(psls):
+        lines = Lines()
+        while psls:
+            current_psl = psls[0]
+            line = JoinedPieceWiseSeparatingLines.from_initial_psl(current_psl)
+            lines.add_line(line)
+            [psls.remove(psl) for psl in line.piece_wise_separating_lines]
+        return lines
