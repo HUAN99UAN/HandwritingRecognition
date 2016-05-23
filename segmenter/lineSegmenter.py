@@ -102,6 +102,11 @@ class LineSegmenter:
     def paint_piece_wise_separating_lines(self, image=None):
         return self._paint_stripe_property(stripe_paint_function=Stripe.paint_piece_wise_separating_lines, image=image)
 
+    def paint_lines(self, image=None):
+        image = image or self._image
+        self._lines.paint(image)
+        return image
+
 
 class Stripe(shapes.Rectangle):
     """
