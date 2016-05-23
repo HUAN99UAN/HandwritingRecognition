@@ -37,6 +37,7 @@ class LineSegmenter:
         self._join_right_to_left()
         # self._join_left_to_right()
         #last filter
+        self._lines = Lines.from_stripes(self._stripes)
 
     def _compute_piece_wise_separating_lines(self, white_threshold):
         for stripe in self._stripes:
@@ -300,3 +301,16 @@ class JoinedPieceWiseSeparatingLines:
     def __init__(self, stripes):
         self._psls = None
         raise NotImplementedError
+class Lines:
+
+    def __init__(self):
+        self._lines = list()
+
+    def paint(self, image):
+        for line in self._lines:
+            line.paint(image)
+
+    @staticmethod
+    def from_stripes(stripes):
+        psls = list()
+        [psls.update(stripe.piece_wise_separating_lines) for stripe in stripes]
