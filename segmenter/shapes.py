@@ -49,7 +49,7 @@ class Line(Shape):
     def paint_on(self, image):
         painter = PIL.ImageDraw.Draw(image)
         # Cannot get the colors to work, so we'll just live with grey for now.
-        painter.line(self._pil_points(), fill=None, width=1)
+        painter.line(self._pil_points(), fill=0, width=1)
         del painter
 
 
