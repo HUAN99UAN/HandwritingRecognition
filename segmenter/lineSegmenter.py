@@ -132,6 +132,10 @@ class Stripe(shapes.Rectangle):
         if value and (not value.left_neighbour):
             value.left_neighbour = self
 
+    @property
+    def piece_wise_separating_lines(self):
+        return self._psl
+
     def distances_between_piece_wise_separating_lines(self):
         return [
             pwl.distance_to(next_pwl)
