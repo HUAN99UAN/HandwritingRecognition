@@ -4,6 +4,7 @@ import os.path
 import tree
 from annotationTree import AnnotationTree
 from decorators import lazy_property
+from errors import InvalidElementPageElementError
 
 
 def create_directory(directory_path):
@@ -31,20 +32,30 @@ class PageElementImage:
         self._text = text
         self._image = image
 
+    def _build_child(self, element, constructor):
+        child_tree = AnnotationTree(element)
+        number = child_tree.get_number()
+        child = constructor(
+            tree=child_tree,
+            description=number,
+            parent=self,
+            text=child_tree.get_text(default=None)
+        )
+
+        self.children.update({
+            number: child
+        })
+
     def _build_children(self, getter, child_class_constructor):
         self.children = dict()
-
         for element in getter(self._tree):
-            child_tree = AnnotationTree(element)
-            number = child_tree.get_number()
-            self.children.update({
-                number: child_class_constructor(
-                    tree=child_tree,
-                    description=number,
-                    parent=self,
-                    text=child_tree.get_text(default=None)
-                )
-            })
+            try:
+                self._build_child(
+                    constructor=child_class_constructor,
+                    element=element)
+            except InvalidElementPageElementError:
+                # if the element is invalid we just skip it.
+                pass
 
     def _extract_sub_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
@@ -119,7 +130,9 @@ class CharacterImage(tree.Leaf, PageElementImage):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._text = self._tree.get_text()
+        self._text = self._tree.get_text(default=None)
+        if not self._text:
+            raise InvalidElementPageElementError('The text attribute of the element is undefined.')
 
     @lazy_property
     def image(self):
