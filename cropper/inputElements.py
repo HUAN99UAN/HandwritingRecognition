@@ -34,7 +34,7 @@ class PageElementImage:
 
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
-        number = child_tree.get_number()
+        number = child_tree.number
         child = constructor(
             tree=child_tree,
             description=number,
