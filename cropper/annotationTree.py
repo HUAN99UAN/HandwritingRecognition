@@ -1,7 +1,46 @@
 import os
+from collections import namedtuple
 
 from xml.etree.ElementTree import ElementTree
 
+from errors import InvalidElementPageElementError
+
+
+BoundingBoxTuple = namedtuple('BoundingBox', ['left', 'right', 'top', 'bottom'])
+
+
+class BoundingBox(BoundingBoxTuple):
+    def __new__(cls, left, right, top, bottom):
+        self = super(BoundingBox, cls).__new__(cls, left, right, top, bottom)
+        try:
+            self._validate()
+        except:
+            raise
+        return self
+
+    @staticmethod
+    def _dimension_greater_than_zero(dimension):
+        return dimension > 0
+
+    @property
+    def width(self):
+        return self.right - self.left
+
+    @property
+    def height(self):
+        return self.bottom - self.top
+
+    def _is_valid(self):
+        try:
+            return BoundingBox._dimension_greater_than_zero(self.width) and \
+                   BoundingBox._dimension_greater_than_zero(self.height)
+        except:
+            raise
+
+    def _validate(self):
+        if not self._is_valid():
+            raise InvalidElementPageElementError(
+                "The {} has invalid dimensions.".format(self))
 
 class AnnotationTree(ElementTree):
     """A words file element hierarchy.
