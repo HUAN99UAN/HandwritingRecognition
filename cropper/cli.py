@@ -61,10 +61,9 @@ if __name__ == "__main__":
     Image.init()
     cli_arguments = parse_command_line_arguments()
 
-    print(cli_arguments)
-    # data_set = dataset.DataSet.from_files(
-    #     cli_arguments.wordsFiles,
-    #     cli_arguments.imageDirectory)
-    # data_set.to_cropped_images_hierarchy(
-    #     directory=cli_arguments.outputDirectory,
-    #     extension=cli_arguments.outputExtension)
+    data_set = dataset.DataSet.from_files(
+        cli_arguments.wordsFiles,
+        cli_arguments.imageDirectory)
+    data_set.to_cropped_images_hierarchy(
+        directory=cli_arguments.outputDirectory,
+        extension=cli_arguments.outputExtension)
