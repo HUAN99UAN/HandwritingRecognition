@@ -42,6 +42,7 @@ class BoundingBox(BoundingBoxTuple):
             raise InvalidElementPageElementError(
                 "The {} has invalid dimensions.".format(self))
 
+
 class AnnotationTree(ElementTree):
     """A words file element hierarchy.
 
@@ -115,7 +116,7 @@ class AnnotationTree(ElementTree):
         Return the bounding box as the tuple (left, rop, right, bottom).
         """
         try:
-            bounding_box = (
+            bounding_box = BoundingBox(
                 int(self._get('left')),
                 int(self._get('top')),
                 int(self._get('right')),
