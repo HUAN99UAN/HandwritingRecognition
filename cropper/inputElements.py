@@ -87,6 +87,9 @@ class PageElementImage:
     def __repr__(self):
         return "{PageElementImage - " + PageElementImage._repr_properties(self) + "}"
 
+    def __str__(self):
+        return "{}, {}({})".format(self.parent, self.type_description, self._description)
+
     def _output_image_name(self, extension):
         return '{type}_{description}.{extension}'.format(
             type=self.type_description,
@@ -261,6 +264,9 @@ class PageImage(tree.Root, PageElementImage):
 
     def images_to_file(self, directory, extension, element_getter=None):
         super(PageImage, self).images_to_file(directory=directory, extension=extension, element_getter=PageImage.lines)
+
+    def __str__(self):
+        return "{}({})".format(self.type_description, self._description)
 
     def __repr__(self):
         return "{PageImage - " + PageElementImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
