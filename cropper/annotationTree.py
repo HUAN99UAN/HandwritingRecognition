@@ -129,8 +129,7 @@ class AnnotationTree(ElementTree):
                 format(self.getroot().tag, exception.attribute)
             )
         except InvalidElementPageElementError:
-            print("Invalid!")
-            exit(-1)
+            raise
 
     def get_image_file_name(self):
         """Get the image file name from the words file.
