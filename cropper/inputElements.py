@@ -3,7 +3,7 @@ import os.path
 
 import tree
 from annotationTree import AnnotationTree
-
+from decorators import lazy_property
 
 def create_directory(directory_path):
     if not os.path.exists(directory_path):
@@ -28,11 +28,7 @@ class PageElementImage:
         super().__init__(**kwargs)
         self._tree = tree
         self._text = text
-        self._image = image if image else self._extract_sub_image()
-
-    @property
-    def image(self):
-        return self._image
+        self._image = image
 
     def _build_children(self, getter, child_class_constructor):
         self.children = dict()
@@ -124,6 +120,11 @@ class CharacterImage(tree.Leaf, PageElementImage):
         super().__init__(**kwargs)
         self._text = self._tree.get_text()
 
+    @lazy_property
+    def image(self):
+        image = self._extract_sub_image()
+        return image
+
     def images_to_file(self, directory, extension, element_getter):
         return self.image_to_file(directory=directory, extension=extension)
 
@@ -143,6 +144,11 @@ class WordImage(tree.Node, PageElementImage):
             getter=WordImage.annotation_tree_getter,
             child_class_constructor=WordImage.child_element_constructor
         )
+
+    @lazy_property
+    def image(self):
+        image = self._extract_sub_image()
+        return image
 
     def characters(self):
         return list(self.children.items())
@@ -167,6 +173,11 @@ class LineImage(tree.Node, PageElementImage):
             getter=LineImage.annotation_tree_getter,
             child_class_constructor=LineImage.child_element_constructor
         )
+
+    @lazy_property
+    def image(self):
+        image = self._extract_sub_image()
+        return image
 
     def words(self):
         return list(self.children.items())
@@ -204,6 +215,10 @@ class PageImage(tree.Root, PageElementImage):
         self._build_children(
             getter=PageImage.annotation_tree_getter,
             child_class_constructor=PageImage.child_element_constructor)
+
+    @property
+    def image(self):
+        return self._image
 
     def lines(self):
         return list(self.children.items())
