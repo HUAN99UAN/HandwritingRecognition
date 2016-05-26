@@ -80,6 +80,7 @@ class DataSetBuilder:
             data_set.add(page_image, image_file_name)
         return data_set
 
+
 class ImageOpener:
 
     def __init__(self, image_file_path):
