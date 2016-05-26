@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Image name="KNMP-VIII_F_69______2C2O_0004">
+    <TextLine bottom="208" left="281" no="1" right="740" shear="0" top="140">
+        <Word bottom="199" left="281" no="1" right="352" shear="0" text="%sitv" top="140">
+            <Character bottom="197" left="283" no="1" right="309" shear="0" text="s" top="144" />
+            <Character bottom="192" left="297" no="2" right="315" shear="0" text="i" top="157" />
+            <Character bottom="193" left="313" no="3" right="329" shear="0" text="t" top="159" />
+            <Character bottom="193" left="326" no="4" right="350" shear="0" text="v" top="161" />
+            <Character bottom="161" left="328" no="5" right="351" shear="0" text="^" top="143" />
+        </Word>
+        <Word bottom="208" left="524" no="2" right="740" shear="0" text="boemice" top="152" />
+        <Word bottom="208" left="524" no="3" right="728" shear="0" text="boemice" top="152" />
+        <Word bottom="205" left="433" no="4" right="468" shear="0" text="h" top="150" />
+        <Word bottom="205" left="433" no="5" right="514" shear="0" text="-huicurl" top="150" />
+        <Word bottom="208" left="353" no="6" right="439" shear="0" text="+tre" top="153">
+            <Character bottom="201" left="360" no="1" right="389" shear="0" text="t" top="158" />
+            <Character bottom="162" left="368" no="2" right="391" shear="0" text="^" top="152" />
+            <Character bottom="200" left="390" no="3" right="407" shear="0" text="r" top="158" />
+            <Character bottom="201" left="404" no="4" right="427" shear="0" text="e" top="161" />
+        </Word>
+        <Word bottom="203" left="524" no="7" right="671" shear="0" text="boemi" top="152" />
+    </TextLine>
+    <TextLine bottom="226" left="524" no="2" right="1869" shear="0" top="157">
+        <Word bottom="226" left="1428" no="1" right="1869" shear="0" text="exponere" top="179" />
+        <Word bottom="226" left="524" no="2" right="728" shear="0" text="boemice" top="157">
+            <Character bottom="205" left="531" no="1" right="558" shear="0" text="b" top="159" />
+            <Character bottom="200" left="554" no="2" right="586" shear="0" text="o" top="168" />
+            <Character bottom="194" left="556" no="3" right="584" shear="0" text="e" top="165" />
+            <Character bottom="203" left="605" no="4" right="654" shear="0" text="m" top="161" />
+            <Character bottom="198" left="656" no="5" right="672" shear="0" text="i" top="163" />
+            <Character bottom="201" left="672" no="6" right="693" shear="0" text="c" top="166" />
+            <Character bottom="202" left="696" no="7" right="715" shear="0" text="e" top="163" />
+        </Word>
+        <Word bottom="214" left="1045" no="3" right="1101" shear="0" text="sit" top="157">
+            <Character bottom="209" left="1047" no="1" right="1076" shear="0" text="s" top="159" />
+            <Character bottom="208" left="1064" no="2" right="1081" shear="0" text="i" top="171" />
+            <Character bottom="212" left="1080" no="3" right="1103" shear="0" text="t" top="166" />
+        </Word>
+        <Word bottom="226" left="1428" no="4" right="1657" shear="0" text="exponere" top="179" />
+    </TextLine>
+</Image>
