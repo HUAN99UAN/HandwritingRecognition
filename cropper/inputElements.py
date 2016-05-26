@@ -53,14 +53,14 @@ class PageElementImage:
                 self.children.update({number: child})
             except InvalidElementPageElementError:
                 # if the element is invalid we just skip it.
+                print("Invalid Bounding Box")
                 pass
 
     def _extract_sub_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
         # image, or new images. Just to be safe they are copied.
         source_image = self.root.image
-        bounding_box = self._tree.get_bounding_box()
-        return source_image.crop(bounding_box)
+        return source_image.crop(self._bounding_box)
 
     def lines(self):
         return list()
