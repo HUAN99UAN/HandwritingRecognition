@@ -1,4 +1,4 @@
-import PIL
+from PIL import ImageDraw
 
 from utils import Point
 
@@ -47,7 +47,7 @@ class Line(Shape):
         return [self.p1, self.p2]
 
     def paint_on(self, image):
-        painter = PIL.ImageDraw.Draw(image)
+        painter = ImageDraw.Draw(image)
         # Cannot get the colors to work, so we'll just live with grey for now.
         painter.line(self._pil_points(), fill=0, width=1)
         del painter
@@ -115,7 +115,7 @@ class Rectangle(Shape):
         return [self.top_left, self.bottom_right]
 
     def paint_on(self, image):
-        painter = PIL.ImageDraw.Draw(image)
+        painter = ImageDraw.Draw(image)
         # Cannot get the colors to work, so we'll just live with grey for now.
         painter.rectangle(self._pil_points(), fill=None, outline=None)
         del painter
