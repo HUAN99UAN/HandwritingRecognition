@@ -6,12 +6,12 @@ from xml.etree.ElementTree import ElementTree
 from errors import InvalidElementPageElementError
 
 
-BoundingBoxTuple = namedtuple('BoundingBox', ['left', 'right', 'top', 'bottom'])
+BoundingBoxTuple = namedtuple('BoundingBox', ['left', 'top', 'right', 'bottom'])
 
 
 class BoundingBox(BoundingBoxTuple):
-    def __new__(cls, left, right, top, bottom):
-        self = super(BoundingBox, cls).__new__(cls, left, right, top, bottom)
+    def __new__(cls, left, top, right, bottom):
+        self = super(BoundingBox, cls).__new__(cls, left, top, right, bottom)
         try:
             self._validate()
         except:
@@ -130,6 +130,7 @@ class AnnotationTree(ElementTree):
             )
         except InvalidElementPageElementError:
             print("Invalid!")
+            exit(-1)
 
     def get_image_file_name(self):
         """Get the image file name from the words file.
