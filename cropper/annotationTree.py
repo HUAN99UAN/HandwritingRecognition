@@ -132,9 +132,10 @@ class AnnotationTree(ElementTree):
         except InvalidElementPageElementError:
             raise
 
-    def get_image_file_name(self):
-        """Get the image file name from the words file.
-
+    @property
+    def image_file_name(self):
+        """
+        Get the image file name from the words file.
         Return the image file name, without extension.
         """
         return self.getroot().get('name')

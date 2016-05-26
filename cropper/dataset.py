@@ -69,8 +69,8 @@ class DataSetBuilder:
         data_set = DataSet()
         for words_file in self._words_files:
             tree = annotationTree.AnnotationTree(file_path=words_file)
-            image_file_name = tree.get_image_file_name()
-            image_file_path = self._build_image_file_path(image_file_name,)
+            image_file_name = tree.image_file_name
+            image_file_path = self._build_image_file_path(image_file_name)
             image = ImageOpener(image_file_path).open()
             page_image = inputElements.PageImage(
                 description=image_file_name,
