@@ -40,7 +40,7 @@ class BoundingBox(BoundingBoxTuple):
     def _validate(self):
         if not self._is_valid():
             raise InvalidElementPageElementError(
-                "The {} has invalid dimensions.".format(self))
+                "the {} has invalid dimensions.".format(self))
 
 
 class AnnotationTree(ElementTree):
@@ -80,7 +80,7 @@ class AnnotationTree(ElementTree):
         if not value:
             raise NoSuchAttributeError(
                 key,
-                "The element '{}' does not have the attribute '{}'.".format(
+                "the element '{}' does not have the attribute '{}'.".format(
                     self.getroot().tag,
                     key
                 )
@@ -123,18 +123,15 @@ class AnnotationTree(ElementTree):
                 right=int(self._get('right')),
                 bottom=int(self._get('bottom')))
             return bounding_box
-        except NoSuchAttributeError as exception:
-            raise NoSuchAttributeError(
-                exception.attribute,
-                'Could not build the bounding box of the element \'{}\', as it does not have the attribute \'{}\'.'.
-                format(self.getroot().tag, exception.attribute)
-            )
+        except NoSuchAttributeError as error:
+            raise InvalidElementPageElementError(error.value)
         except InvalidElementPageElementError:
             raise
 
-    def get_image_file_name(self):
-        """Get the image file name from the words file.
-
+    @property
+    def image_file_name(self):
+        """
+        Get the image file name from the words file.
         Return the image file name, without extension.
         """
         return self.getroot().get('name')

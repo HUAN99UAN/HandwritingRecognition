@@ -51,10 +51,10 @@ class PageElementImage:
                     constructor=child_class_constructor,
                     element=element)
                 self.children.update({number: child})
-            except InvalidElementPageElementError:
+            except InvalidElementPageElementError as error:
                 # if the element is invalid we just skip it.
-                print("Invalid Bounding Box")
-                pass
+                print("Skipped one of the children of {} as {}".format(self.parent, error.value), file=sys.stderr)
+                # pass
 
     def _extract_sub_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
@@ -86,6 +86,9 @@ class PageElementImage:
 
     def __repr__(self):
         return "{PageElementImage - " + PageElementImage._repr_properties(self) + "}"
+
+    def __str__(self):
+        return "{}, {}({})".format(self.parent, self.type_description, self._description)
 
     def _output_image_name(self, extension):
         return '{type}_{description}.{extension}'.format(
@@ -130,7 +133,7 @@ class CharacterImage(tree.Leaf, PageElementImage):
         super().__init__(**kwargs)
         self._text = self._tree.get_text(default=None)
         if not self._text:
-            raise InvalidElementPageElementError('The text attribute of the element is undefined.')
+            raise InvalidElementPageElementError('the text attribute of the element is undefined.')
         try:
             self._bounding_box = self._tree.get_bounding_box()
         except:
@@ -261,6 +264,9 @@ class PageImage(tree.Root, PageElementImage):
 
     def images_to_file(self, directory, extension, element_getter=None):
         super(PageImage, self).images_to_file(directory=directory, extension=extension, element_getter=PageImage.lines)
+
+    def __str__(self):
+        return "{}({})".format(self.type_description, self._description)
 
     def __repr__(self):
         return "{PageImage - " + PageElementImage.__repr__(self) + " " + tree.Root.__repr__(self) + "}"
