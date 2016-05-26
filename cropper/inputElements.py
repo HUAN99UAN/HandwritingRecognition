@@ -48,7 +48,7 @@ class PageElementImage:
     def _extract_sub_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
         # image, or new images. Just to be safe they are copied.
-        source_image_copy = self.get_root().image
+        source_image_copy = self.root.image
         bounding_box = self._tree.get_bounding_box()
         return source_image_copy.crop(bounding_box)
 

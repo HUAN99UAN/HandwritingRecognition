@@ -22,14 +22,9 @@ class Node:
         self.children = children
         super().__init__(**kwargs)
 
-    def get_root(self):
-        """
-        Get the root of the tree this node is part of.
-
-        :rtype: tree.Node
-        :return: the root node of the tree.
-        """
-        return self.parent.get_root()
+    @property
+    def root(self):
+        return self.parent.root
 
     def is_root(self):
         return False
@@ -73,7 +68,8 @@ class Root(Node):
             children=children,
             **kwargs)
 
-    def get_root(self):
+    @property
+    def root(self):
         return self
 
     def is_root(self):
