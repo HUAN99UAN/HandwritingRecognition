@@ -1,10 +1,8 @@
-import os
 from collections import namedtuple
-
 from xml.etree.ElementTree import ElementTree
 
-from errors import InvalidElementPageElementError
-
+import inputOutput.verifiers
+from errors.inputErrors import NoSuchAttributeError, InvalidElementPageElementError
 
 BoundingBoxTuple = namedtuple('BoundingBox', ['left', 'top', 'right', 'bottom'])
 
@@ -59,7 +57,7 @@ class AnnotationTree(ElementTree):
     """
     def __init__(self, element=None, file_path=None):
         if file_path:
-            WordsFileVerifier(file_path).verify()
+            inputOutput.verifiers.WordsFileVerifier(file_path).verify()
         super(AnnotationTree, self).__init__(element, file_path)
 
     @property
@@ -169,51 +167,3 @@ class AnnotationTree(ElementTree):
             "root tag: " + self._root.tag,
             "}"
         ])
-
-
-class WordsFileVerifier:
-    _words_file_extension = '.words'
-
-    def __init__(self, file_path):
-        self._file_path = file_path
-
-    def _is_words_file(self):
-        (_, extension) = os.path.splitext(self._file_path)
-        return extension == WordsFileVerifier._words_file_extension
-
-    def verify(self):
-        if not self._is_words_file():
-            raise UnexpectedFileError(
-                "Expected a file with the extension {}".format(
-                    WordsFileVerifier._words_file_extension)
-            )
-        if not (os.path.exists(self._file_path) and os.path.exists(self._file_path)):
-            raise NonExistentFileError(
-                "The file {} cannot be found.".format(
-                    self._file_path)
-            )
-
-
-class NonExistentFileError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class NoSuchAttributeError(Exception):
-    def __init__(self, attribute, value):
-        self.value = value
-        self.attribute = attribute
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class UnexpectedFileError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)

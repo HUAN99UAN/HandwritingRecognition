@@ -3,8 +3,8 @@ import os.path
 
 import tree
 from annotationTree import AnnotationTree
-from decorators import lazy_property
-from errors import InvalidElementPageElementError
+from utils.decorators import lazy_property
+from errors.inputErrors import InvalidElementPageElementError
 
 
 def create_directory(directory_path):
