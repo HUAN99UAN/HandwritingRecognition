@@ -1,6 +1,12 @@
 import argparse
 from glob import glob
 import os
+import sys
+
+# Fix path issues
+from os.path import dirname, realpath
+root = dirname(dirname(realpath(__file__)))
+sys.path.append(root)
 
 from PIL import Image
 
