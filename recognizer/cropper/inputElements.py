@@ -1,7 +1,7 @@
 import sys
 import os.path
 
-import tree
+from utils import tree
 from annotationTree import AnnotationTree
 from utils.decorators import lazy_property
 from errors.inputErrors import InvalidElementPageElementError
