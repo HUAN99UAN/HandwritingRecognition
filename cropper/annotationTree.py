@@ -117,17 +117,19 @@ class AnnotationTree(ElementTree):
         """
         try:
             bounding_box = BoundingBox(
-                int(self._get('left')),
-                int(self._get('top')),
-                int(self._get('right')),
-                int(self._get('bottom')))
+                left=int(self._get('left')),
+                top=int(self._get('top')),
+                right=int(self._get('right')),
+                bottom=int(self._get('bottom')))
+            return bounding_box
         except NoSuchAttributeError as exception:
             raise NoSuchAttributeError(
                 exception.attribute,
                 'Could not build the bounding box of the element \'{}\', as it does not have the attribute \'{}\'.'.
                 format(self.getroot().tag, exception.attribute)
             )
-        return bounding_box
+        except InvalidElementPageElementError:
+            print("Invalid!")
 
     def get_image_file_name(self):
         """Get the image file name from the words file.
