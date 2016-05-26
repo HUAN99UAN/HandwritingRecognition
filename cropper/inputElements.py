@@ -41,18 +41,16 @@ class PageElementImage:
             parent=self,
             text=child_tree.get_text(default=None)
         )
-
-        self.children.update({
-            number: child
-        })
+        return number, child
 
     def _build_children(self, getter, child_class_constructor):
         self.children = dict()
         for element in getter(self._tree):
             try:
-                self._build_child(
+                (number, child) = self._build_child(
                     constructor=child_class_constructor,
                     element=element)
+                self.children.update({number: child})
             except InvalidElementPageElementError:
                 # if the element is invalid we just skip it.
                 pass
