@@ -62,7 +62,8 @@ class AnnotationTree(ElementTree):
             WordsFileVerifier(file_path).verify()
         super(AnnotationTree, self).__init__(element, file_path)
 
-    def get_number(self):
+    @property
+    def number(self):
         """Get the contents of the 'no' attribute of the root.
 
         This method raises a NoSuchAttributeError if the root of the *AnnotationTree* does not have
