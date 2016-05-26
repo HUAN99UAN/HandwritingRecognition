@@ -131,6 +131,10 @@ class CharacterImage(tree.Leaf, PageElementImage):
         self._text = self._tree.get_text(default=None)
         if not self._text:
             raise InvalidElementPageElementError('The text attribute of the element is undefined.')
+        try:
+            self._bounding_box = self._tree.get_bounding_box()
+        except:
+            raise
 
     @lazy_property
     def image(self):
@@ -156,6 +160,10 @@ class WordImage(tree.Node, PageElementImage):
             getter=WordImage.annotation_tree_getter,
             child_class_constructor=WordImage.child_element_constructor
         )
+        try:
+            self._bounding_box = self._tree.get_bounding_box()
+        except:
+            raise
 
     @lazy_property
     def image(self):
@@ -185,6 +193,10 @@ class LineImage(tree.Node, PageElementImage):
             getter=LineImage.annotation_tree_getter,
             child_class_constructor=LineImage.child_element_constructor
         )
+        try:
+            self._bounding_box = self._tree.get_bounding_box()
+        except:
+            raise
 
     @lazy_property
     def image(self):
