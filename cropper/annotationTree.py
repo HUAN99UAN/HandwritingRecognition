@@ -1,6 +1,46 @@
 import os
+from collections import namedtuple
 
 from xml.etree.ElementTree import ElementTree
+
+from errors import InvalidElementPageElementError
+
+
+BoundingBoxTuple = namedtuple('BoundingBox', ['left', 'top', 'right', 'bottom'])
+
+
+class BoundingBox(BoundingBoxTuple):
+    def __new__(cls, left, top, right, bottom):
+        self = super(BoundingBox, cls).__new__(cls, left, top, right, bottom)
+        try:
+            self._validate()
+        except:
+            raise
+        return self
+
+    @staticmethod
+    def _dimension_greater_than_zero(dimension):
+        return dimension > 0
+
+    @property
+    def width(self):
+        return self.right - self.left
+
+    @property
+    def height(self):
+        return self.bottom - self.top
+
+    def _is_valid(self):
+        try:
+            return BoundingBox._dimension_greater_than_zero(self.width) and \
+                   BoundingBox._dimension_greater_than_zero(self.height)
+        except:
+            raise
+
+    def _validate(self):
+        if not self._is_valid():
+            raise InvalidElementPageElementError(
+                "The {} has invalid dimensions.".format(self))
 
 
 class AnnotationTree(ElementTree):
@@ -76,18 +116,20 @@ class AnnotationTree(ElementTree):
         Return the bounding box as the tuple (left, rop, right, bottom).
         """
         try:
-            bounding_box = (
-                int(self._get('left')),
-                int(self._get('top')),
-                int(self._get('right')),
-                int(self._get('bottom')))
+            bounding_box = BoundingBox(
+                left=int(self._get('left')),
+                top=int(self._get('top')),
+                right=int(self._get('right')),
+                bottom=int(self._get('bottom')))
+            return bounding_box
         except NoSuchAttributeError as exception:
             raise NoSuchAttributeError(
                 exception.attribute,
                 'Could not build the bounding box of the element \'{}\', as it does not have the attribute \'{}\'.'.
                 format(self.getroot().tag, exception.attribute)
             )
-        return bounding_box
+        except InvalidElementPageElementError:
+            raise
 
     def get_image_file_name(self):
         """Get the image file name from the words file.

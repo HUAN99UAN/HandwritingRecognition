@@ -41,28 +41,26 @@ class PageElementImage:
             parent=self,
             text=child_tree.get_text(default=None)
         )
-
-        self.children.update({
-            number: child
-        })
+        return number, child
 
     def _build_children(self, getter, child_class_constructor):
         self.children = dict()
         for element in getter(self._tree):
             try:
-                self._build_child(
+                (number, child) = self._build_child(
                     constructor=child_class_constructor,
                     element=element)
+                self.children.update({number: child})
             except InvalidElementPageElementError:
                 # if the element is invalid we just skip it.
+                print("Invalid Bounding Box")
                 pass
 
     def _extract_sub_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
         # image, or new images. Just to be safe they are copied.
         source_image = self.root.image
-        bounding_box = self._tree.get_bounding_box()
-        return source_image.crop(bounding_box)
+        return source_image.crop(self._bounding_box)
 
     def lines(self):
         return list()
@@ -133,6 +131,10 @@ class CharacterImage(tree.Leaf, PageElementImage):
         self._text = self._tree.get_text(default=None)
         if not self._text:
             raise InvalidElementPageElementError('The text attribute of the element is undefined.')
+        try:
+            self._bounding_box = self._tree.get_bounding_box()
+        except:
+            raise
 
     @lazy_property
     def image(self):
@@ -158,6 +160,10 @@ class WordImage(tree.Node, PageElementImage):
             getter=WordImage.annotation_tree_getter,
             child_class_constructor=WordImage.child_element_constructor
         )
+        try:
+            self._bounding_box = self._tree.get_bounding_box()
+        except:
+            raise
 
     @lazy_property
     def image(self):
@@ -187,6 +193,10 @@ class LineImage(tree.Node, PageElementImage):
             getter=LineImage.annotation_tree_getter,
             child_class_constructor=LineImage.child_element_constructor
         )
+        try:
+            self._bounding_box = self._tree.get_bounding_box()
+        except:
+            raise
 
     @lazy_property
     def image(self):
