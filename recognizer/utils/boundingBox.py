@@ -3,6 +3,7 @@ from errors.inputErrors import InvalidElementPageElementError
 
 BoundingBoxTuple = namedtuple('BoundingBox', ['left', 'top', 'right', 'bottom'])
 
+
 class BoundingBox(BoundingBoxTuple):
     def __new__(cls, left, top, right, bottom):
         self = super(BoundingBox, cls).__new__(cls, left, top, right, bottom)

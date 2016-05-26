@@ -1,13 +1,14 @@
 from collections import Counter
 
-from lines.segmentedlines import SegmentedLines
-from lines.stripe import Stripe
+from segmenter.lines.segmentedlines import SegmentedLines
+from segmenter.lines.stripe import Stripe
 
 _default_parameters = {
     'white_threshold': 240,
     'number_of_most_frequent_values': 5,
     'line_height': 0
 }
+
 
 class LineSegmenter:
     """

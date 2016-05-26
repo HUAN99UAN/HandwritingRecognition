@@ -2,9 +2,9 @@ import operator
 
 import numpy as np
 
-import shapes
-from lines.psl import PieceWiseSeparatingLine
-from utils import Point
+from utils import shapes
+from segmenter.lines.psl import PieceWiseSeparatingLine
+from utils.point import Point
 
 
 class Stripe(shapes.Rectangle):

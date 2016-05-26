@@ -1,6 +1,6 @@
 import numpy as np
 
-import shapes
+from utils import shapes
 
 
 class JoinedPieceWiseSeparatingLines:

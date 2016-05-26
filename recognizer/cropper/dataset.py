@@ -1,8 +1,8 @@
 import os.path
 from builtins import staticmethod
 
-import annotationTree
-import inputElements
+import cropper.annotationTree as annotationTree
+import cropper.inputElements as inputElements
 
 from inputOutput.openers import ImageOpener
 

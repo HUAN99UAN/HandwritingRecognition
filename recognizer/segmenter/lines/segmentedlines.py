@@ -1,4 +1,4 @@
-from lines.psl import JoinedPieceWiseSeparatingLines
+from segmenter.lines.psl import JoinedPieceWiseSeparatingLines
 
 
 class SegmentedLines:

@@ -1,6 +1,6 @@
 from PIL import ImageDraw
 
-from utils import Point
+from utils.point import Point
 
 
 class Shape:
