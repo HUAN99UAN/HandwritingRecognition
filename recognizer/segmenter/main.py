@@ -7,14 +7,11 @@ sys.path.append(root)
 
 from inputOutput.openers import ImageOpener
 from segmenter.lines import lineSegmenter
-
+from segmenter.words.wordSegmenter import WordSegmenter
 
 if __name__ == '__main__':
-    image_path = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmenter/final.jpg'
+    image_path = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/wordSegmenter/word.png'
     image = ImageOpener(image_file_path=image_path).open()
-    l = lineSegmenter.LineSegmenter(image=image)
-    l.segment()
-
-    image = l.paint_stripes()
-    image = l.paint_piece_wise_separating_lines(image)
+    w = WordSegmenter(word_image=image)
+    w.segment()
     image.show()
