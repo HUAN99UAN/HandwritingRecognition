@@ -20,7 +20,16 @@ class SuspiciousSegmentationPointGenerator:
     """
     def __init__(self, image, **parameters):
         self._image = image
-        self._stroke_width = _StrokeWidthComputer(image=image, **parameters).compute()
+
+        self._parameters = default_parameters.copy()
+        self._parameters.update(parameters)
+
+        self._stroke_width = _StrokeWidthComputer(foreground=self.image_foreground).compute()
+        self._base_line = BaseLine.compute(image=self.image_foreground)
+
+    @property
+    def image_foreground(self):
+        return np.array(self._image) < self._parameters.get('white_threshold')
 
 
 class SuspiciousSegmentationPoint:
@@ -37,34 +46,38 @@ class BaseLine:
 
     @staticmethod
     def compute(image):
-        pass
+        return _BaseLineComputer(foreground=image).compute()
+
+
+class _BaseLineComputer:
+    """Class to compute the thickness of the pen stroke of a word in an image."""
+
+    def __init__(self, foreground, **parameters):
+        """The constructor of the _BaseLineComputer class.
+
+        Args:
+            foreground: A 2D bool array with the foreground pixels set to true
+        """
+        self._foreground = foreground
+
+    def compute(self):
+        return BaseLine(high_y=10, low_y=8)
 
 
 class _StrokeWidthComputer:
     """Class to compute the thickness of the pen stroke of a word in an image."""
 
-    def __init__(self, image, **parameters):
+    def __init__(self, foreground):
         """The constructor of the StrokeWidthComputer class.
 
         Args:
-            image (PIL.Image): A gray scale image in which we determine the stroke width.
-            white_threshold: The white threshold to be used, gray scales lower than this value are foreground, gray
-                values greater than this value are background.
+            foreground: A 2D bool array with the foreground pixels set to true
         """
-        self._image_array = np.array(image)
-        self._white_threshold = parameters.pop(
-            'white_threshold',
-            default_parameters.get('white_threshold')
-        )
-        self._foreground = self._compute_foreground()
-        kwargs_was_valid(kwargs=parameters, function_name='_StrokeWidthComputer Constructor')
+        self._foreground = foreground
 
     def compute(self):
         sequences = self._compute_continuous_foreground_sequences()
         return mode(sequences)
-
-    def _compute_foreground(self):
-        return self._image_array < self._white_threshold
 
     @staticmethod
     def _runs_of_ones(bits):
