@@ -41,7 +41,16 @@ class SSPGenerator:
 
     @lazy_property
     def suspicious_segmentation_points(self):
-        pass
+        def find_sequences_of_ones(bits):
+            bounded = np.hstack(([0], bits, [0]))
+            # get 1 at run starts and -1 at run ends
+            difs = np.diff(bounded)
+            run_starts, = np.where(difs > 0)
+            run_ends, = np.where(difs < 0)
+            return [(start, end - 1, end - start) for (start, end) in zip(run_starts, run_ends)]
+
+        initial_segmentation_points = np.sum(self.body_region, axis=0) < self._segment_criteria
+
 
 
     def paint_base_lines(self, image=None):
