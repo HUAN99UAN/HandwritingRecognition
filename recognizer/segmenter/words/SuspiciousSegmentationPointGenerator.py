@@ -3,8 +3,8 @@ from statistics import mode
 import numpy as np
 
 from utils.lists import flatten_one_level
-from utils.functionArguments import kwargs_was_valid
-from utils.shapes import  HorizontalLine
+from utils.decorators import lazy_property
+from utils.shapes import HorizontalLine
 
 
 class SuspiciousSegmentationPointGenerator:
@@ -21,19 +21,24 @@ class SuspiciousSegmentationPointGenerator:
 
         self._stroke_width = _StrokeWidthComputer(foreground=self.image_foreground).compute()
         self._base_line = BaseLine.compute(image=self.image_foreground)
+        self._segment_criteria = self._stroke_width * 2
 
     @property
     def image_foreground(self):
         return np.array(self._image) < self._white_threshold
 
-    def paint_base_lines(self, image = None):
+    def paint_base_lines(self, image=None):
         image = image or self._image
         return self._base_line.paint(image)
+
+    @lazy_property
+    def suspicious_segmentation_points(self):
+        pass
 
 
 class SuspiciousSegmentationPoint:
 
-     def __init__(self, x):
+    def __init__(self, x):
         self._x = x
 
 
@@ -67,10 +72,11 @@ class BaseLine:
         self._low_base_line.paint_on(image)
         return image
 
+
 class _BaseLineComputer:
     """Class to compute the thickness of the pen stroke of a word in an image."""
 
-    def __init__(self, foreground, **parameters):
+    def __init__(self, foreground):
         """The constructor of the _BaseLineComputer class.
 
         Args:
