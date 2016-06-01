@@ -39,10 +39,25 @@ class SuspiciousSegmentationPoint:
 
 
 class BaseLine:
+    """Class to represent the low and the high baseline of a word or line of text."""
 
-    def __init__(self, high_y, low_y):
-        self._high_y = high_y
-        self._low_y = low_y
+    def __init__(self, _high_base_line, _low_base_line):
+        """The constructor of the BaseLine class.
+
+        Args:
+            high_base_line: The index into a column the baseline lying on the top of the letters
+            low_base_line: The index into a column of the baseline touchign the bottom of the letters.
+        """
+        self._high_base_line = _high_base_line
+        self._low_base_line = _low_base_line
+
+    @property
+    def low_base_line(self):
+        return self._low_base_line
+
+    @property
+    def high_base_line(self):
+        return self._high_base_line
 
     @staticmethod
     def compute(image):
@@ -60,8 +75,17 @@ class _BaseLineComputer:
         """
         self._foreground = foreground
 
+    def _base_lines(self):
+        (high_column_base_lines, low_column_base_lines) = (list(), list())
+        for column in np.transpose(self._foreground):
+            indices = np.where(column)
+            high_column_base_lines.append(np.min(indices))
+            low_column_base_lines.append(np.max(indices))
+        return mode(low_column_base_lines), mode(high_column_base_lines)
+
     def compute(self):
-        return BaseLine(high_y=10, low_y=8)
+        (low_base_line, high_base_line) = self._base_lines()
+        return BaseLine(_low_base_line=low_base_line, _high_base_line=high_base_line)
 
 
 class _StrokeWidthComputer:
