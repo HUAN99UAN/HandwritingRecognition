@@ -71,10 +71,11 @@ class _BaseLineComputer:
 
     def _base_lines(self):
         (high_column_base_lines, low_column_base_lines) = (list(), list())
-        for column in np.transpose(self._foreground):
+        for column in self._foreground.T:
             indices = np.where(column)
-            high_column_base_lines.append(np.min(indices))
-            low_column_base_lines.append(np.max(indices))
+            if indices[0].size is not 0:
+                high_column_base_lines.append(np.min(indices))
+                low_column_base_lines.append(np.max(indices))
         return mode(low_column_base_lines), mode(high_column_base_lines)
 
     def compute(self):
