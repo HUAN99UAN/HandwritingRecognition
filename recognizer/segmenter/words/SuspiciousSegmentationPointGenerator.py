@@ -5,10 +5,6 @@ import numpy as np
 from utils.lists import flatten_one_level
 from utils.functionArguments import kwargs_was_valid
 
-default_parameters = {
-    'white_threshold': 240
-}
-
 
 class SuspiciousSegmentationPointGenerator:
     """Class that generates the suspicious segmentation points
@@ -18,18 +14,16 @@ class SuspiciousSegmentationPointGenerator:
         white_threshold: The white threshold to be used, gray scales lower than this value are foreground, gray
             values greater than this value are background. Defaults to default_parameters['white_threshold'].
     """
-    def __init__(self, image, **parameters):
+    def __init__(self, image, white_threshold, **kwargs):
         self._image = image
-
-        self._parameters = default_parameters.copy()
-        self._parameters.update(parameters)
+        self._white_threshold = white_threshold
 
         self._stroke_width = _StrokeWidthComputer(foreground=self.image_foreground).compute()
         self._base_line = BaseLine.compute(image=self.image_foreground)
 
     @property
     def image_foreground(self):
-        return np.array(self._image) < self._parameters.get('white_threshold')
+        return np.array(self._image) < self._white_threshold
 
 
 class SuspiciousSegmentationPoint:
