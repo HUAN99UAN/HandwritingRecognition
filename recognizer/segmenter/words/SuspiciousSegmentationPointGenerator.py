@@ -20,16 +20,28 @@ class SuspiciousSegmentationPointGenerator:
         self._white_threshold = white_threshold
 
         self._stroke_width = _StrokeWidthComputer(foreground=self.image_foreground).compute()
-        self._base_line = BaseLine.compute(image=self.image_foreground)
+        self._base_line = BaseLines.compute(image=self.image_foreground)
         self._segment_criteria = self._stroke_width * 2
 
     @property
     def image_foreground(self):
-        return np.array(self._image) < self._white_threshold
+        return self.image_array < self._white_threshold
 
     def paint_base_lines(self, image=None):
         image = image or self._image
         return self._base_line.paint(image)
+
+    @lazy_property
+    def image_array(self):
+        return np.array(self._image)
+
+    @lazy_property
+    def body_region(self):
+        row_indices_body = list(range(
+            self._base_line.high_base_line_y,
+            self._base_line.low_base_line_y + 2
+        ))
+        return self.image_array.take(row_indices_body, axis=0)
 
     @lazy_property
     def suspicious_segmentation_points(self):
@@ -42,11 +54,11 @@ class SuspiciousSegmentationPoint:
         self._x = x
 
 
-class BaseLine:
+class BaseLines:
     """Class to represent the low and the high baseline of a word or line of text."""
 
     def __init__(self, high_base_line, low_base_line, left_x, right_x):
-        """The constructor of the BaseLine class.
+        """The constructor of the BaseLines class.
 
         Args:
             high_base_line: The index into a column the baseline lying on the top of the letters
@@ -56,12 +68,12 @@ class BaseLine:
         self._low_base_line = HorizontalLine(left_x, right_x, low_base_line)
 
     @property
-    def low_base_line(self):
-        return self._low_base_line
+    def low_base_line_y(self):
+        return self._low_base_line.y
 
     @property
-    def high_base_line(self):
-        return self._high_base_line
+    def high_base_line_y(self):
+        return self._high_base_line.y
 
     @staticmethod
     def compute(image):
@@ -95,7 +107,7 @@ class _BaseLineComputer:
 
     def compute(self):
         (low_base_line, high_base_line) = self._base_lines()
-        return BaseLine(
+        return BaseLines(
             low_base_line=low_base_line, high_base_line=high_base_line,
             left_x=0, right_x=self._foreground.shape[1]
         )
