@@ -16,17 +16,12 @@ if __name__ == '__main__':
     image = ImageOpener(image_file_path=image_path).open()
 
 
-    # parameters = {
-    #     'white_threshold' : 240
-    # }
+    parameters = {
+        'white_threshold' : 240
+    }
 
-    # TODO: Move default parameters to wordSegmenter.
-    # TODO: Baseline computation fails with actual image
     # TODO: Draw the found baseline
 
-    # image = np.array([[0, 0, 1, 0, 0, 0], [1, 1, 1, 0, 1, 1], [1, 1, 0, 1, 0, 0], [0, 1, 1, 1, 1, 0]])
-    # ssp_generator._BaseLineComputer(foreground=image).compute()
-
-    w = WordSegmenter(word_image=image)
+    w = WordSegmenter(word_image=image, parameters=parameters)
     w.segment()
     image.show()
