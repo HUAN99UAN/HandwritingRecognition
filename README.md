@@ -16,3 +16,8 @@ Line segmentation is done with the method described in Tripathy, Nilamadhaba, an
 
 * Instead of choosing the mode of the lineheights we use the min of the n most frequent line heights. Ussing the mode of the line heights, removed nearly all piece wise separating lines.
 * After computing the list of potential stripes we recursively remove all stripes that have no piece wise separating lines.
+
+##WCharacter Segmentation
+Character segementation is doen with the method described in Lee, Hong, and Brijesh Verma. "Binary segmentation algorithm for English cursive handwriting recognition." Pattern Recognition 45.4 (2012): 1306-1317. With the following changes:
+
+* Instead of using the method described by H. Lee and B.Verma to compute the baseline we use the horizontal pixel density histogram. 
