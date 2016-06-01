@@ -4,6 +4,7 @@ import numpy as np
 
 from utils.lists import flatten_one_level
 from utils.functionArguments import kwargs_was_valid
+from utils.shapes import  HorizontalLine
 
 
 class SuspiciousSegmentationPointGenerator:
@@ -25,6 +26,10 @@ class SuspiciousSegmentationPointGenerator:
     def image_foreground(self):
         return np.array(self._image) < self._white_threshold
 
+    def paint_base_lines(self, image = None):
+        image = image or self._image
+        return self._base_line.paint(image)
+
 
 class SuspiciousSegmentationPoint:
 
@@ -35,15 +40,15 @@ class SuspiciousSegmentationPoint:
 class BaseLine:
     """Class to represent the low and the high baseline of a word or line of text."""
 
-    def __init__(self, _high_base_line, _low_base_line):
+    def __init__(self, high_base_line, low_base_line, left_x, right_x):
         """The constructor of the BaseLine class.
 
         Args:
             high_base_line: The index into a column the baseline lying on the top of the letters
             low_base_line: The index into a column of the baseline touchign the bottom of the letters.
         """
-        self._high_base_line = _high_base_line
-        self._low_base_line = _low_base_line
+        self._high_base_line = HorizontalLine(left_x, right_x, high_base_line)
+        self._low_base_line = HorizontalLine(left_x, right_x, low_base_line)
 
     @property
     def low_base_line(self):
@@ -57,6 +62,10 @@ class BaseLine:
     def compute(image):
         return _BaseLineComputer(foreground=image).compute()
 
+    def paint(self, image):
+        self._high_base_line.paint_on(image)
+        self._low_base_line.paint_on(image)
+        return image
 
 class _BaseLineComputer:
     """Class to compute the thickness of the pen stroke of a word in an image."""
@@ -80,7 +89,10 @@ class _BaseLineComputer:
 
     def compute(self):
         (low_base_line, high_base_line) = self._base_lines()
-        return BaseLine(_low_base_line=low_base_line, _high_base_line=high_base_line)
+        return BaseLine(
+            low_base_line=low_base_line, high_base_line=high_base_line,
+            left_x=0, right_x=self._foreground.shape[1]
+        )
 
 
 class _StrokeWidthComputer:
