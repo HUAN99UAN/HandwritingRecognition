@@ -7,7 +7,7 @@ from utils.decorators import lazy_property
 from utils.shapes import HorizontalLine
 
 
-class SuspiciousSegmentationPointGenerator:
+class SSPGenerator:
     """Class that generates the suspicious segmentation points
 
     Args:
@@ -23,13 +23,9 @@ class SuspiciousSegmentationPointGenerator:
         self._base_line = BaseLines.compute(image=self.image_foreground)
         self._segment_criteria = self._stroke_width * 2
 
-    @property
+    @lazy_property
     def image_foreground(self):
         return self.image_array < self._white_threshold
-
-    def paint_base_lines(self, image=None):
-        image = image or self._image
-        return self._base_line.paint(image)
 
     @lazy_property
     def image_array(self):
@@ -39,13 +35,18 @@ class SuspiciousSegmentationPointGenerator:
     def body_region(self):
         row_indices_body = list(range(
             self._base_line.high_base_line_y,
-            self._base_line.low_base_line_y + 2
+            self._base_line.low_base_line_y + 1
         ))
         return self.image_array.take(row_indices_body, axis=0)
 
     @lazy_property
     def suspicious_segmentation_points(self):
         pass
+
+
+    def paint_base_lines(self, image=None):
+        image = image or self._image
+        return self._base_line.paint(image)
 
 
 class SuspiciousSegmentationPoint:
@@ -125,7 +126,7 @@ class _StrokeWidthComputer:
         self._foreground = foreground
 
     def compute(self):
-        sequences = self._compute_continuous_foreground_sequences()
+        sequences = self._find_continuous_foreground_sequences()
         return mode(sequences)
 
     @staticmethod
@@ -139,7 +140,7 @@ class _StrokeWidthComputer:
         run_ends, = np.where(difs < 0)
         return list(run_ends - run_starts)
 
-    def _compute_continuous_foreground_sequences(self):
+    def _find_continuous_foreground_sequences(self):
         sequences = list()
         sequences.extend(self._vertical_sequence_lengths())
         sequences.extend(self._horizontal_sequence_lengths())

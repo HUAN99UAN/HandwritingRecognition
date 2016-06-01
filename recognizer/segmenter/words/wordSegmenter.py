@@ -1,6 +1,6 @@
 import numpy as np
 
-from segmenter.words.SuspiciousSegmentationPointGenerator import SuspiciousSegmentationPointGenerator
+from segmenter.words.SuspiciousSegmentationPointGenerator import SSPGenerator
 from errors.inputErrors import InvalidImageError
 
 
@@ -21,7 +21,7 @@ class WordSegmenter:
             raise
 
     def segment(self):
-        ssps = SuspiciousSegmentationPointGenerator(self._word_image, **self._parameters)
+        ssps = SSPGenerator(self._word_image, **self._parameters)
 
 
 class WordImageValidator:
