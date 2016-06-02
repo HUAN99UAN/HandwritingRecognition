@@ -22,6 +22,13 @@ class SSPGenerator:
         self._stroke_width = _StrokeWidthComputer(foreground=self.image_foreground).compute()
         self._base_line = BaseLines.compute(image=self.image_foreground)
         self._segment_criteria = self._stroke_width * 2
+    @property
+    def base_lines(self):
+        return self._base_lines
+
+    @property
+    def _segment_criterion(self):
+        return self._stroke_width * 2
 
     @lazy_property
     def image_foreground(self):
