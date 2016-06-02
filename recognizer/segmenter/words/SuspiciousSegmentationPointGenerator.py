@@ -20,8 +20,8 @@ class SSPGenerator:
         self._white_threshold = white_threshold
 
         self._stroke_width = _StrokeWidthComputer(foreground=self.image_foreground).compute()
-        self._base_line = BaseLines.compute(image=self.image_foreground)
-        self._segment_criteria = self._stroke_width * 2
+        self._base_lines = BaseLines.compute(image=self.image_foreground)
+
     @property
     def base_lines(self):
         return self._base_lines
@@ -46,8 +46,28 @@ class SSPGenerator:
         ))
         return self.image_array.take(row_indices_body, axis=0)
 
+    def _extract_regions(self, suspicious_pixels):
+        bounded = np.hstack(([0], suspicious_pixels, [0]))
+        differences = np.diff(bounded)
+        run_starts, = np.where(differences > 0)
+        run_ends, = np.where(differences < 0)
+        return [
+            (start, end - 1, end - start)
+            for (start, end)
+            in zip(run_starts, run_ends)
+        ]
+
+    def _find_suspicious_regions(self):
+        suspicious_pixels = np.sum(self.body_region, axis=0) < self._segment_criterion
+        return self._extract_regions(suspicious_pixels)
+
+    def _dissect(self, suspicious_regions):
+        pass
+
     @lazy_property
     def suspicious_segmentation_points(self):
+        suspicious_regions = self._find_suspicious_regions()
+        suspicious_segmentation_points = self._dissect(suspicious_regions)
 
 
 class SuspiciousSegmentationPoint:
