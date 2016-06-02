@@ -30,25 +30,36 @@ class CharacterSegmenter:
             validator = WordImageVerifier(self._word_image, **self._parameters).validate()
         except:
             raise
+        self._segment()
 
     @lazy_property
     def segmentation_points(self):
         return SSPGenerator(self._word_image, **self._parameters).suspicious_segmentation_points
 
-    def segment(self):
+    def _segment(self):
         bounding_boxes = self._get_bounding_boxes(self.segmentation_points)
         characters = self._extract_characters(bounding_boxes)
         return characters
 
-
     def _get_bounding_boxes(self, segmentation_points):
-        return [
+        def first_bounding_box(self, segmentation_points):
+            return BoundingBox(left=0, right=segmentation_points[0].x,
+                               bottom=self._word_image.height, top=0)
+
+        def last_bounding_box(self, segmentation_points):
+            return BoundingBox(left=segmentation_points.pop().x, right=self._word_image.width,
+                               bottom=self._word_image.height, top=0)
+
+        bounding_boxes = [first_bounding_box(self, segmentation_points)]
+        bounding_boxes.extend([
             BoundingBox(
                 left=left.x, right=right.x,
                 bottom=self._word_image.height, top=0)
             for (left, right)
             in zip(segmentation_points, segmentation_points[1:])
-            ]
+            ])
+        bounding_boxes.append(last_bounding_box(self, segmentation_points))
+        return bounding_boxes
 
     def _extract_characters(self, bounding_boxes):
         return [
