@@ -48,21 +48,6 @@ class SSPGenerator:
 
     @lazy_property
     def suspicious_segmentation_points(self):
-        def find_sequences_of_false(bits):
-            bits = (bits == False)
-            bounded = np.hstack(([0], bits, [0]))
-            # get 1 at run starts and -1 at run ends
-            difs = np.diff(bounded)
-            run_starts, = np.where(difs > 0)
-            run_ends, = np.where(difs < 0)
-            return [(start, end - 1, end - start) for (start, end) in zip(run_starts, run_ends)]
-
-        def dissect_continuous_areas_without_ssps(sequences):
-            pass
-
-        initial_segmentation_points = np.sum(self.body_region, axis=0) < self._segment_criteria
-        find_sequences_of_false(bits=initial_segmentation_points)
-
     def paint_base_lines(self, image=None):
         image = image or self._image
         return self._base_line.paint(image)
