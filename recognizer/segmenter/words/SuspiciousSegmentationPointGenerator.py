@@ -41,8 +41,8 @@ class SSPGenerator:
     @lazy_property
     def body_region(self):
         row_indices_body = list(range(
-            self._base_line.high_base_line_y,
-            self._base_line.low_base_line_y + 1
+            self._base_lines.high_base_line_y,
+            self._base_lines.low_base_line_y + 1
         ))
         return self.image_array.take(row_indices_body, axis=0)
 
