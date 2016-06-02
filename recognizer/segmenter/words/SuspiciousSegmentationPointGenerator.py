@@ -48,9 +48,6 @@ class SSPGenerator:
 
     @lazy_property
     def suspicious_segmentation_points(self):
-    def paint_base_lines(self, image=None):
-        image = image or self._image
-        return self._base_line.paint(image)
 
 
 class SuspiciousSegmentationPoint:
