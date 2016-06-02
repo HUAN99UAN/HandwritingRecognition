@@ -53,6 +53,14 @@ class Line(Shape):
         del painter
 
 
+class VerticalLine(Line):
+    def __init__(self, x, y1, y2):
+        super(VerticalLine, self).__init__(Point(x, y1), Point(x, y2))
+
+    def x(self):
+        return self.p_1.x
+
+
 class HorizontalLine(Line):
 
     def __init__(self, x1, x2, y):
