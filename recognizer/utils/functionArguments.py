@@ -4,3 +4,9 @@ def kwargs_was_valid(kwargs, function_name):
             function_name=function_name,
             parameters=", ".join("'{key}'".format(key = key) for key in kwargs.keys())
         ))
+
+
+def merge_parameter_dictionaries(default, argument):
+    parameters = default.copy()
+    parameters.update(argument)
+    return parameters

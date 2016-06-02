@@ -1,11 +1,12 @@
 from statistics import mode
+import collections
 
 import numpy as np
 
 from utils.lists import flatten_one_level
 from utils.decorators import lazy_property
-from utils.shapes import HorizontalLine
-
+from utils.shapes import HorizontalLine, VerticalLine, Rectangle
+from utils.point import Point
 
 class SSPGenerator:
     """Class that generates the suspicious segmentation points
@@ -15,20 +16,33 @@ class SSPGenerator:
         white_threshold: The white threshold to be used, gray scales lower than this value are foreground, gray
             values greater than this value are background. Defaults to default_parameters['white_threshold'].
     """
-    def __init__(self, image, white_threshold, **kwargs):
+    def __init__(self, image, white_threshold, longest_word_length, initial_segment_criterion, **kwargs):
         self._image = image
         self._white_threshold = white_threshold
+        self._longest_word_length = longest_word_length
 
         self._stroke_width = _StrokeWidthComputer(foreground=self.image_foreground).compute()
         self._base_lines = BaseLines.compute(image=self.image_foreground)
+        self._segment_criterion_factor = initial_segment_criterion
+
+        self._suspicious_regions = self._find_suspicious_regions()
+        self._suspicious_segmentation_points = self._dissect_suspicious_regions()
+
+    @property
+    def segment_criterion(self):
+        return self._segment_criterion_factor * self._stroke_width
 
     @property
     def base_lines(self):
         return self._base_lines
 
     @property
-    def _segment_criterion(self):
-        return self._stroke_width * 2
+    def suspicious_regions(self):
+        return self._suspicious_regions
+
+    @property
+    def suspicious_segmentation_points(self):
+        return self._suspicious_segmentation_points
 
     @lazy_property
     def image_foreground(self):
@@ -46,34 +60,82 @@ class SSPGenerator:
         ))
         return self.image_array.take(row_indices_body, axis=0)
 
-    def _extract_regions(self, suspicious_pixels):
+    def _find_suspicious_regions(self):
+        suspicious_regions = self._extract_suspicious_regions()
+        while len(suspicious_regions) <= self._longest_word_length:
+            self._segment_criterion_factor += 1
+            suspicious_regions = self._extract_suspicious_regions()
+        return suspicious_regions
+
+    def _extract_suspicious_regions(self):
+        suspicious_pixels = self._extract_suspicious_pixels()
+        (region_start, region_end) = self._find_continious_regions(suspicious_pixels)
+        return [
+            SuspiciousRegion(
+                start_idx=start,
+                end_idx=end - 1,
+                length=end - start)
+            for (start, end)
+            in zip(region_start, region_end)
+            ]
+
+    def _extract_suspicious_pixels(self):
+        return np.sum(self.body_region, axis=0) < self.segment_criterion
+
+    def _find_continious_regions(self, suspicious_pixels):
         bounded = np.hstack(([0], suspicious_pixels, [0]))
         differences = np.diff(bounded)
         run_starts, = np.where(differences > 0)
         run_ends, = np.where(differences < 0)
-        return [
-            (start, end - 1, end - start)
-            for (start, end)
-            in zip(run_starts, run_ends)
-        ]
+        return run_starts, run_ends
 
-    def _find_suspicious_regions(self):
-        suspicious_pixels = np.sum(self.body_region, axis=0) < self._segment_criterion
-        return self._extract_regions(suspicious_pixels)
+    def _dissect_suspicious_regions(self):
+        ssps = list()
+        for region in self._suspicious_regions:
+            if region.length > self._stroke_width:
+                ssps.extend(self._dissect_large_region(region))
+            else:
+                ssps.append(self._dissect_small_region(region))
+        return ssps
 
-    def _dissect(self, suspicious_regions):
-        pass
+    def _dissect_small_region(self, region):
+        return SuspiciousSegmentationPoint(
+            x=region.start_idx + round(region.length / 2))
 
-    @lazy_property
-    def suspicious_segmentation_points(self):
-        suspicious_regions = self._find_suspicious_regions()
-        suspicious_segmentation_points = self._dissect(suspicious_regions)
+    def _dissect_large_region(self, region):
+        ssp_x_coordinates = range(region.start_idx, region.end_idx, self._stroke_width)
+        ssps = list()
+        for x in ssp_x_coordinates:
+            ssps.append(SuspiciousSegmentationPoint(x=x))
+        ssps.append(SuspiciousSegmentationPoint(region.end_idx))
+        return ssps
+
+
+SuspiciousRegionTuple = collections.namedtuple('SuspiciousRegionTuple', field_names='start_idx, end_idx, length')
+
+
+class SuspiciousRegion(SuspiciousRegionTuple):
+    def __new__(cls, start_idx, end_idx, length):
+        self = super(SuspiciousRegion, cls).__new__(cls, start_idx, end_idx, length)
+        return self
+
+    def paint_on(self, image):
+        Rectangle(
+            top_left=Point(x=self.start_idx, y=0),
+            bottom_right=Point(x=self.end_idx, y=image.height)).paint_on(image, fill=230)
 
 
 class SuspiciousSegmentationPoint:
 
     def __init__(self, x):
         self._x = x
+
+    @property
+    def x(self):
+        return self._x
+
+    def paint_on(self, image):
+        VerticalLine(x=self._x, y1=0, y2=image.height).paint_on(image)
 
 
 class BaseLines:
