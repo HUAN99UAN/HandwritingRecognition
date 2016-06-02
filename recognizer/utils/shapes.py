@@ -122,8 +122,8 @@ class Rectangle(Shape):
     def _pil_points(self):
         return [self.top_left, self.bottom_right]
 
-    def paint_on(self, image):
+    def paint_on(self, image, fill=None):
         painter = ImageDraw.Draw(image)
-        # Cannot get the colors to work, so we'll just live with grey for now.
-        painter.rectangle(self._pil_points(), fill=None, outline=None)
+        # Cannot get the colors to work, so we'll just live with black for now.
+        painter.rectangle(self._pil_points(), fill=fill, outline=None)
         del painter
