@@ -41,9 +41,9 @@ class PageElementImage(object):
     def preprocessed_np_array(self):
         return self._preprocessed_np_array
 
-    @property
+    @preprocessed_np_array.setter
     def preprocessed_np_array(self, value):
-        self._preprocessed_np_array = value
+        pass
 
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
