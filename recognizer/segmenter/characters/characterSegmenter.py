@@ -1,8 +1,15 @@
+import warnings
+
 from inputOutput.verifiers import WordImageVerifier
 from segmenter.characters.SuspiciousSegmentationPointGenerator import SSPGenerator
 from utils.functionArguments import merge_parameter_dictionaries
 from utils.boundingBox import BoundingBox
 from utils.decorators import lazy_property
+from cropper.dataset import DataSet
+import inputOutput.openers
+from cropper.inputElements import CharacterImage
+
+
 
 default_parameters = {
     'white_threshold': 240,
@@ -58,15 +65,17 @@ class CharacterSegmenter:
             return BoundingBox(left=segmentation_points.pop().x, right=self._word_image.width,
                                bottom=self._word_image.height, top=0)
 
-        bounding_boxes = [first_bounding_box(self, segmentation_points)]
-        bounding_boxes.extend([
-            BoundingBox(
-                left=left.x, right=right.x,
-                bottom=self._word_image.height, top=0)
-            for (left, right)
-            in zip(segmentation_points, segmentation_points[1:])
-            ])
-        bounding_boxes.append(last_bounding_box(self, segmentation_points))
+        bounding_boxes = list()
+        if segmentation_points:
+            bounding_boxes.append(first_bounding_box(self, segmentation_points))
+            bounding_boxes.extend([
+                BoundingBox(
+                    left=left.x, right=right.x,
+                    bottom=self._word_image.height, top=0)
+                for (left, right)
+                in zip(segmentation_points, segmentation_points[1:])
+                ])
+            bounding_boxes.append(last_bounding_box(self, segmentation_points))
         return bounding_boxes
 
     def _extract_characters(self, bounding_boxes):
@@ -78,3 +87,69 @@ class CharacterSegmenter:
 
     def _extract_character(self, bounding_box):
         return self._word_image.crop(bounding_box)
+
+
+class DataSetCharacterSegmenter:
+
+    def __init__(self, data_set):
+        self._data_set = data_set
+
+    def segment(self):
+        for _, page in self._data_set.pages():
+            TreeCharacterSegmenter(tree=page).segment()
+
+
+class TreeCharacterSegmenter:
+
+    def __init__(self, tree):
+        self._tree = tree
+
+    def segment(self):
+        for (_, word_image) in self._tree.words():
+            WordImageSegmenter(word_image=word_image).segment()
+
+
+class WordImageSegmenter:
+
+    def __init__(self, word_image):
+        self._word_image = word_image
+
+    def segment(self):
+        temporary_image = inputOutput.openers.ImageOpener(
+            image_file_path='/Users/laura/Repositories/HandwritingRecognition/data/testdata/wordSegmenter/word.png'
+        ).open()
+        # character_images = CharacterSegmenter(word_image=self._word_image.image).character_images
+        images = CharacterSegmenter(word_image=temporary_image).character_images
+        warnings.warn("Using a temporary hardcoded image.")
+        character_images = self._create_character_images(images)
+        self._word_image.children = self._create_children_dict(character_images)
+
+    def _create_character_images(self, images):
+        character_images = list()
+        for (image, number) in zip(images, range(len(images))):
+            character_images.append(
+                CharacterImage(
+                    parent=self._word_image,
+                    image=image,
+                    description=number
+                )
+            )
+        return character_images
+
+    def _create_children_dict(self, children):
+        return dict(
+            zip(
+                range(len(children)),
+                children
+            )
+        )
+
+if __name__ == '__main__':
+    words_files = [
+        '/Users/laura/Repositories/HandwritingRecognition/data/testdata/test_data/KNMP-VIII_F_69______2C2O_0004.words'
+    ]
+    image_directory = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/images'
+    test_data = DataSet.from_files(words_files=words_files, image_files_directory=image_directory)
+
+    DataSetCharacterSegmenter(data_set=test_data).segment()
+    test_data.to_cropped_images_hierarchy('/Users/laura/Desktop/', extension='jpg')
