@@ -1,15 +1,11 @@
-import sys
 import os.path
+import sys
 
-from utils import tree
 from cropper.annotationTree import AnnotationTree
-from utils.decorators import lazy_property
 from errors.inputErrors import InvalidElementPageElementError
-
-
-def create_directory(directory_path):
-    if not os.path.exists(directory_path):
-        os.makedirs(directory_path, exist_ok=False)
+from inputOutput.outputFiles import create_directory
+from utils import tree
+from utils.decorators import lazy_property
 
 
 class PageElementImage:

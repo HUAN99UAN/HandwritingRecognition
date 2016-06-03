@@ -6,7 +6,7 @@ from utils.decorators import lazy_property
 
 default_parameters = {
     'white_threshold': 240,
-    'longest_word_length': 10,
+    'maximum_word_length': 10,
     'initial_segment_criterion': 50
 }
 
@@ -20,7 +20,7 @@ class CharacterSegmenter:
             image (PIL.Image): A gray scale image of a word
             [white_threshold (int): The white threshold to be used, gray scales lower than this value are foreground,
                 gray values greater than this value are background.]
-            [longest_word_length (int): The length of the longest word in the training set.]
+            [maximum_word_length (int): The length of the longest word in the training set.]
             [initial_segment_criterion (int): Parameter that determines the sensitivity of the segmentation process to
                 the vertical histogram. High values results in more suspicious segmentation points.]
         """
@@ -30,16 +30,24 @@ class CharacterSegmenter:
             validator = WordImageVerifier(self._word_image, **self._parameters).validate()
         except:
             raise
-        self._segment()
+        self._character_images = self._segment()
 
     @lazy_property
     def segmentation_points(self):
         return SSPGenerator(self._word_image, **self._parameters).suspicious_segmentation_points
 
+    @property
+    def character_images(self):
+        return self._character_images
+
+    @property
+    def image(self):
+        return self._word_image
+
     def _segment(self):
         bounding_boxes = self._get_bounding_boxes(self.segmentation_points)
-        characters = self._extract_characters(bounding_boxes)
-        return characters
+        character_images = self._extract_characters(bounding_boxes)
+        return character_images
 
     def _get_bounding_boxes(self, segmentation_points):
         def first_bounding_box(self, segmentation_points):

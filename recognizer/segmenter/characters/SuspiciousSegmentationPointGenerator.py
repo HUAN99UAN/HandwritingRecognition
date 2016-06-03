@@ -8,6 +8,7 @@ from utils.decorators import lazy_property
 from utils.shapes import HorizontalLine, VerticalLine, Rectangle
 from utils.point import Point
 
+
 class SSPGenerator:
     """Class that generates the suspicious segmentation points
 
@@ -16,10 +17,10 @@ class SSPGenerator:
         white_threshold: The white threshold to be used, gray scales lower than this value are foreground, gray
             values greater than this value are background. Defaults to default_parameters['white_threshold'].
     """
-    def __init__(self, image, white_threshold, longest_word_length, initial_segment_criterion, **kwargs):
+    def __init__(self, image, white_threshold, maximum_word_length, initial_segment_criterion, **kwargs):
         self._image = image
         self._white_threshold = white_threshold
-        self._longest_word_length = longest_word_length
+        self._maximum_word_length = maximum_word_length
 
         self._stroke_width = _StrokeWidthComputer(foreground=self.image_foreground).compute()
         self._base_lines = BaseLines.compute(image=self.image_foreground)
@@ -62,7 +63,7 @@ class SSPGenerator:
 
     def _find_suspicious_regions(self):
         suspicious_regions = self._extract_suspicious_regions()
-        while len(suspicious_regions) <= self._longest_word_length:
+        while len(suspicious_regions) <= self._maximum_word_length:
             self._segment_criterion_factor += 1
             suspicious_regions = self._extract_suspicious_regions()
         return suspicious_regions
