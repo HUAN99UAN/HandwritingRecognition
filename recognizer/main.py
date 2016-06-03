@@ -1,6 +1,7 @@
 import argparse
 import os
 import fnmatch
+import numpy as np
 
 from cropper.dataset import DataSet
 from preprocessor import pipe
@@ -32,7 +33,7 @@ def parse_command_line_arguments():
 
 def remove_noise_from(dataset):
     for _, page in dataset.pages():
-        page.preprocessed_np_array = pipe.pipe(page.image_as_np_array)
+        page.preprocessed_np_array = pipe.pipe().pipe_line(page.image_as_np_array)
 
 
 if __name__ == '__main__':

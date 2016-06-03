@@ -40,6 +40,7 @@ class DataSet:
         for _, page in self.pages():
             page.images_to_file(directory=directory, extension=extension, element_getter=extension)
 
+    @staticmethod
     def from_files(words_files, image_files_directory):
         return DataSetBuilder(words_files, image_files_directory).build()
 

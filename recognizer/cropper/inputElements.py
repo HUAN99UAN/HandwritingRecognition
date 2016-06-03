@@ -12,7 +12,7 @@ from utils import tree
 from utils.decorators import lazy_property
 
 
-class PageElementImage:
+class PageElementImage(object):
     """Representation of an element of a page of handwriting."""
 
     annotation_tree_getter = None
@@ -27,7 +27,7 @@ class PageElementImage:
         :param text: Text represented by this element, is *None* if the text is unkown.
         :param kwargs:
         """
-        super().__init__(**kwargs)
+        super(PageElementImage, self).__init__(**kwargs)
         self._tree = tree
         self._text = text
         self._image = image
@@ -142,7 +142,7 @@ class CharacterImage(tree.Leaf, PageElementImage):
     type_description = 'character'
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(CharacterImage, self).__init__(**kwargs)
         if self._tree:
             self._text = self._tree.get_text(default=None)
             if not self._text:
@@ -174,7 +174,7 @@ class WordImage(tree.Node, PageElementImage):
     type_description = 'word'
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(WordImage, self).__init__(**kwargs)
         self._build_children(
             getter=WordImage.annotation_tree_getter,
             child_class_constructor=WordImage.child_element_constructor
@@ -207,7 +207,7 @@ class LineImage(tree.Node, PageElementImage):
     type_description = 'line'
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(LineImage, self).__init__(**kwargs)
         self._build_children(
             getter=LineImage.annotation_tree_getter,
             child_class_constructor=LineImage.child_element_constructor
@@ -254,7 +254,7 @@ class PageImage(tree.Root, PageElementImage):
             :param children: children of this node, type should be *Node* or *Leaf*
             :param kwargs:
         """
-        super().__init__(**kwargs)
+        super(self.__class__, self).__init__(**kwargs)
         self._build_children(
             getter=PageImage.annotation_tree_getter,
             child_class_constructor=PageImage.child_element_constructor)

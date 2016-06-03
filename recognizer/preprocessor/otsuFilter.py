@@ -8,7 +8,7 @@ class otsuFilter:
 		pass
 
 	def otsu_threshold(self, img, threshold = 0):
-		garbage, img_after_otsu = cv2.threshold(img,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+		_, img_after_otsu = cv2.threshold(img,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 		return img_after_otsu
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ def delete_element_from_dict(key, dictionary):
         pass
 
 
-class Node:
+class Node(object):
     """
     Node of a tree.
     """
@@ -20,7 +20,7 @@ class Node:
         self._description = description
         self.parent = parent
         self.children = children
-        super().__init__(**kwargs)
+        super(Node, self).__init__(**kwargs)
 
     @property
     def root(self):
@@ -62,7 +62,7 @@ class Root(Node):
         """
         delete_element_from_dict(key='parent', dictionary=kwargs)
 
-        super().__init__(
+        super(Root, self).__init__(
             description=description,
             parent=None,
             children=children,
@@ -87,7 +87,7 @@ class Leaf(Node):
     """
     def __init__(self, description=None, parent=None, **kwargs):
         delete_element_from_dict(dictionary=kwargs, key='children')
-        super().__init__(
+        super(Leaf, self).__init__(
             description=description,
             parent=parent,
             children=dict(),

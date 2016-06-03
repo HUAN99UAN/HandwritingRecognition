@@ -14,13 +14,13 @@ class pipe:
 		self._th_fltr = thresholdFilter()
 		self._otsu_fltr = otsuFilter()
 
-	def pipe_line(self, img_after_lum_norm):
+	def pipe_line(self, img):
 
 		img_after_lum_norm = self._lum_fltr.luminosity_normalization(img)
 
 		#img_after_threshold = self._th_fltr.global_threshold(img_after_lum_norm.astype(np.uint8), 170,1)
 
-		img_after_threshold = self._otsu_fltr.otsu_threshold(img_after_lum_norm.astype(np.uint8))
+		img_after_threshold = self._otsu_fltr.otsu_threshold(img_after_lum_norm)
 		
 		img_after_closing = self._morph_fltr.openning(img_after_threshold.astype(np.uint8), (3,3))
 
