@@ -1,10 +1,10 @@
 import argparse
 import os
 import fnmatch
-import numpy as np
 
 from cropper.dataset import DataSet
 from preprocessor import pipe
+from segmenter.characters.characterSegmenter import DataSetCharacterSegmenter
 
 def recursive_search(directory, ext='words'):
     matches = []
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     remove_noise_from(train_data)
     remove_noise_from(test_data)
 
-    # remove noise from train and test data
+    DataSetCharacterSegmenter(data_set=test_data).segment()
 
     # segment test_data
 
