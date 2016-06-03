@@ -1,6 +1,7 @@
 import os
 import os.path
 import sys
+import warnings
 
 
 def create_directory(directory_path):
@@ -12,11 +13,10 @@ def image_to_file(image, file_path):
     try:
         image.save(file_path)
     except KeyError:
-        print("Could not write the file {} as the output format could not be determined.".format(
-            file_path), file=sys.stderr)
+        warnings.warn("Could not write the file {} as the output format could not be determined.".format(
+            file_path))
     except IOError:
-        print("Could not write the file {} the created file may contain partial data.".format(
-            file_path), file=sys.stderr)
+        warnings.warn("Could not write the file {} the created file may contain partial data.".format(file_path))
 
 
 def build_file_path(path, file_name, extension):

@@ -1,5 +1,9 @@
 import os.path
 import sys
+import warnings
+
+
+import numpy as np
 
 from cropper.annotationTree import AnnotationTree
 from errors.inputErrors import InvalidElementPageElementError
@@ -27,6 +31,19 @@ class PageElementImage:
         self._tree = tree
         self._text = text
         self._image = image
+        self._preprocessed_np_array = None
+
+    @property
+    def image_as_np_array(self):
+        return np.array(self.image)
+
+    @property
+    def preprocessed_np_array(self):
+        return self._preprocessed_np_array
+
+    @property
+    def preprocessed_np_array(self, value):
+        self._preprocessed_np_array = value
 
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
@@ -49,7 +66,7 @@ class PageElementImage:
                 self.children.update({number: child})
             except InvalidElementPageElementError as error:
                 # if the element is invalid we just skip it.
-                print("Skipped one of the children of {} as {}".format(self.parent, error.value), file=sys.stderr)
+                warnings.warn("Skipped one of the children of {} as {}".format(self.parent, error.value))
                 # pass
 
     def _extract_sub_image(self):
@@ -107,11 +124,10 @@ class PageElementImage:
         try:
             self.image.save(image_file_path)
         except KeyError:
-            print("Could not write the file {} as the output format could not be determined.".format(
-                image_file_path), file=sys.stderr)
+            warnings.warn("Could not write the file {} as the output format could not be determined.".format(image_file_path))
         except IOError:
-            print("Could not write the file {} the created file may contain partial data.".format(
-                image_file_path), file=sys.stderr)
+            warnings.warn(
+                "Could not write the file {} the created file may contain partial data.".format(image_file_path))
 
     def images_to_file(self, directory, extension, element_getter):
         directory_path = os.path.join(directory, self._output_directory_name())

@@ -10,7 +10,6 @@ import inputOutput.openers
 from cropper.inputElements import CharacterImage
 
 
-
 default_parameters = {
     'white_threshold': 240,
     'maximum_word_length': 10,
