@@ -22,7 +22,7 @@ class morphologicalFilters:
 	def closing(self, img, mask):
 		return cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones(mask,np.uint8))
 
-	def openning_by_reconstruction(self, img, dilation_mask = (7,7), erosion_mask = (3,3)):	
+	def openning_by_reconstruction(self, img, dilation_mask = (6,6), erosion_mask = (3,3)):	
 		img_dil = self.dilation(img, dilation_mask)
 
 		tmp_img = np.copy(img_dil)

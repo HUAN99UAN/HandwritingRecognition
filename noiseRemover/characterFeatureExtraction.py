@@ -1,4 +1,5 @@
 
+
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -82,14 +83,17 @@ if __name__ == '__main__':
 	tmp2 = c.invert_image(img)
 	regions = c.split_regions(tmp2)
 
-	hog = cv2.HOGDescriptor()
-	h = hog.compute(img, (8,8))
-	print h.shape
-	pca = cv2.PCACompute(h, np.mean(h, axis=0).reshape(1,-1), 10)
+	for i in regions[1]:
+		print i
 
-	print type(pca)
+	# hog = cv2.HOGDescriptor()
+	# h = hog.compute(img, (8,8))
+	# print h.shape
+	# pca = cv2.PCACompute(h, np.mean(h, axis=0).reshape(1,-1), 10)
 
-	print pca
+	# print type(pca)
+
+	# print pca
 
 	# print c.horizontal_celled_prj_feature(regions)
 
