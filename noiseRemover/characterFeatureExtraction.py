@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy import cluster, linalg
+from PIL import Image
 
 from thresholdFilter import thresholdFilter
 
@@ -11,13 +12,16 @@ class characterFeatureExtraction:
 		self._th_fltr = thresholdFilter()
 
 	def load_char(self, name):
-		return cv2.imread(name,0)
+		return Image.open(name).convert('L')
 
 	def clear_char(self, img):
 		return self._th_fltr.global_threshold(img, 150, 1)
 
-	def split_regions(self, img, R=3):
+	def split_regions(self, img, R=4):
 		return np.split(img, R, axis=1)
+
+	def resize_img(self, img):
+		return img.resize((128,128), Image.BILINEAR)
 
 	def horizontal_celled_prj_feature(self, regions):
 
@@ -43,7 +47,6 @@ class characterFeatureExtraction:
 		size = img.shape
 
 		vector = np.zeros(size[0])
-		print vector
 		for r in range(len(img)):
 			for c in xrange(1, len(img[r]), 1):
 				if img[r][c-1] != img[r][c]:
@@ -72,23 +75,29 @@ class characterFeatureExtraction:
 if __name__ == '__main__':
 	c = characterFeatureExtraction()
 
-	tmp = c.clear_char(c.load_char("alpha1.png"))
+	tmp = c.load_char("Selection_024.png")
+	tmp = c.resize_img(tmp)
+	img = np.asarray(tmp)
+	img = c.clear_char(img)
+	tmp2 = c.invert_image(img)
+	regions = c.split_regions(tmp2)
 
-	tmp = c.invert_image(tmp)
+	hog = cv2.HOGDescriptor()
+	h = hog.compute(img, (8,8))
+	print h.shape
+	pca = cv2.PCACompute(h, np.mean(h, axis=0).reshape(1,-1), 10)
 
-	regions = c.split_regions(tmp)
+	print type(pca)
 
-	#print c.horizontal_celled_prj_feature(regions)
+	print pca
 
-	# print c.crossing_feature(tmp)
+	# print c.horizontal_celled_prj_feature(regions)
 
-	data = c.hist_feature(tmp)
+	# print c.crossing_feature(img)
 
-	# x = cluster.vq.kmeans(cluster.vq.whiten(smth), 5)
+	#data = c.hist_feature(tmp)
 
 	# print x
 
-	plt.imshow(tmp, 'gray')
-	plt.show()
-
-
+	# plt.imshow(tmp, 'gray')
+	# plt.show()

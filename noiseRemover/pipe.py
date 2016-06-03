@@ -18,7 +18,6 @@ class pipe:
 
 	def pipe_line(self, img):
 
-
 		img_after_lum_norm = self._lum_fltr.luminosity_normalization(img)
 
 
@@ -44,7 +43,7 @@ class pipe:
 if __name__ == '__main__':
 	p = pipe()
 
-	img = cv2.imread("test.jpg", 0)
+	img = cv2.imread("Selection_024.jpg", 0)
 
 	img2 = p.pipe_line(img)
 

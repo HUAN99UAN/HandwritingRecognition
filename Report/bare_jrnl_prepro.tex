@@ -1,0 +1,12 @@
+
+\section{Preprocessing of the data}
+\label{sec:prepro}
+For the handwriting to be effective we had to bring the data into a clean state. To this end we used a pipeline which is described below in figure \ref{fig:pipeline}. As the figure explains the first step is to normalize the luminosity of the image. This step is essential for the thresholding to work since in some parts of dataset the ink has worn off the pages. By normalizing the luminosity we eliminate the need to adjust threshold values in later steps.
+
+\begin{figure}[h]
+\label{fig:pipeline}
+\includegraphics[width=8cm]{pipeline.png}
+\caption{Overview of our pipeline.}
+\end{figure}
+
+The next step is to binarize the image and extract the clean text from it. For the binarization we tested the Otsu approach and global threshold and we settled with the latter as it gave better results \ref{}. To eliminate the what is left from the noise we applied opening by reconstruction. This has a result to miss some punctuation characters which however did not prove crucial to our learning process. In figure \ref{} we can see the final result of the preprocessing of the data. 
