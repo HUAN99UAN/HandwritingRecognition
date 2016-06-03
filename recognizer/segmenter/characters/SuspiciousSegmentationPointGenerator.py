@@ -61,9 +61,13 @@ class SSPGenerator:
         ))
         return self.image_array.take(row_indices_body, axis=0)
 
+    def continue_trying(self, suspicious_regions):
+        return (len(suspicious_regions) <= self._maximum_word_length) and \
+               (self.segment_criterion < self._image.width)
+
     def _find_suspicious_regions(self):
         suspicious_regions = self._extract_suspicious_regions()
-        while len(suspicious_regions) <= self._maximum_word_length:
+        while self.continue_trying(suspicious_regions):
             self._segment_criterion_factor += 1
             suspicious_regions = self._extract_suspicious_regions()
         return suspicious_regions
