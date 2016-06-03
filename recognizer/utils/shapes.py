@@ -53,6 +53,14 @@ class Line(Shape):
         del painter
 
 
+class VerticalLine(Line):
+    def __init__(self, x, y1, y2):
+        super(VerticalLine, self).__init__(Point(x, y1), Point(x, y2))
+
+    def x(self):
+        return self.p_1.x
+
+
 class HorizontalLine(Line):
 
     def __init__(self, x1, x2, y):
@@ -114,8 +122,8 @@ class Rectangle(Shape):
     def _pil_points(self):
         return [self.top_left, self.bottom_right]
 
-    def paint_on(self, image):
+    def paint_on(self, image, fill=None):
         painter = ImageDraw.Draw(image)
-        # Cannot get the colors to work, so we'll just live with grey for now.
-        painter.rectangle(self._pil_points(), fill=None, outline=None)
+        # Cannot get the colors to work, so we'll just live with black for now.
+        painter.rectangle(self._pil_points(), fill=fill, outline=None)
         del painter

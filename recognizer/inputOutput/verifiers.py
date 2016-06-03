@@ -1,7 +1,10 @@
 import os
 
+import numpy as np
+
 from errors.fileErrors import NonExistentFileError
 from errors.fileErrors import UnexpectedFileError
+from errors.inputErrors import InvalidImageError
 
 
 class WordsFileVerifier:
@@ -25,3 +28,27 @@ class WordsFileVerifier:
                 "The file {} cannot be found.".format(
                     self._file_path)
             )
+
+
+class WordImageVerifier:
+
+    def __init__(self, image, white_threshold, **parameters):
+        self._image = image
+        self._image_array = np.array(image)
+        self._white_threshold = white_threshold
+
+    def _is_gray_scale(self):
+        if not self._image.mode in ['1', 'L', 'I', 'F']:
+            raise InvalidImageError("The word image is not gray scale.")
+        else:
+            return True
+
+    def _has_foreground(self):
+        foreground = self._image_array < self._white_threshold
+        if not np.any(foreground):
+            raise InvalidImageError('The word image does not have a foreground.')
+        else:
+            return True
+
+    def validate(self):
+        return self._is_gray_scale() and self._has_foreground()
