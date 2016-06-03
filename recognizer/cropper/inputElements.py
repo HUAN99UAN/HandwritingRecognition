@@ -1,15 +1,11 @@
-import sys
 import os.path
+import sys
 
-from utils import tree
 from cropper.annotationTree import AnnotationTree
-from utils.decorators import lazy_property
 from errors.inputErrors import InvalidElementPageElementError
-
-
-def create_directory(directory_path):
-    if not os.path.exists(directory_path):
-        os.makedirs(directory_path, exist_ok=False)
+from inputOutput.outputFiles import create_directory
+from utils import tree
+from utils.decorators import lazy_property
 
 
 class PageElementImage:
@@ -131,18 +127,22 @@ class CharacterImage(tree.Leaf, PageElementImage):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._text = self._tree.get_text(default=None)
-        if not self._text:
-            raise InvalidElementPageElementError('the text attribute of the element is undefined.')
-        try:
-            self._bounding_box = self._tree.get_bounding_box()
-        except:
-            raise
+        if self._tree:
+            self._text = self._tree.get_text(default=None)
+            if not self._text:
+                raise InvalidElementPageElementError('the text attribute of the element is undefined.')
+            try:
+                self._bounding_box = self._tree.get_bounding_box()
+            except:
+                raise
 
     @lazy_property
     def image(self):
-        image = self._extract_sub_image()
-        return image
+        if not self._image:
+            image = self._extract_sub_image()
+            return image
+        else:
+            return self._image
 
     def images_to_file(self, directory, extension, element_getter):
         return self.image_to_file(directory=directory, extension=extension)
