@@ -1,8 +1,8 @@
 import os.path
-from builtins import staticmethod
 
 import cropper.annotationTree as annotationTree
 import cropper.inputElements as inputElements
+import model
 
 from inputOutput.openers import ImageOpener
 
@@ -40,6 +40,21 @@ class DataSet:
     def to_cropped_images_hierarchy(self, directory, extension):
         for _, page in self.pages():
             page.images_to_file(directory=directory, extension=extension, element_getter=extension)
+
+    def pre_process(self, pre_processor):
+        for _, page in self.pages():
+            page.preprocessed_np_array = pre_processor(page.image_as_np_array)
+
+    def extract_features(self, feature_extractor):
+        for _, character in self.characters():
+            character.feature_vector = feature_extractor(character.preprocessed_np_array)
+
+    def to_model(self):
+        data_set_model = model.Model()
+        for _, page in self.pages():
+            page_model = page.to_model()
+            data_set_model.merge_with(page_model)
+        return data_set_model
 
     @staticmethod
     def from_files(words_files, image_files_directory):

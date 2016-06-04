@@ -4,6 +4,8 @@ from glob import glob
 
 from PIL import Image
 
+Image.init()
+
 
 class VerifyOutputExtensionAction(argparse.Action):
     @staticmethod
@@ -29,6 +31,21 @@ class ExpandDirectoryPathAction(argparse.Action):
     @staticmethod
     def _expand_tilde(path):
         return os.path.expanduser(path)
+
+
+class ExpandFilePathAction(argparse.Action):
+    @staticmethod
+    def _to_absolute_path(path):
+        return os.path.abspath(path)
+
+    @staticmethod
+    def _expand_tilde(path):
+        return os.path.expanduser(path)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        values = ExpandFilePathAction._expand_tilde(values)
+        values = ExpandFilePathAction._to_absolute_path(values)
+        setattr(namespace, self.dest, values)
 
 
 class ExpandFilePathsAction(argparse.Action):
