@@ -10,7 +10,6 @@ import inputOutput.openers
 from cropper.inputElements import CharacterImage
 
 
-
 default_parameters = {
     'white_threshold': 240,
     'maximum_word_length': 10,
@@ -115,12 +114,7 @@ class WordImageSegmenter:
         self._word_image = word_image
 
     def segment(self):
-        temporary_image = inputOutput.openers.ImageOpener(
-            image_file_path='/Users/laura/Repositories/HandwritingRecognition/data/testdata/wordSegmenter/word.png'
-        ).open()
-        # character_images = CharacterSegmenter(word_image=self._word_image.image).character_images
-        images = CharacterSegmenter(word_image=temporary_image).character_images
-        warnings.warn("Using a temporary hardcoded image.")
+        images = CharacterSegmenter(word_image=self._word_image.preprocessed_np_array).character_images
         character_images = self._create_character_images(images)
         self._word_image.children = self._create_children_dict(character_images)
 

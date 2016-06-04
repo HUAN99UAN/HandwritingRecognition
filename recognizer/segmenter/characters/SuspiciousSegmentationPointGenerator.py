@@ -1,4 +1,3 @@
-from statistics import mode
 import collections
 
 import numpy as np
@@ -7,6 +6,7 @@ from utils.lists import flatten_one_level
 from utils.decorators import lazy_property
 from utils.shapes import HorizontalLine, VerticalLine, Rectangle
 from utils.point import Point
+from utils.statistics import mode
 
 
 class SSPGenerator:

@@ -1,5 +1,9 @@
 import os.path
 import sys
+import warnings
+
+
+import numpy as np
 
 from cropper.annotationTree import AnnotationTree
 from errors.inputErrors import InvalidElementPageElementError
@@ -8,7 +12,7 @@ from utils import tree
 from utils.decorators import lazy_property
 
 
-class PageElementImage:
+class PageElementImage(object):
     """Representation of an element of a page of handwriting."""
 
     annotation_tree_getter = None
@@ -23,10 +27,23 @@ class PageElementImage:
         :param text: Text represented by this element, is *None* if the text is unkown.
         :param kwargs:
         """
-        super().__init__(**kwargs)
+        super(PageElementImage, self).__init__(**kwargs)
         self._tree = tree
         self._text = text
         self._image = image
+        self._preprocessed_np_array = None
+
+    @property
+    def image_as_np_array(self):
+        return np.array(self.image)
+
+    @property
+    def preprocessed_np_array(self):
+        return self._preprocessed_np_array
+
+    @preprocessed_np_array.setter
+    def preprocessed_np_array(self, value):
+        pass
 
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
@@ -49,7 +66,7 @@ class PageElementImage:
                 self.children.update({number: child})
             except InvalidElementPageElementError as error:
                 # if the element is invalid we just skip it.
-                print("Skipped one of the children of {} as {}".format(self.parent, error.value), file=sys.stderr)
+                warnings.warn("Skipped one of the children of {} as {}".format(self.parent, error.value))
                 # pass
 
     def _extract_sub_image(self):
@@ -107,11 +124,10 @@ class PageElementImage:
         try:
             self.image.save(image_file_path)
         except KeyError:
-            print("Could not write the file {} as the output format could not be determined.".format(
-                image_file_path), file=sys.stderr)
+            warnings.warn("Could not write the file {} as the output format could not be determined.".format(image_file_path))
         except IOError:
-            print("Could not write the file {} the created file may contain partial data.".format(
-                image_file_path), file=sys.stderr)
+            warnings.warn(
+                "Could not write the file {} the created file may contain partial data.".format(image_file_path))
 
     def images_to_file(self, directory, extension, element_getter):
         directory_path = os.path.join(directory, self._output_directory_name())
@@ -126,7 +142,7 @@ class CharacterImage(tree.Leaf, PageElementImage):
     type_description = 'character'
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(CharacterImage, self).__init__(**kwargs)
         if self._tree:
             self._text = self._tree.get_text(default=None)
             if not self._text:
@@ -158,7 +174,7 @@ class WordImage(tree.Node, PageElementImage):
     type_description = 'word'
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(WordImage, self).__init__(**kwargs)
         self._build_children(
             getter=WordImage.annotation_tree_getter,
             child_class_constructor=WordImage.child_element_constructor
@@ -191,7 +207,7 @@ class LineImage(tree.Node, PageElementImage):
     type_description = 'line'
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(LineImage, self).__init__(**kwargs)
         self._build_children(
             getter=LineImage.annotation_tree_getter,
             child_class_constructor=LineImage.child_element_constructor
@@ -238,7 +254,7 @@ class PageImage(tree.Root, PageElementImage):
             :param children: children of this node, type should be *Node* or *Leaf*
             :param kwargs:
         """
-        super().__init__(**kwargs)
+        super(self.__class__, self).__init__(**kwargs)
         self._build_children(
             getter=PageImage.annotation_tree_getter,
             child_class_constructor=PageImage.child_element_constructor)
