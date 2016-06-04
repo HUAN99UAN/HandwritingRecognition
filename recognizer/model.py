@@ -48,7 +48,7 @@ class _ModelBuilder(object):
             image_files_directory=image_directory
         )
         self._pre_processor = pipe.pipe().pipe_line
-        self._feature_extractor = characterFeatureExtraction.extract()
+        self._feature_extractor = characterFeatureExtraction.extract
 
     def build(self):
         model = dict()
