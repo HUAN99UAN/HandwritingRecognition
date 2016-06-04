@@ -3,14 +3,14 @@ import cv2
 import numpy as np
 
 from morphologicalFilters import morphologicalFilters
-from luminosityFilter import luminosityFilter
+from luminosityFilter import LuminosityFilter
 from thresholdFilter import thresholdFilter
 from otsuFilter import otsuFilter
 
 class pipe:
 	def __init__(self):
 		self._morph_fltr = morphologicalFilters()
-		self._lum_fltr = luminosityFilter()
+		self._lum_fltr = LuminosityFilter()
 		self._th_fltr = thresholdFilter()
 		self._otsu_fltr = otsuFilter()
 
