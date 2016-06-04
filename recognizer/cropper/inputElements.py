@@ -39,11 +39,8 @@ class PageElementImage(object):
 
     @property
     def preprocessed_np_array(self):
-        return self._preprocessed_np_array
-
-    @preprocessed_np_array.setter
-    def preprocessed_np_array(self, value):
-        pass
+        preprocessed_np_array = self._extract_sub_array(self.root.preprocessed_np_array)
+        return preprocessed_np_array
 
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
@@ -67,13 +64,18 @@ class PageElementImage(object):
             except InvalidElementPageElementError as error:
                 # if the element is invalid we just skip it.
                 warnings.warn("Skipped one of the children of {} as {}".format(self.parent, error.value))
-                # pass
 
     def _extract_sub_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
         # image, or new images. Just to be safe they are copied.
         source_image = self.root.image
         return source_image.crop(self._bounding_box)
+
+    def _extract_sub_array(self, array):
+        return array[
+            self._bounding_box.top:self._bounding_box.bottom,
+            self._bounding.box.left, self._bounding_box.right
+        ]
 
     def lines(self):
         return list()
@@ -258,6 +260,14 @@ class PageImage(tree.Root, PageElementImage):
         self._build_children(
             getter=PageImage.annotation_tree_getter,
             child_class_constructor=PageImage.child_element_constructor)
+
+    @property
+    def preprocessed_np_array(self):
+        return self._preprocessed_np_array
+
+    @preprocessed_np_array.setter
+    def preprocessed_np_array(self, value):
+        self._preprocessed_np_array = value
 
     @property
     def image(self):
