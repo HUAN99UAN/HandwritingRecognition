@@ -1,10 +1,9 @@
 import os.path
-import sys
 import warnings
-
 
 import numpy as np
 
+import model
 from cropper.annotationTree import AnnotationTree
 from errors.inputErrors import InvalidElementPageElementError
 from inputOutput.outputFiles import create_directory
@@ -64,6 +63,12 @@ class PageElementImage(object):
             except InvalidElementPageElementError as error:
                 # if the element is invalid we just skip it.
                 warnings.warn("Skipped one of the children of {} as {}".format(self.parent, error.value))
+
+    def to_model(self):
+        final_model = model.Model()
+        for _, character in self.characters():
+            final_model.merge_with(character.to_model())
+        return final_model
 
     def _extract_sub_image(self):
         # The PIL documentation is vague about whether or not cropped images are cropped copies of the original
@@ -170,6 +175,9 @@ class CharacterImage(tree.Leaf, PageElementImage):
             return image
         else:
             return self._image
+
+    def to_model(self):
+        return model.Model(keys=[self._text], values=[self.feature_vector])
 
     def images_to_file(self, directory, extension, element_getter):
         return self.image_to_file(directory=directory, extension=extension)
