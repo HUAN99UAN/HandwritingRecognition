@@ -153,6 +153,15 @@ class CharacterImage(tree.Leaf, PageElementImage):
                 self._bounding_box = self._tree.get_bounding_box()
             except:
                 raise
+        self._feature_vector = kwargs.get('feature_vector', None)
+
+    @property
+    def feature_vector(self):
+        return self._feature_vector
+
+    @feature_vector.setter
+    def feature_vector(self, value):
+        self._feature_vector = value
 
     @lazy_property
     def image(self):

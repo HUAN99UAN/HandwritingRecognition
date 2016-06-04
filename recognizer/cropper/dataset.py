@@ -45,9 +45,8 @@ class DataSet:
             page.preprocessed_np_array = pre_processor(page.image_as_np_array)
 
     def extract_features(self, feature_extractor):
-        raise NotImplementedError()
-        # for _, character in self.characters():
-        #     character.feature_vector = feature_extractor(character.preprocessed_np_array)
+        for _, character in self.characters():
+            character.feature_vector = feature_extractor(character.preprocessed_np_array)
 
     @staticmethod
     def from_files(words_files, image_files_directory):

@@ -13,7 +13,7 @@ class CharacterFeatureExtraction:
 		return np.split(img, R, axis=1)
 
 	def resize_img(self, img):
-		return img.resize((128,128), Image.BILINEAR)
+		return np.array(Image.fromarray(img).resize((128, 128), Image.BILINEAR))
 
 	def horizontal_celled_prj_feature(self, regions):
 
