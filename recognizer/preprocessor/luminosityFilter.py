@@ -1,40 +1,30 @@
-
 import cv2
-import numpy as np
 
 
-class luminosityFilter:
-	def __init__(self):
-		pass
+class LuminosityFilter:
 
-	def luminosity_normalization(self, img):
-		size = img.shape
-		y_center = size[0]/2
-		x_center = size[1]/2
-		center_sqr = img[y_center-500:y_center+500, x_center-500:x_center+500]
-		lowest = center_sqr.min()
-		highest = center_sqr.max()
-		# lowest = img.min()
-		# highest = img.max()
-		# print lowest
-		# print highest
+    def __init__(self):
+        pass
 
-		norm_f = np.vectorize(self._linear_norm)
-		en_f = np.vectorize(self._linear_enhancement)
+    def luminosity_normalization(self, img):
+        size = img.shape
+        y_center = size[0]/2
+        x_center = size[1]/2
+        center_sqr = img[y_center-500:y_center+500, x_center-500:x_center+500]
+        lowest = center_sqr.min()
+        highest = center_sqr.max()
 
-		new_img = norm_f(img.astype(int), lowest, highest)
+        normalized_image = self._linear_norm(img, lowest, highest)
+        return normalized_image
 
-		return new_img
-
-	def _linear_norm(self, img, old_min_val, old_max_val, new_min_val = 0, new_max_val =255):
-		return (img - old_min_val)*((new_max_val - new_min_val)/(old_max_val-old_min_val))+new_min_val
-
-	def _linear_enhancement(self, img):
-		return img*img*img
+    def _linear_norm(self, image, old_min, old_max, new_min = 0, new_max = 255):
+        old_range = old_max - old_min
+        new_range = new_max - new_min
+        normalized_to_old_min_image = image - old_min
+        factor = (new_range / old_range)
+        return normalized_to_old_min_image * factor + new_min
 
 if __name__ == '__main__':
-	img = cv2.imread("test2.jpg",0)
-	l = luminosityFilter()
-
-	l.luminosity_normalization(img)
-
+    img = cv2.imread('test2.jpg', 0)
+    l = LuminosityFilter()
+    l.luminosity_normalization(img)
