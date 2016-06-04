@@ -1,3 +1,6 @@
+import argparse
+
+import utils.actions
 from cropper.dataset import DataSet
 from preprocessor import pipe
 from extractor.characterFeatureExtraction import characterFeatureExtraction
@@ -12,10 +15,10 @@ class Model(object):
             self._model = dict(zip(keys, values))
 
     def serialize(self):
-        pass
+        raise NotImplementedError
 
     def to_file(self, file):
-        pass
+        raise NotImplementedError
 
     def __getattr__(self, key):
         if key == '_model':
