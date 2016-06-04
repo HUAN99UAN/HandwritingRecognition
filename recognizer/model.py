@@ -1,7 +1,7 @@
 import argparse
 
 import utils.actions
-from cropper.dataset import DataSet
+import cropper.dataset
 from preprocessor import pipe
 from extractor.characterFeatureExtraction import CharacterFeatureExtraction
 
@@ -9,7 +9,7 @@ from extractor.characterFeatureExtraction import CharacterFeatureExtraction
 class Model(object):
 
     def __init__(self, keys=[], values=[], model=None):
-        if not model:
+        if model:
             self._model = model
         else:
             self._model = dict(zip(keys, values))
@@ -26,10 +26,10 @@ class Model(object):
             raise AttributeError()
         return getattr(self._model, key)
 
-    def merge(self, other):
-        keys = set(self).union(other)
+    def merge_with(self, other):
+        keys = set(self.keys()).union(other.keys())
         empty_list = []
-        return dict(
+        self._model = dict(
             (key, self.get(key, empty_list) + other.get(key, empty_list))
             for key
             in keys
@@ -47,7 +47,7 @@ class Model(object):
 class _ModelBuilder(object):
 
     def __init__(self, word_files, image_directory):
-        self._data_set = DataSet.from_files(
+        self._data_set = cropper.dataset.DataSet.from_files(
             words_files=word_files,
             image_files_directory=image_directory
         )
@@ -55,10 +55,9 @@ class _ModelBuilder(object):
         self._feature_extractor = CharacterFeatureExtraction().extract
 
     def build(self):
-        model = dict()
         self._data_set.pre_process(self._pre_processor)
         self._data_set.extract_features(self._feature_extractor)
-        return model
+        return self._data_set.to_model()
 
     # def _pre_process(self):
     #     for _, page in self._dataset.pages():
