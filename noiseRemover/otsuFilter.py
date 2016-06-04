@@ -20,5 +20,7 @@ if __name__ == '__main__':
 
 	img_after_otsu = fltr.otsu_threshold(img)
 
+
+	cv2.imwrite('otsu.jpg', img_after_otsu)
 	plt.imshow(img_after_otsu, 'gray')
 	plt.show()
