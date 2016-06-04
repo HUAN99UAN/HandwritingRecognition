@@ -36,7 +36,7 @@ class Model(object):
         )
 
     @staticmethod
-    def _from_files(word_files, image_directory):
+    def from_files(word_files, image_directory):
         return _ModelBuilder(word_files, image_directory).build()
 
 
