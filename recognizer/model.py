@@ -15,10 +15,10 @@ class Model(object):
             self._model = dict(zip(keys, values))
 
     def serialize(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def to_file(self, file):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def __getattr__(self, key):
         if key == '_model':
