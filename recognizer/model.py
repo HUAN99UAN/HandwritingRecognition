@@ -39,6 +39,10 @@ class Model(object):
     def build_from_files(word_files, image_directory):
         return _ModelBuilder(word_files, image_directory).build()
 
+    @staticmethod
+    def from_file(model_file):
+        raise NotImplementedError()
+
 
 class _ModelBuilder(object):
 
