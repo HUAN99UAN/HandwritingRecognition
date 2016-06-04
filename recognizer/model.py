@@ -1,4 +1,5 @@
 import argparse
+import pickle
 
 import utils.actions
 import cropper.dataset
@@ -14,11 +15,8 @@ class Model(object):
         else:
             self._model = dict(zip(keys, values))
 
-    def serialize(self):
-        raise NotImplementedError()
-
-    def to_file(self, file):
-        raise NotImplementedError()
+    def to_file(self, output_file):
+        _ModelWriter(model=self, output_file=output_file).write()
 
     def __getattr__(self, key):
         if key == '_model':
@@ -41,7 +39,7 @@ class Model(object):
 
     @staticmethod
     def from_file(model_file):
-        raise NotImplementedError()
+        return _ModelReader(input_file=model_file).read()
 
 
 class _ModelBuilder(object):
@@ -59,13 +57,31 @@ class _ModelBuilder(object):
         self._data_set.extract_features(self._feature_extractor)
         return self._data_set.to_model()
 
-    # def _pre_process(self):
-    #     for _, page in self._dataset.pages():
-    #         page.preprocessed_np_array = pipe.pipe().pipe_line(page.image_as_np_array)
-    #
-    # def _extract_features(self):
-    #     for _, character in self.dataset.characters():
-    #         feature_vector = CharacterFeatureExtraction.extract(character.preprocessed_np_array)
+
+class _ModelWriter(object):
+
+    def __init__(self, model, output_file):
+        self._model = model
+        self._output_file_name = output_file
+        self._output_file = self.open_output_file()
+
+    def open_output_file(self):
+        return open(self._output_file_name, 'w+b')
+
+    def write(self):
+        pickle.dump(self._model, self._output_file)
+        self._output_file.close()
+
+
+class _ModelReader(object):
+
+    def __init__(self, input_file):
+        self._input_file = open(input_file, 'rb')
+
+    def read(self):
+        model = pickle.load(self._input_file)
+        self._input_file.close()
+        return model
 
 
 def parse_command_line_arguments():
@@ -77,8 +93,10 @@ def parse_command_line_arguments():
                         help='The words files, should be at least one file. Each words file should be associated with '
                              'an image in the imageDirectory.')
     parser.add_argument('outputFile', type=str,
+                        action=utils.actions.ExpandFilePathAction,
                         help='The path to the output file.')
     return vars(parser.parse_args())
+
 
 if __name__ == '__main__':
     cli_arguments = parse_command_line_arguments()
@@ -86,3 +104,4 @@ if __name__ == '__main__':
         word_files=cli_arguments.get('wordsFiles'),
         image_directory=cli_arguments.get('imageDirectory'))
     model.to_file(cli_arguments.get('outputFile'))
+    read_model = Model.from_file(cli_arguments.get('outputFile'))
