@@ -36,7 +36,7 @@ class Model(object):
         )
 
     @staticmethod
-    def from_files(word_files, image_directory):
+    def build_from_files(word_files, image_directory):
         return _ModelBuilder(word_files, image_directory).build()
 
 
@@ -79,7 +79,7 @@ def parse_command_line_arguments():
 
 if __name__ == '__main__':
     cli_arguments = parse_command_line_arguments()
-    model = Model.from_files(
+    model = Model.build_from_files(
         word_files=cli_arguments.get('wordsFiles'),
         image_directory=cli_arguments.get('imageDirectory'))
     model.to_file(cli_arguments.get('outputFile'))
