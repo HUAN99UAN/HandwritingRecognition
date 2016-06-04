@@ -41,6 +41,16 @@ class DataSet:
         for _, page in self.pages():
             page.images_to_file(directory=directory, extension=extension, element_getter=extension)
 
+    def pre_process(self, pre_processor):
+        raise NotImplementedError()
+        # for _, page in self.pages():
+        #     page.preprocessed_np_array = pre_processor(page.image_as_np_array)
+
+    def extract_features(self, feature_extractor):
+        raise NotImplementedError()
+        # for _, character in self.characters():
+        #     character.feature_vector = feature_extractor(character.preprocessed_np_array)
+
     @staticmethod
     def from_files(words_files, image_files_directory):
         return DataSetBuilder(words_files, image_files_directory).build()
