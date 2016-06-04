@@ -64,9 +64,22 @@ class _ModelBuilder(object):
     #     for _, character in self.dataset.characters():
     #         feature_vector = characterFeatureExtraction.extract(character.preprocessed_np_array)
 
+
+def parse_command_line_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('imageDirectory', type=str,
+                        action=utils.actions.ExpandDirectoryPathAction,
+                        help='The path to the directory with images')
+    parser.add_argument('wordsFiles', nargs='+', type=str, action=utils.actions.ExpandFilePathsAction,
+                        help='The words files, should be at least one file. Each words file should be associated with '
+                             'an image in the imageDirectory.')
+    parser.add_argument('outputFile', type=str,
+                        help='The path to the output file.')
+    return vars(parser.parse_args())
+
 if __name__ == '__main__':
-    pass
-    # Input arguments: list of words files, directory with image files.
-
-
-    # return dictionary
+    cli_arguments = parse_command_line_arguments()
+    model = Model.from_files(
+        word_files=cli_arguments.get('wordsFiles'),
+        image_directory=cli_arguments.get('imageDirectory'))
+    model.to_file(cli_arguments.get('outputFile'))
