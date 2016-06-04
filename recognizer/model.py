@@ -3,7 +3,7 @@ import argparse
 import utils.actions
 from cropper.dataset import DataSet
 from preprocessor import pipe
-from extractor.characterFeatureExtraction import characterFeatureExtraction
+from extractor.characterFeatureExtraction import CharacterFeatureExtraction
 
 
 class Model(object):
@@ -48,7 +48,7 @@ class _ModelBuilder(object):
             image_files_directory=image_directory
         )
         self._pre_processor = pipe.pipe().pipe_line
-        self._feature_extractor = characterFeatureExtraction.extract
+        self._feature_extractor = CharacterFeatureExtraction().extract
 
     def build(self):
         model = dict()
@@ -62,7 +62,7 @@ class _ModelBuilder(object):
     #
     # def _extract_features(self):
     #     for _, character in self.dataset.characters():
-    #         feature_vector = characterFeatureExtraction.extract(character.preprocessed_np_array)
+    #         feature_vector = CharacterFeatureExtraction.extract(character.preprocessed_np_array)
 
 
 def parse_command_line_arguments():

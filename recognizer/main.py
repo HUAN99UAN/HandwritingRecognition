@@ -5,7 +5,7 @@ import fnmatch
 from cropper.dataset import DataSet
 from preprocessor import pipe
 from segmenter.characters.characterSegmenter import DataSetCharacterSegmenter
-from extractor.characterFeatureExtraction import characterFeatureExtraction
+from extractor.characterFeatureExtraction import CharacterFeatureExtraction
 
 
 def recursive_search(directory, ext='words'):
@@ -40,7 +40,7 @@ def remove_noise_from(dataset):
 def extract_features(dataset):
     for _, character in dataset.characters():
         raise  NotImplementedError('The extracted features should be stored somewhere, probably in the dataset elements so that we know with which word they belong.')
-        characterFeatureExtraction.extract(character.preprocessed_np_array)
+        CharacterFeatureExtraction.extract(character.preprocessed_np_array)
 
 if __name__ == '__main__':
     arguments = parse_command_line_arguments()

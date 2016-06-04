@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image
 
-class characterFeatureExtraction:
+class CharacterFeatureExtraction:
 
 	def load_char(self, name):
 		return Image.open(name).convert('L')
@@ -70,7 +70,7 @@ class characterFeatureExtraction:
 		return self.split_regions(inverted_image)
 
 if __name__ == '__main__':
-	c = characterFeatureExtraction()
+	c = CharacterFeatureExtraction()
 
 	tmp = c.load_char("Selection_024.png")
 	tmp = c.resize_img(tmp)
