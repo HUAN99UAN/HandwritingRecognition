@@ -74,7 +74,7 @@ class PageElementImage(object):
     def _extract_sub_array(self, array):
         return array[
             self._bounding_box.top:self._bounding_box.bottom,
-            self._bounding.box.left, self._bounding_box.right
+            self._bounding_box.left:self._bounding_box.right
         ]
 
     def lines(self):

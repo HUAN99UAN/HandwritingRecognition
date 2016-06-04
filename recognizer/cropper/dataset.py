@@ -41,8 +41,8 @@ class DataSet:
             page.images_to_file(directory=directory, extension=extension, element_getter=extension)
 
     def pre_process(self, pre_processor):
-        # for _, page in self.pages():
-        #     page.preprocessed_np_array = pre_processor(page.image_as_np_array)
+        for _, page in self.pages():
+            page.preprocessed_np_array = pre_processor(page.image_as_np_array)
 
     def extract_features(self, feature_extractor):
         raise NotImplementedError()
