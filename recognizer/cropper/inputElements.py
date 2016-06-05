@@ -3,6 +3,7 @@ import warnings
 
 import numpy as np
 import PIL
+import xml.etree.ElementTree as et
 
 import model
 from cropper.annotationTree import AnnotationTree
@@ -20,7 +21,7 @@ class PageElementImage(object):
     child_element_constructor = None
     type_description = None
 
-    def __init__(self, image=None, tree=None, text=None, **kwargs):
+    def __init__(self, image=None, tree=None, text=None, bounding_box=None, **kwargs):
         """
         Constructor of the somethingImage class
         :param image: image of the type *PIL.Image*
@@ -33,6 +34,7 @@ class PageElementImage(object):
         self._text = text
         self._image = image
         self._preprocessed_np_array = None
+        self._bounding_box = bounding_box
 
     @property
     def image_as_np_array(self):
@@ -152,6 +154,20 @@ class PageElementImage(object):
         self.image_to_file(directory=directory_path, extension=extension)
         for _, element in element_getter(self):
             element.images_to_file(directory=directory_path, extension=extension, element_getter=extension)
+
+    @property
+    def words_file_attributes(self):
+        basic_dict = {
+            'bottom': str(self._bounding_box.bottom),
+            'left': str(self._bounding_box.left),
+            'no': str(self._description),
+            'right': str(self._bounding_box.right),
+            'shear': '0',
+            'top': str(self._bounding_box.top)
+        }
+        if self.text:
+            basic_dict['text'] = self.text
+        return basic_dict
 
 
 class CharacterImage(tree.Leaf, PageElementImage):

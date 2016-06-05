@@ -154,7 +154,11 @@ class _AnnotationTreeBuilder(object):
         self._element = input_element
 
     def build(self):
-        raise NotImplementedError()
+        element = ET.Element(
+            tag=self._element.words_file_type,
+            attrib=self._element.words_file_attributes
+        )
+        return AnnotationTree(element_tree=element)
 
 
 class _AnnotationTreeWriter(object):
@@ -179,9 +183,17 @@ class _AnnotationTreeUpdater(object):
         for (_, word) in self._page_image.words():
             self._update_word(word.tree, word)
 
+    def _update_character(self, tree, character):
+        if character.tree:
+            # update the character
+            raise NotImplementedError()
+        else:
+            tree = _AnnotationTreeBuilder(character).build()
+            character.tree = tree
+
     def _update_characters(self):
         for (_, character) in self._page_image.characters():
-            raise NotImplementedError
+            self._update_character(character.tree, character)
 
     def _update_lines(self):
         # Lines never change, no need to update them right now

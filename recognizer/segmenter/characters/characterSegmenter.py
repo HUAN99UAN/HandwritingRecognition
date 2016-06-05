@@ -36,6 +36,7 @@ class CharacterSegmenter:
             validator = WordImageVerifier(self._word_image, **self._parameters).validate()
         except:
             raise
+        self._bounding_boxes = self._get_bounding_boxes(self.segmentation_points)
         self._character_images = self._segment()
 
     @lazy_property
@@ -50,9 +51,12 @@ class CharacterSegmenter:
     def image(self):
         return self._word_image
 
+    @property
+    def bounding_boxes(self):
+        return self._bounding_boxes
+
     def _segment(self):
-        bounding_boxes = self._get_bounding_boxes(self.segmentation_points)
-        character_images = self._extract_characters(bounding_boxes)
+        character_images = self._extract_characters(self.bounding_boxes)
         return character_images
 
     def _get_bounding_boxes(self, segmentation_points):
@@ -114,18 +118,21 @@ class WordImageSegmenter:
         self._word_image = word_image
 
     def segment(self):
-        images = CharacterSegmenter(word_image=self._word_image.preprocessed_image).character_images
-        character_images = self._create_character_images(images)
+        segmenter = CharacterSegmenter(word_image=self._word_image.preprocessed_image)
+        images = segmenter.character_images
+        bounding_boxes = segmenter.bounding_boxes
+        character_images = self._create_character_images(images, bounding_boxes)
         self._word_image.children = self._create_children_dict(character_images)
 
-    def _create_character_images(self, images):
+    def _create_character_images(self, images, bounding_boxes):
         character_images = list()
-        for (image, number) in zip(images, range(len(images))):
+        for ((image, bounding_box), number) in zip(zip(images, bounding_boxes), range(len(images))):
             character_images.append(
                 CharacterImage(
                     parent=self._word_image,
                     image=image,
-                    description=number
+                    description=number,
+                    bounding_box=bounding_box
                 )
             )
         return character_images
@@ -137,6 +144,7 @@ class WordImageSegmenter:
                 children
             )
         )
+
 
 if __name__ == '__main__':
     words_files = [
