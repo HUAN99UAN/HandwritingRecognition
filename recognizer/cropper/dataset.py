@@ -1,9 +1,10 @@
 import os.path
+import warnings
 
 import cropper.annotationTree as annotationTree
 import cropper.inputElements as inputElements
 import model
-
+import errors
 from inputOutput.openers import ImageOpener
 
 
@@ -86,11 +87,24 @@ class DataSetBuilder:
             tree = annotationTree.AnnotationTree(file_path=words_file)
             image_file_name = tree.image_file_name
             image_file_path = self._build_image_file_path(image_file_name)
-            image = ImageOpener(image_file_path).open()
-            page_image = inputElements.PageImage(
-                description=image_file_name,
-                image=image,
-                tree=tree
-            )
-            data_set.add(page_image, image_file_name)
+            try:
+                image = ImageOpener(image_file_path).open()
+                page_image = inputElements.PageImage(
+                    description=image_file_name,
+                    image=image,
+                    tree=tree
+                )
+                data_set.add(page_image, image_file_name)
+            except errors.fileErrors.NonExistentFileError:
+                warnings.warn(
+                    'Skipping the file {words_file} as the image {image_file} it annotates cannot be found.'
+                        .format(words_file=words_file, image_file=image_file_path)
+                )
+            except IOError:
+                warnings.warn(
+                    'Skipping the file {words_file} as the image {image_file} could not be read.'
+                        .format(words_file=words_file, image_file=image_file_path)
+                )
+            except:
+                raise
         return data_set

@@ -22,10 +22,6 @@ class ImageOpener:
         try:
             self.verify_image_file()
             image = Image.open(self.image_file_path)
-        except IOError:
-            sys.stderr.write("Could not read the file {}".format(self.image_file_path))
-            sys.exit(-1)
-        except errors.fileErrors.NonExistentFileError as error:
-            sys.stderr.write(str(error))
-            sys.exit(-1)
+        except:
+            raise
         return image
