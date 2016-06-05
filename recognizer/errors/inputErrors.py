@@ -6,6 +6,7 @@ class NoSuchAttributeError(Exception):
     def __str__(self):
         return repr(self.value)
 
+
 class InvalidElementPageElementError(Exception):
     def __init__(self, value):
         self.value = value

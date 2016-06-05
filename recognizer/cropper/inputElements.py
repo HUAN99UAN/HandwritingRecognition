@@ -7,6 +7,7 @@ import PIL
 import model
 from cropper.annotationTree import AnnotationTree
 from errors.inputErrors import InvalidElementPageElementError
+from errors.other import ForbiddenOperationError
 from inputOutput.outputFiles import create_directory
 from utils import tree
 from utils.decorators import lazy_property
@@ -169,6 +170,19 @@ class CharacterImage(tree.Leaf, PageElementImage):
     def feature_vector(self):
         return self._feature_vector
 
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        if self._text:
+            raise ForbiddenOperationError('The text property of {self} has already been set to "{text}"'.format(
+                self=self,
+                text=self.text
+            ))
+        self._text = value
+
     @feature_vector.setter
     def feature_vector(self, value):
         self._feature_vector = value
@@ -207,6 +221,10 @@ class WordImage(tree.Node, PageElementImage):
             self._bounding_box = self._tree.get_bounding_box()
         except:
             raise
+
+    @property
+    def text(self):
+        raise NotImplementedError('Should build a string from the text properties of its children.')
 
     @lazy_property
     def image(self):
