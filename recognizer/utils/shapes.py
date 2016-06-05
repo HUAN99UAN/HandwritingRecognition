@@ -3,7 +3,7 @@ from PIL import ImageDraw
 from utils.point import Point
 
 
-class Shape:
+class Shape(object):
     def paint_on(self, image):
         pass
 

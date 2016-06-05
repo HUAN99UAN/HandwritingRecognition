@@ -2,6 +2,7 @@ import os.path
 import warnings
 
 import numpy as np
+import PIL
 
 import model
 from cropper.annotationTree import AnnotationTree
@@ -40,6 +41,10 @@ class PageElementImage(object):
     def preprocessed_np_array(self):
         preprocessed_np_array = self._extract_sub_array(self.root.preprocessed_np_array)
         return preprocessed_np_array
+
+    @property
+    def preprocessed_image(self):
+        return PIL.Image.fromarray(np.uint8(self.preprocessed_np_array))
 
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
