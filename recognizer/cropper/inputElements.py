@@ -181,6 +181,10 @@ class CharacterImage(tree.Leaf, PageElementImage):
 
     @property
     def text(self):
+        if not self._text:
+            import random
+            import string
+            return random.choice(string.ascii_uppercase)
         return self._text
 
     @text.setter
