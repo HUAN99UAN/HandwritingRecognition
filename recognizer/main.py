@@ -43,8 +43,6 @@ if __name__ == '__main__':
         image_file=arguments.get('image')
     )
 
-    character_image = list(test_data.pages())[0][1].words()[0][1]._text
-
     remove_noise_from(test_data)
 
     DataSetCharacterSegmenter(data_set=test_data).segment()
