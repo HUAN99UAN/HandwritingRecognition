@@ -1,6 +1,7 @@
 import argparse
+import xml.etree.ElementTree as et
 
-import  utils.actions
+import utils.actions
 from cropper.dataset import DataSet
 from preprocessor import pipe
 from segmenter.characters.characterSegmenter import DataSetCharacterSegmenter
@@ -25,10 +26,10 @@ def parse_command_line_arguments():
                         help='The path output file.')
     return vars(parser.parse_args())
 
+
 def remove_noise_from(data_set):
     for _, page in data_set.pages():
         page.preprocessed_np_array = pipe.pipe().pipe_line(page.image_as_np_array)
-
 
 def extract_features(data_set):
     for _, character in data_set.characters():
@@ -42,14 +43,19 @@ if __name__ == '__main__':
         image_file=arguments.get('image')
     )
 
-    remove_noise_from(test_data)
+    character_image = list(test_data.pages())[0][1].words()[0][1]._text
 
-    extract_features(data_set=test_data)
+    remove_noise_from(test_data)
 
     DataSetCharacterSegmenter(data_set=test_data).segment()
 
-    # model = model.Model.from_file(model_file=config.model_file)
+    extract_features(data_set=test_data)
+
+    model = model.Model.from_file(model_file=config.model_file)
 
     # call classifier
 
-    #write data_set_annotation_to_file
+    test_data.write_annotation_trees_to_file(
+        file_names=[arguments.get('outputFilePath')],
+        updated=True
+    )
