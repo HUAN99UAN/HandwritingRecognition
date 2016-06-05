@@ -54,10 +54,11 @@ class CharacterFeatureExtraction:
 
 
 	def _invert_image(self, img):
-
-		invert_fun = np.vectorize(self._invert_filter)
-
-		return invert_fun(img)
+		#
+		# invert_fun = np.vectorize(self._invert_filter)
+        #
+		# return invert_fun(img)
+		return (img == 0).astype(int)
 
 	def _invert_filter(self, img):
 		if img == 1:
