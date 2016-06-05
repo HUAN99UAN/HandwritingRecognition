@@ -6,7 +6,7 @@ _BoundingBoxTuple = namedtuple('BoundingBox', ['left', 'top', 'right', 'bottom']
 
 class BoundingBox(_BoundingBoxTuple):
     def __new__(cls, left, top, right, bottom):
-        self = super(BoundingBox, cls).__new__(cls, left, top, right, bottom)
+        self = super(BoundingBox, cls).__new__(cls, int(round(left)), int(round(top)), int(round(right)), int(round(bottom)))
         try:
             self._validate()
         except:
