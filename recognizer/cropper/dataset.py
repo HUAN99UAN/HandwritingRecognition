@@ -62,6 +62,10 @@ class DataSet:
             data_set_model.merge_with(page_model)
         return data_set_model
 
+    def update_annotation_trees(self):
+        for _, page in self.pages():
+            page.tree.update_from_page_image(page)
+
     @staticmethod
     def from_files(words_files, image_files_directory):
         return DataSetBuilder(words_files, image_files_directory).build()
