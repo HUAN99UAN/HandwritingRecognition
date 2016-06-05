@@ -6,6 +6,8 @@ from cropper.dataset import DataSet
 from preprocessor import pipe
 from segmenter.characters.characterSegmenter import DataSetCharacterSegmenter
 from extractor.characterFeatureExtraction import CharacterFeatureExtraction
+import model
+import config
 
 
 def recursive_search(directory, ext='words'):
@@ -56,9 +58,11 @@ if __name__ == '__main__':
 
     DataSetCharacterSegmenter(data_set=test_data).segment()
 
+    model = model.Model.from_file(model_file=config.model_file)
+
     extract_features(test_data)
 
-    # call classifier somewhere somehow
+    # call classifier
 
 
 

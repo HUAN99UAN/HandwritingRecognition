@@ -5,7 +5,7 @@ import utils.actions
 import cropper.dataset
 from preprocessor import pipe
 from extractor.characterFeatureExtraction import CharacterFeatureExtraction
-
+import config
 
 class Model(object):
 
@@ -92,7 +92,8 @@ def parse_command_line_arguments():
     parser.add_argument('wordsFiles', nargs='+', type=str, action=utils.actions.ExpandFilePathsAction,
                         help='The words files, should be at least one file. Each words file should be associated with '
                              'an image in the imageDirectory.')
-    parser.add_argument('outputFile', type=str,
+    parser.add_argument('--outputFile', type=str,
+                        default=config.model_file,
                         action=utils.actions.ExpandFilePathAction,
                         help='The path to the output file.')
     return vars(parser.parse_args())
