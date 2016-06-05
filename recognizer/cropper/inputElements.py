@@ -224,7 +224,8 @@ class WordImage(tree.Node, PageElementImage):
 
     @property
     def text(self):
-        raise NotImplementedError('Should build a string from the text properties of its children.')
+        child_characters = [self.children.get(child_key).text for child_key in sorted(self.children.keys())]
+        return ''.join(child_characters)
 
     @lazy_property
     def image(self):
