@@ -1,10 +1,31 @@
-import os
+import os.path
 
 import numpy as np
 
+from inputOutput.outputFiles import create_directory
 from errors.fileErrors import NonExistentFileError
 from errors.fileErrors import UnexpectedFileError
 from errors.inputErrors import InvalidImageError
+
+
+class OutputFileVerifier:
+
+    def __init__(self, file_path):
+        self._file_path = file_path
+
+    @property
+    def path(self):
+        return os.path.dirname(self._file_path)
+
+    def _is_directory(self):
+        if os.path.isdir(self._file_path):
+            raise UnexpectedFileError(
+                "{} is a directory, expected a file.".format(self._file_path)
+            )
+
+    def verify(self):
+        self._is_directory()
+        create_directory(self.path)
 
 
 class WordsFileVerifier:

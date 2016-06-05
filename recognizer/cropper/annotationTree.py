@@ -1,4 +1,5 @@
 from xml.etree.ElementTree import ElementTree
+import xml.etree.ElementTree as ET
 
 import inputOutput.verifiers
 from errors.inputErrors import NoSuchAttributeError, InvalidElementPageElementError
@@ -19,10 +20,10 @@ class AnnotationTree(ElementTree):
     contents will be used to initialize the _tree with.
 
     """
-    def __init__(self, element=None, file_path=None):
+    def __init__(self, element_tree=None, file_path=None):
         if file_path:
             inputOutput.verifiers.WordsFileVerifier(file_path).verify()
-        super(AnnotationTree, self).__init__(element, file_path)
+        super(AnnotationTree, self).__init__(element_tree, file_path)
 
     @property
     def number(self):
@@ -125,9 +126,84 @@ class AnnotationTree(ElementTree):
         for word in self.iterfind('Character'):
             yield word
 
+    def add_child(self, child):
+        self.getroot().append(child)
+
+    @staticmethod
+    def from_input_element(input_element):
+        return _AnnotationTreeBuilder(input_element).build()
+
+    def to_file(self, output_file):
+        _AnnotationTreeWriter(tree=self, output_file=output_file).write()
+
+    def update_from_page_image(self, page_image):
+        _AnnotationTreeUpdater(
+            annotation_tree=self,
+            page_image=page_image
+        ).update()
+
     def __repr__(self):
         return ", ".join([
             "{ElementTree",
             "root tag: " + self._root.tag,
             "}"
         ])
+
+
+class _AnnotationTreeBuilder(object):
+
+    def __init__(self, input_element):
+        self._element = input_element
+
+    def build(self):
+        element = ET.Element(
+            tag=self._element.words_file_type,
+            attrib=self._element.words_file_attributes
+        )
+        return AnnotationTree(element_tree=element)
+
+
+class _AnnotationTreeWriter(object):
+
+    def __init__(self, tree, output_file):
+        self._tree = tree
+        inputOutput.verifiers.OutputFileVerifier(file_path=output_file).verify()
+        self._output_file = output_file
+
+    def write(self):
+        self._tree.write(self._output_file)
+
+
+class _AnnotationTreeUpdater(object):
+
+    def __init__(self, annotation_tree, page_image):
+        self._tree = annotation_tree
+        self._page_image = page_image
+
+    def _update_word(self, tree, word):
+        tree.getroot().set('text', word.text)
+
+    def _update_words(self):
+        for (_, word) in self._page_image.words():
+            self._update_word(word.tree, word)
+
+    def _update_character(self, tree, character):
+        if character.tree:
+            # update the character
+            raise NotImplementedError()
+        else:
+            tree = _AnnotationTreeBuilder(character).build()
+            character.tree = tree
+
+    def _update_characters(self):
+        for (_, character) in self._page_image.characters():
+            self._update_character(character.tree, character)
+
+    def _update_lines(self):
+        # Lines never change, no need to update them right now
+        pass
+
+    def update(self):
+        self._update_lines()
+        self._update_words()
+        self._update_characters()

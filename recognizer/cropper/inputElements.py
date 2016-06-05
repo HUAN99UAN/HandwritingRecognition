@@ -7,6 +7,7 @@ import PIL
 import model
 from cropper.annotationTree import AnnotationTree
 from errors.inputErrors import InvalidElementPageElementError
+from errors.other import ForbiddenOperationError
 from inputOutput.outputFiles import create_directory
 from utils import tree
 from utils.decorators import lazy_property
@@ -19,7 +20,7 @@ class PageElementImage(object):
     child_element_constructor = None
     type_description = None
 
-    def __init__(self, image=None, tree=None, text=None, **kwargs):
+    def __init__(self, image=None, tree=None, text=None, bounding_box=None, **kwargs):
         """
         Constructor of the somethingImage class
         :param image: image of the type *PIL.Image*
@@ -32,6 +33,7 @@ class PageElementImage(object):
         self._text = text
         self._image = image
         self._preprocessed_np_array = None
+        self._bounding_box = bounding_box
 
     @property
     def image_as_np_array(self):
@@ -45,6 +47,10 @@ class PageElementImage(object):
     @property
     def preprocessed_image(self):
         return PIL.Image.fromarray(np.uint8(self.preprocessed_np_array))
+
+    @property
+    def tree(self):
+        return self._tree
 
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
@@ -148,10 +154,25 @@ class PageElementImage(object):
         for _, element in element_getter(self):
             element.images_to_file(directory=directory_path, extension=extension, element_getter=extension)
 
+    @property
+    def words_file_attributes(self):
+        basic_dict = {
+            'bottom': str(self._bounding_box.bottom),
+            'left': str(self._bounding_box.left),
+            'no': str(self._description),
+            'right': str(self._bounding_box.right),
+            'shear': '0',
+            'top': str(self._bounding_box.top)
+        }
+        if self.text:
+            basic_dict['text'] = self.text
+        return basic_dict
+
 
 class CharacterImage(tree.Leaf, PageElementImage):
 
     type_description = 'character'
+    words_file_type = 'Character'
 
     def __init__(self, **kwargs):
         super(CharacterImage, self).__init__(**kwargs)
@@ -168,6 +189,36 @@ class CharacterImage(tree.Leaf, PageElementImage):
     @property
     def feature_vector(self):
         return self._feature_vector
+
+    @property
+    def tree(self):
+        return self._tree
+
+    @tree.setter
+    def tree(self, value):
+        if self._tree:
+            raise ForbiddenOperationError('The tree property of {self} has already been set '.format(
+                self=self,
+            ))
+        self._tree = value
+        self.parent.tree.add_child(self.tree.getroot())
+
+    @property
+    def text(self):
+        if not self._text:
+            import random
+            import string
+            return random.choice(string.ascii_lowercase)
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        if self._text:
+            raise ForbiddenOperationError('The text property of {self} has already been set to "{text}"'.format(
+                self=self,
+                text=self.text
+            ))
+        self._text = value
 
     @feature_vector.setter
     def feature_vector(self, value):
@@ -196,6 +247,7 @@ class WordImage(tree.Node, PageElementImage):
     annotation_tree_getter = AnnotationTree.characters
     child_element_constructor = CharacterImage
     type_description = 'word'
+    words_file_type = 'Word'
 
     def __init__(self, **kwargs):
         super(WordImage, self).__init__(**kwargs)
@@ -207,6 +259,11 @@ class WordImage(tree.Node, PageElementImage):
             self._bounding_box = self._tree.get_bounding_box()
         except:
             raise
+
+    @property
+    def text(self):
+        child_characters = [self.children.get(child_key).text for child_key in sorted(self.children.keys())]
+        return ''.join(child_characters)
 
     @lazy_property
     def image(self):
@@ -229,6 +286,7 @@ class LineImage(tree.Node, PageElementImage):
     annotation_tree_getter = AnnotationTree.words
     child_element_constructor = WordImage
     type_description = 'line'
+    words_file_type = 'TextLine'
 
     def __init__(self, **kwargs):
         super(LineImage, self).__init__(**kwargs)
