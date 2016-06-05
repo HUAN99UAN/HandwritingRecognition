@@ -1,4 +1,5 @@
 from xml.etree.ElementTree import ElementTree
+import xml.etree.ElementTree as ET
 
 import inputOutput.verifiers
 from errors.inputErrors import NoSuchAttributeError, InvalidElementPageElementError
@@ -19,10 +20,10 @@ class AnnotationTree(ElementTree):
     contents will be used to initialize the _tree with.
 
     """
-    def __init__(self, element=None, file_path=None):
+    def __init__(self, element_tree=None, file_path=None):
         if file_path:
             inputOutput.verifiers.WordsFileVerifier(file_path).verify()
-        super(AnnotationTree, self).__init__(element, file_path)
+        super(AnnotationTree, self).__init__(element_tree, file_path)
 
     @property
     def number(self):
@@ -137,7 +138,7 @@ class AnnotationTree(ElementTree):
         _AnnotationTreeUpdater(
             annotation_tree=self,
             page_image=page_image
-        )
+        ).update()
 
     def __repr__(self):
         return ", ".join([
@@ -150,10 +151,10 @@ class AnnotationTree(ElementTree):
 class _AnnotationTreeBuilder(object):
 
     def __init__(self, input_element):
-        raise NotImplementedError()
+        self._element = input_element
 
     def build(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class _AnnotationTreeWriter(object):
@@ -171,9 +172,12 @@ class _AnnotationTreeUpdater(object):
         self._tree = annotation_tree
         self._page_image = page_image
 
+    def _update_word(self, tree, word):
+        tree._root.set('text', word.text)
+
     def _update_words(self):
         for (_, word) in self._page_image.words():
-            raise NotImplementedError
+            self._update_word(word.tree, word)
 
     def _update_characters(self):
         for (_, character) in self._page_image.characters():
