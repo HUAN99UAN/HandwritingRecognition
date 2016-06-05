@@ -33,6 +33,10 @@ class Model(object):
             in keys
         )
 
+    @property
+    def number_of_classes(self):
+        return len(self._model.keys())
+
     @staticmethod
     def build_from_files(word_files, image_directory):
         return _ModelBuilder(word_files, image_directory).build()
@@ -105,4 +109,4 @@ if __name__ == '__main__':
         word_files=cli_arguments.get('wordsFiles'),
         image_directory=cli_arguments.get('imageDirectory'))
     model.to_file(cli_arguments.get('outputFile'))
-    read_model = Model.from_file(cli_arguments.get('outputFile'))
+    # read_model = Model.from_file(cli_arguments.get('outputFile'))
