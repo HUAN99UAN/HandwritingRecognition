@@ -133,9 +133,8 @@ class AnnotationTree(ElementTree):
     def from_input_element(input_element):
         return _AnnotationTreeBuilder(input_element).build()
 
-    @staticmethod
-    def to_file(output_file):
-        _AnnotationTreeWriter(output_file=output_file).write()
+    def to_file(self, output_file):
+        _AnnotationTreeWriter(tree=self, output_file=output_file).write()
 
     def update_from_page_image(self, page_image):
         _AnnotationTreeUpdater(
@@ -166,11 +165,12 @@ class _AnnotationTreeBuilder(object):
 
 class _AnnotationTreeWriter(object):
 
-    def __init__(self, output_file):
+    def __init__(self, tree, output_file):
+        self._tree = tree
         self._output_file = output_file
 
     def write(self):
-        raise NotImplementedError
+        self._tree.write(self._output_file)
 
 
 class _AnnotationTreeUpdater(object):
