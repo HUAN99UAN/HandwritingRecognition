@@ -126,6 +126,9 @@ class AnnotationTree(ElementTree):
         for word in self.iterfind('Character'):
             yield word
 
+    def add_child(self, child):
+        self.getroot().append(child)
+
     @staticmethod
     def from_input_element(input_element):
         return _AnnotationTreeBuilder(input_element).build()
@@ -177,7 +180,7 @@ class _AnnotationTreeUpdater(object):
         self._page_image = page_image
 
     def _update_word(self, tree, word):
-        tree._root.set('text', word.text)
+        tree.getroot().set('text', word.text)
 
     def _update_words(self):
         for (_, word) in self._page_image.words():
