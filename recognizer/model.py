@@ -1,11 +1,16 @@
 import argparse
-import pickle
+
+import msgpack
+import msgpack_numpy as m
 
 import utils.actions
 import cropper.dataset
 from preprocessor import pipe
 from extractor.characterFeatureExtraction import CharacterFeatureExtraction
 import config
+
+m.patch()
+
 
 class Model(object):
 
@@ -32,6 +37,10 @@ class Model(object):
             for key
             in keys
         )
+
+    @property
+    def dictionary(self):
+        return self._model
 
     @property
     def number_of_classes(self):
@@ -73,7 +82,9 @@ class _ModelWriter(object):
         return open(self._output_file_name, 'w+b')
 
     def write(self):
-        pickle.dump(self._model, self._output_file)
+        binary = msgpack.packb(self._model.dictionary)
+        self._output_file.write(binary)
+        # pickle.dump(self._model, self._output_file)
         self._output_file.close()
 
 
@@ -83,9 +94,10 @@ class _ModelReader(object):
         self._input_file = open(input_file, 'rb')
 
     def read(self):
-        model = pickle.load(self._input_file)
+        binary = self._input_file.read()
+        model_dict = msgpack.unpackb(binary)
         self._input_file.close()
-        return model
+        return Model(model=model_dict)
 
 
 def parse_command_line_arguments():
@@ -109,4 +121,5 @@ if __name__ == '__main__':
         word_files=cli_arguments.get('wordsFiles'),
         image_directory=cli_arguments.get('imageDirectory'))
     model.to_file(cli_arguments.get('outputFile'))
-    # read_model = Model.from_file(cli_arguments.get('outputFile'))
+    read_model = Model.from_file(cli_arguments.get('outputFile'))
+    print(read_model.dictionary)
