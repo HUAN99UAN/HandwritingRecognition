@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     DataSetCharacterSegmenter(data_set=test_data).segment()
 
-    model = model.Model.from_file(model_file=config.model_file)
+    # model = model.Model.from_file(model_file=config.model_file)
 
     # call classifier
 

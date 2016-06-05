@@ -114,7 +114,7 @@ class WordImageSegmenter:
         self._word_image = word_image
 
     def segment(self):
-        images = CharacterSegmenter(word_image=self._word_image.preprocessed_np_array).character_images
+        images = CharacterSegmenter(word_image=self._word_image.preprocessed_image).character_images
         character_images = self._create_character_images(images)
         self._word_image.children = self._create_children_dict(character_images)
 
