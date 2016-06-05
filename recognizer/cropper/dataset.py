@@ -1,5 +1,7 @@
 import os.path
 import warnings
+import random
+import string
 
 import cropper.annotationTree as annotationTree
 import cropper.inputElements as inputElements
@@ -8,6 +10,9 @@ import errors
 from inputOutput.openers import ImageOpener
 
 
+def _id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 class DataSet:
 
     def __init__(self):
@@ -15,7 +20,7 @@ class DataSet:
 
     def add(self, page_image, description=None):
         if not description:
-            description = page_image.image_file
+            description = _id_generator()
         self._pages.update({
             description: page_image
         })
@@ -61,11 +66,41 @@ class DataSet:
     def from_files(words_files, image_files_directory):
         return DataSetBuilder(words_files, image_files_directory).build()
 
+    @staticmethod
+    def test_data(words_file, image_file):
+        return _TestDataSetBuilder(
+            words_file = words_file,
+            image_file = image_file).build()
+
     def __str__(self):
         return ", ".join([
             "{DataSet",
             "page images: [" + ", ".join(self._pages.keys()) + "]",
             "}"])
+
+
+class _TestDataSetBuilder:
+
+    def __init__(self, words_file, image_file):
+        self._words_file = words_file
+        self._image_file = image_file
+
+    @property
+    def image_file_name(self):
+        return os.path.basename(self._image_file)
+
+    def build(self):
+        data_set = DataSet()
+        tree = annotationTree.AnnotationTree(file_path=self._words_file)
+        # Allow the Image Opener to crash the program if it encounters problems.
+        image = ImageOpener(self._image_file).open()
+        page_image = inputElements.PageImage(
+            description=self.image_file_name,
+            image=image,
+            tree=tree
+        )
+        data_set.add(page_image=page_image, description=self.image_file_name)
+        return data_set
 
 
 class DataSetBuilder:
