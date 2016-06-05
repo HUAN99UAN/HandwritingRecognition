@@ -51,10 +51,6 @@ class PageElementImage(object):
     def tree(self):
         return self._tree
 
-    @tree.setter
-    def tree(self, value):
-        self._tree = value
-
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
         number = child_tree.number
@@ -178,6 +174,19 @@ class CharacterImage(tree.Leaf, PageElementImage):
     @property
     def feature_vector(self):
         return self._feature_vector
+
+    @property
+    def tree(self):
+        return self._tree
+
+    @tree.setter
+    def tree(self, value):
+        if self._tree:
+            raise ForbiddenOperationError('The tree property of {self} has already been set '.format(
+                self=self,
+            ))
+        self._tree = value
+        raise NotImplementedError("The new tree should become a child of the tree of the parent.")
 
     @property
     def text(self):
