@@ -3,7 +3,6 @@ import warnings
 
 import numpy as np
 import PIL
-import xml.etree.ElementTree as et
 
 import model
 from cropper.annotationTree import AnnotationTree
@@ -202,14 +201,14 @@ class CharacterImage(tree.Leaf, PageElementImage):
                 self=self,
             ))
         self._tree = value
-        raise NotImplementedError("The new tree should become a child of the tree of the parent.")
+        self.parent.tree.add_child(self.tree.getroot())
 
     @property
     def text(self):
         if not self._text:
             import random
             import string
-            return random.choice(string.ascii_uppercase)
+            return random.choice(string.ascii_lowercase)
         return self._text
 
     @text.setter
