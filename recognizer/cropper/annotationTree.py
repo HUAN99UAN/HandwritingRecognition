@@ -167,6 +167,7 @@ class _AnnotationTreeWriter(object):
 
     def __init__(self, tree, output_file):
         self._tree = tree
+        inputOutput.verifiers.OutputFileVerifier(file_path=output_file).verify()
         self._output_file = output_file
 
     def write(self):

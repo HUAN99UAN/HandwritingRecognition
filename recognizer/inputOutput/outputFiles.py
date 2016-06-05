@@ -6,7 +6,7 @@ import warnings
 
 def create_directory(directory_path):
     if not os.path.exists(directory_path):
-        os.makedirs(directory_path, exist_ok=False)
+        os.makedirs(directory_path)
 
 
 def image_to_file(image, file_path):
