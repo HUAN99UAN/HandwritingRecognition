@@ -47,6 +47,14 @@ class PageElementImage(object):
     def preprocessed_image(self):
         return PIL.Image.fromarray(np.uint8(self.preprocessed_np_array))
 
+    @property
+    def tree(self):
+        return self._tree
+
+    @tree.setter
+    def tree(self, value):
+        self._tree = value
+
     def _build_child(self, element, constructor):
         child_tree = AnnotationTree(element)
         number = child_tree.number
@@ -153,6 +161,7 @@ class PageElementImage(object):
 class CharacterImage(tree.Leaf, PageElementImage):
 
     type_description = 'character'
+    words_file_type = 'Character'
 
     def __init__(self, **kwargs):
         super(CharacterImage, self).__init__(**kwargs)
@@ -210,6 +219,7 @@ class WordImage(tree.Node, PageElementImage):
     annotation_tree_getter = AnnotationTree.characters
     child_element_constructor = CharacterImage
     type_description = 'word'
+    words_file_type = 'Word'
 
     def __init__(self, **kwargs):
         super(WordImage, self).__init__(**kwargs)
@@ -248,6 +258,7 @@ class LineImage(tree.Node, PageElementImage):
     annotation_tree_getter = AnnotationTree.words
     child_element_constructor = WordImage
     type_description = 'line'
+    words_file_type = 'TextLine'
 
     def __init__(self, **kwargs):
         super(LineImage, self).__init__(**kwargs)
