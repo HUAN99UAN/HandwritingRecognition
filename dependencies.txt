@@ -1,8 +1,9 @@
-cycler==0.10.0
-matplotlib==1.5.1
+meld==3.14.2
+msgpack-numpy==0.3.7
+msgpack-python==0.4.7
+nose==1.3.7
 numpy==1.11.0
 Pillow==3.2.0
-pyparsing==2.1.4
-python-dateutil==2.5.3
-pytz==2016.4
-six==1.10.0
+pygobject==3.18.2
+u-msgpack-python==2.1
+vboxapi==1.0
