@@ -6,6 +6,8 @@ from cropper.dataset import DataSet
 from preprocessor import pipe
 from segmenter.characters.characterSegmenter import DataSetCharacterSegmenter
 from extractor.characterFeatureExtraction import CharacterFeatureExtraction
+from classifier.classifier import Classifier
+
 import model
 import config
 
@@ -35,6 +37,13 @@ def extract_features(data_set):
     for _, character in data_set.characters():
         character.feature_vector = CharacterFeatureExtraction().extract(character.preprocessed_np_array)
 
+
+def classify_feature_vectors(data_set, classifier):
+    for _, character in data_set.characters():
+        classification = classifier.knn(character)
+        character.text = classification[0]
+
+
 if __name__ == '__main__':
     arguments = parse_command_line_arguments()
 
@@ -51,7 +60,9 @@ if __name__ == '__main__':
 
     model = model.Model.from_file(model_file=config.model_file)
 
-    # call classifier
+    c = Classifier(model=model)
+
+    classify_feature_vectors(data_set=test_data, classifier=c)
 
     test_data.write_annotation_trees_to_file(
         file_names=[arguments.get('outputFilePath')],

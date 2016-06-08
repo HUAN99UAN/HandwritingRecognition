@@ -2,6 +2,7 @@ import argparse
 
 import msgpack
 import msgpack_numpy as m
+import numpy as np
 
 import utils.actions
 import cropper.dataset
@@ -36,6 +37,34 @@ class Model(object):
             (key, self.get(key, empty_list) + other.get(key, empty_list))
             for key
             in keys
+        )
+
+    @property
+    def patterns_and_labels(self):
+        labels = self._extract_label_vector()
+        patterns = self._extract_pattern_matrix()
+        return (patterns, labels)
+
+    @property
+    def number_of_feature_vectors(self):
+        return sum([len(feature_vectors) for feature_vectors in self._model.values()])
+
+    @property
+    def dimensionality(self):
+        random_feature_vector = self.get(self.keys()[0])[0]
+        dim = random_feature_vector.shape[0]
+        return dim
+
+    def _extract_label_vector(self):
+        labels = np.array(self._model.keys())
+        number_of_feature_vectors_per_label = [len(feature_vectors) for feature_vectors in self._model.values()]
+        return np.repeat(labels, number_of_feature_vectors_per_label, axis=0)
+
+    def _extract_pattern_matrix(self):
+        return np.array(
+            utils.lists.flatten_one_level(
+                [feature_vectors for feature_vectors in self.values()]
+            )
         )
 
     @property
@@ -114,10 +143,6 @@ def parse_command_line_arguments():
                         help='The path to the output file.')
     return vars(parser.parse_args())
 
-def reduce_dimentions(l):
-    pass
-
-
 if __name__ == '__main__':
     cli_arguments = parse_command_line_arguments()
     model = Model.build_from_files(
@@ -126,4 +151,5 @@ if __name__ == '__main__':
     model.to_file(cli_arguments.get('outputFile'))
     read_model = Model.from_file(cli_arguments.get('outputFile'))
     D = read_model.dictionary
-    print('hi')
+
+    print(read_model.number_of_feature_vectors)
