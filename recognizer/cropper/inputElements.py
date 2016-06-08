@@ -233,7 +233,7 @@ class CharacterImage(tree.Leaf, PageElementImage):
             return self._image
 
     def to_model(self):
-        return model.Model(keys=[self._text], values=[self.feature_vector])
+        return model.Model(keys=[self._text], values=[[self.feature_vector]])
 
     def images_to_file(self, directory, extension, element_getter):
         return self.image_to_file(directory=directory, extension=extension)
