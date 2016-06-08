@@ -8,4 +8,5 @@ class Classifier:
         self._classifier.fit(patterns, labels)
 
     def knn(self, character_image):
-        return self._classifier.predict(character_image.feature_vector)
+        feature_vector = character_image.feature_vector.reshape(1, -1)
+        return self._classifier.predict(feature_vector)

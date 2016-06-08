@@ -1,5 +1,6 @@
+#!/usr/bin/env python
+
 import argparse
-import xml.etree.ElementTree as et
 
 import utils.actions
 from cropper.dataset import DataSet

@@ -61,24 +61,38 @@ class CharacterSegmenter:
 
     def _get_bounding_boxes(self, segmentation_points):
         def first_bounding_box(self, segmentation_points):
-            return BoundingBox(left=0, right=segmentation_points[0].x,
-                               bottom=self._word_image.height, top=0)
+            bb = None
+            try:
+                bb = BoundingBox(left=0, right=segmentation_points[0].x,
+                                   bottom=self._word_image.height, top=0)
+            except:
+                pass
+            return bb
 
         def last_bounding_box(self, segmentation_points):
-            return BoundingBox(left=segmentation_points.pop().x, right=self._word_image.width,
+            bb = None
+            try:
+                bb = BoundingBox(left=segmentation_points.pop().x, right=self._word_image.width,
                                bottom=self._word_image.height, top=0)
+            except:
+                pass
+            return bb
 
         bounding_boxes = list()
         if segmentation_points:
-            bounding_boxes.append(first_bounding_box(self, segmentation_points))
+            first_bb = first_bounding_box(self, segmentation_points)
+            if first_bb:
+                bounding_boxes.append(first_bb)
             bounding_boxes.extend([
                 BoundingBox(
                     left=left.x, right=right.x,
                     bottom=self._word_image.height, top=0)
                 for (left, right)
                 in zip(segmentation_points, segmentation_points[1:])
-                ])
-            bounding_boxes.append(last_bounding_box(self, segmentation_points))
+                if (left is not right)])
+            last_bb = last_bounding_box(self, segmentation_points)
+            if last_bb:
+                bounding_boxes.append(last_bb)
         return bounding_boxes
 
     def _extract_characters(self, bounding_boxes):
