@@ -68,7 +68,7 @@ class CharacterFeatureExtraction:
 	def extract(self, image_as_np_array):
 		resized = self.resize_img(image_as_np_array)
 		inverted_image = self._invert_image(resized)
-		return self.split_regions(inverted_image)
+		return self.crossing_feature(inverted_image)
 
 if __name__ == '__main__':
 	c = CharacterFeatureExtraction()
