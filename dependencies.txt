@@ -5,5 +5,8 @@ nose==1.3.7
 numpy==1.11.0
 Pillow==3.2.0
 pygobject==3.18.2
+scikit-learn==0.17.1
+scipy==0.17.1
+sklearn==0.0
 u-msgpack-python==2.1
 vboxapi==1.0
