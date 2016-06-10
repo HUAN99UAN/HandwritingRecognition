@@ -6,14 +6,17 @@
             "follow_symlinks": true,
             "file_exclude_patterns": ["*.acn", "*.acr", "*.alg", "*.aux", "*.bbl", "*.blg", "*.dvi", "*.fdb_latexmk", "*.glg", "*.glo", "*.gls", "*.idx", "*.ilg", "*.ind", "*.ist", "*.lof", "*.log", "*.lot", "*.maf", "*.mtc", "*.mtc0", "*.nav", "*.nlo", "*.out", "*.pdfsync", "*.ps", "*.snm", "*.synctex.gz", "*.toc", "*.vrb", "*.xdy", "*.tdo", "run.xml", "bcf", "*.fls", "main.run.xml", "*.sty", "*.fd", "*.cls", "main-blx.bib", "*.bcf", "*.lbl"
             ],			
-            "folder_exclude_patterns": ["individual", "shared"]
+            "folder_exclude_patterns": ["individual", "shared"],
+            "follow_symlinks": true
 		},
 		{
-			"path": "./individual",
-			"folder_exclude_patterns": []
+			"path": "~/Dropbox/Studie/Handwriting Recognition/individual/",
+			"folder_exclude_patterns": [],
+			"follow_symlinks": true
 		},
 		{
-			"path": "./shared"
+			"path": "./shared",
+			"follow_symlinks": true
 		}		
 	],
 	"settings":
