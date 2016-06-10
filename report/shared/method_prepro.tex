@@ -2,9 +2,9 @@
 For the handwriting to be effective we had to bring the data into a clean state. To this end we used a pipeline which is described below in figure \ref{fig:pipeline}. 
 
 \begin{figure}[ht]
-\label{fig:pipeline}
 \includegraphics[width=8cm]{shared/img/pipeline.png}
 \caption{Overview of our pipeline.}
+\label{fig:pipeline}
 \end{figure}
 
 As the figure explains the first step is to normalize the luminosity of the image. This step is essential for the thresholding to work since in some parts of dataset the ink has worn off the pages. Figure \ref{} gives an example why luminosity normalization was necessary. In the above mentioned figure, we applied the same threshold filter with and without luminosity normalization and the results speak for themselves. By normalizing the luminosity we eliminate the need to adjust threshold values in later steps.
