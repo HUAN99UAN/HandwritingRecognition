@@ -8,7 +8,7 @@
 
 % Graphics
 \usepackage[pdftex]{graphicx}
-\graphicspath{ {.images/} }
+\graphicspath{{.shared/img/}{./individual/img/}}
 \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
 
 % Math
@@ -54,7 +54,7 @@ Email: e.karountzos@student.rug.nl}}
 
 \section{Introduction}
 \label{s:introduction}
-\input{individual/introduction}
+\input{individual_angelo/introduction}
 
 \section{Methods}
 \label{s:methods}
@@ -66,9 +66,11 @@ Email: e.karountzos@student.rug.nl}}
 
 \section{Discussion}
 \label{s:discussion}
-\input{individual/discussion}
+\input{individual_angelo/discussion}
 
-\cite{russell1995modern}
+\section{Conclusion}
+\label{s:conclusion}
+\input{individual_angelo/conclusion}
 
 \bibliographystyle{IEEEtran}
 \bibliography{biblio}
