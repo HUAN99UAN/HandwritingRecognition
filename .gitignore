@@ -360,3 +360,8 @@ cropper/.idea/inspectionProfiles/Project_Default.xml
 *.pkl
 
 angelo_laura_v0.tar.gz
+
+report2/main.pdf
+report2/individual/*
+
+report2/hwr_report.sublime-workspace

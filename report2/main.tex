@@ -1,0 +1,77 @@
+\documentclass[conference,compsoc]{IEEEtran}
+
+%Language
+\usepackage[english]{babel}
+
+% Citation
+\usepackage[nocompress]{cite}
+
+% Graphics
+\usepackage[pdftex]{graphicx}
+\graphicspath{ {.images/} }
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+
+% Math
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\interdisplaylinepenalty=2500
+
+%Pseudo Code
+\usepackage{algorithmic}
+
+% Floats
+\usepackage[caption=false,font=footnotesize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{stfloats}
+
+%Hyperlinks
+\usepackage{url}
+\usepackage{varioref}
+\usepackage{hyperref}
+\usepackage[noabbrev, capitalise, nameinlink]{cleveref}
+
+%Temporary
+\usepackage{todonotes}
+\newcommand{\angelo}[1]{\todo[color=blue!20, inline]{\textbf{Angelo: }#1}}
+\newcommand{\laura}[1]{\todo[color=green!20, inline]{\textbf{Laura: }#1}}
+
+\begin{document}
+
+\title{Handwriting Recognition}
+\author{\IEEEauthorblockN{L.E.N. Baamkan}
+\IEEEauthorblockA{s1869140\\
+Email: l.e.n.baakman@student.rug.nl}
+\and
+\IEEEauthorblockN{Evangelos Karountzos}
+\IEEEauthorblockA{s???????\\
+Email: e.karountzos@student.rug.nl}}
+
+\maketitle
+
+\input{individual/abstract}
+% \IEEEpeerreviewmaketitle
+
+\section{Introduction}
+\label{s:introduction}
+\input{individual/introduction}
+
+\section{Methods}
+\label{s:methods}
+\input{shared/methods}
+
+\section{Results}
+\label{s:results}
+\input{shared/results}
+
+\section{Discussion}
+\label{s:discussion}
+\input{individual/discussion}
+
+\cite{russell1995modern}
+
+\bibliographystyle{IEEEtran}
+\bibliography{biblio}
+\end{document}
+
+
