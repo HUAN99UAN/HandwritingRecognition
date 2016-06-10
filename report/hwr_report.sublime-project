@@ -6,7 +6,7 @@
             "follow_symlinks": true,
             "file_exclude_patterns": ["*.acn", "*.acr", "*.alg", "*.aux", "*.bbl", "*.blg", "*.dvi", "*.fdb_latexmk", "*.glg", "*.glo", "*.gls", "*.idx", "*.ilg", "*.ind", "*.ist", "*.lof", "*.log", "*.lot", "*.maf", "*.mtc", "*.mtc0", "*.nav", "*.nlo", "*.out", "*.pdfsync", "*.ps", "*.snm", "*.synctex.gz", "*.toc", "*.vrb", "*.xdy", "*.tdo", "run.xml", "bcf", "*.fls", "main.run.xml", "*.sty", "*.fd", "*.cls", "main-blx.bib", "*.bcf", "*.lbl"
             ],			
-            "folder_exclude_patterns": ["content"]
+            "folder_exclude_patterns": ["individual", "shared"]
 		},
 		{
 			"path": "./individual",
