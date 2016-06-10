@@ -1,4 +1,5 @@
-\documentclass[conference,compsoc]{IEEEtran}
+\documentclass[a4paper, conference,compsoc]{IEEEtran}
+\usepackage[utf8]{inputenc}
 
 %Language
 \usepackage[english]{babel}
@@ -30,6 +31,34 @@
 \usepackage{varioref}
 \usepackage{hyperref}
 \usepackage[noabbrev, capitalise, nameinlink]{cleveref}
+\usepackage{etoolbox}
+% Patch cleverref for use with ieee, source: http://tex.stackexchange.com/a/250739
+\makeatletter
+\patchcmd{\@IEEEyesnumber}
+  {\stepcounter}
+  {\refstepcounter}
+  {}{}
+\patchcmd{\@@IEEEeqnarray}
+  {\stepcounter}
+  {\refstepcounter}
+  {}{}
+\patchcmd{\@@IEEEeqnarraycr}
+  {\stepcounter{IEEEsubequation}}
+  {\refstepcounter{IEEEsubequation}}
+  {}{}
+\patchcmd{\@@IEEEeqnarraycr}
+  {\stepcounter{IEEEsubequation}}
+  {\refstepcounter{IEEEsubequation}}
+  {}{}
+\patchcmd{\@@IEEEeqnarraycr}
+  {\stepcounter{IEEEequation}}
+  {\refstepcounter{IEEEequation}}
+  {}{}
+\patchcmd{\@@IEEEeqnarraycr}
+  {\stepcounter{IEEEequation}}
+  {\refstepcounter{IEEEequation}}
+  {}{}
+\makeatother
 
 %Temporary
 \usepackage{todonotes}
