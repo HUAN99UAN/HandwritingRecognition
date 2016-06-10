@@ -1,4 +1,4 @@
-\documentclass[a4paper, conference,compsoc]{IEEEtran}
+\documentclass[a4paper, conference,compsoc,peerreview]{IEEEtran}
 \usepackage[utf8]{inputenc}
 
 %Language
@@ -60,7 +60,11 @@
   {}{}
 \makeatother
 
+%Lists
+\usepackage[inline]{enumitem}
+
 %Temporary
+\usepackage{layouts}
 \usepackage{todonotes}
 \newcommand{\angelo}[1]{\todo[color=blue!20, inline]{\textbf{Angelo: }#1}}
 \newcommand{\laura}[1]{\todo[color=green!20, inline]{\textbf{Laura: }#1}}
@@ -78,8 +82,10 @@ Email: e.karountzos@student.rug.nl}}
 
 \maketitle
 
+\IEEEpeerreviewmaketitle
+
 \input{individual/abstract}
-% \IEEEpeerreviewmaketitle
+
 
 \section{Introduction}
 \label{s:introduction}
