@@ -1,14 +1,11 @@
 %!TEX root = ../main.tex
-\todo[inline]{Stages of handwriting recognizer}
-\todo[inline]{Refer to \cref{fig:pipeline}.}
-\todo[inline]{Mention that we use a bottom up model}
-\todo[inline]{Wat are we going to talk about in this section.}
+In this section we discuss the inner workings of our recognizer. Our recognizer can consists of four of the five stages introduced in the previous section: preprocessing, internal segmentation, feature extraction and recognition. As stated before the external segmentation of the input images is part of the input of our recognizer. Each subsection of this method discusses one of the stages of our recognizer in the order that they are applied to the input image, thus \cref{ss:methods:preprocessing} present our preprocessing method, \cref{ss:methods:characterSegmentation} discusses the algorithms used for internal segmentation, the next section focuses on our feature extraction and the algorithm we used for recognizing these feature vectors can be found in \cref{ss:methods:machineLearing}.
 
-\subsection{Preprocessing of the Data}
+\subsection{Preprocessing}
 \label{ss:methods:preprocessing}
 \input{shared/method_prepro}
 
-\subsection{Character Segmentation}
+\subsection{Internal Segmentation}
 \label{ss:methods:characterSegmentation}
 \input{shared/method_segmentation}
 
@@ -16,6 +13,6 @@
 \label{ss:methods:featureExtraction}
 \input{shared/method_features}
 
-\subsection{Machine Learning}
+\subsection{Recognition}
 \label{ss:methods:machineLearing}
 \input{shared/method_machineLearning}
