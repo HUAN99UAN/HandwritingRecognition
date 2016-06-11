@@ -55,7 +55,33 @@ For the internal segmentation we have adapted the binary segmentation algorithm 
 			0 & \text{otherwise.}
 		\end{cases}
 	\end{equation*}
-	The final image $g$ is formed by appending to each seed point all the 1-valued points in $f_Q$ that are eight connected to the seed point \cite{gonzalez2002digitalCh10}. All connected components in $g$ that do not reach the boundary of the image are considered holes. \laura{Create images to illustrate this process for the final version.}
+	The final image $g$ is formed by appending to each seed point all the 1-valued points in $f_Q$ that are eight connected to the seed point \cite{gonzalez2002digitalCh10}. All connected components in $g$ that do not reach the boundary of the image are considered holes. This process is illustrated for one letter in \cref{fig:method:segmentation:holeDetection}. This example also shows a problem with this algorithm, namely that holes that are not completely closed are not seen as holes. 
+
+		\begin{figure}
+		\centering
+		\subfloat[]{
+			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_fxy.png}%
+			\label{fig:method:segmentation:holeDetection:fxy}%
+		}
+		\hfil
+		\subfloat[]{
+			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_sxy.png}%
+			\label{fig:method:segmentation:holeDetection:seed}%
+		}
+		\hfil
+		\subfloat[]{
+			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_fqxy.png}%
+			\label{fig:method:segmentation:holeDetection:fqxy}%
+		}
+		\hfil
+		\subfloat[]{
+			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_g.png}%
+			\label{fig:method:segmentation:holeDetection:g}%
+		}				
+		\caption{An example of hole detection on \protect\subref{fig:method:segmentation:holeDetection:fxy} the image array $f(x,y)$ representing the letter `b', with \protect\subref{fig:method:segmentation:holeDetection:seed} the seed array $s(x,y)$ which contains the suspicious segmentation points. Filtering the \protect\subref{fig:method:segmentation:holeDetection:fqxy} connected components, that were found after applying predicate $Q$ to $f(x,y)$ results in \protect\subref{fig:method:segmentation:holeDetection:g} one of the holes of the letter.}
+		\label{fig:method:segmentation:holeDetection}
+	\end{figure}
+
 
 \subsubsection{Binary Segmentation}
 	\label{sss:method:segmentation:binarySegmentation}
