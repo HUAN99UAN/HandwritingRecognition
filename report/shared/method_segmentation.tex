@@ -16,16 +16,16 @@ For the internal segmentation we have adapted the binary segmentation algorithm 
 	The stroke width (\texttt{SW}) refers to how thick the stroke of a pen is. We compute the stroke width as the mode of the number of sequential foreground pixels in one row or column of pixels in the horizontal and the vertical direction respectively. Stroke width is used in the generation of suspicious segmentation points including avoiding under-segmentations.
 
 	%Baseline: 2.3.2
-	The baseline of the word is computed as the row with the most foreground pixels, as is illustrated in \cref{fig:method:segmentation:baselinecomputation}. The baseline is used to reduce the influence of extensive ligatures in cursive handwriting when generation suspicious segmentation points, among other things.
+	The baseline of the word is computed as the row with the most foreground pixels. \Cref{fig:method:segmentation:baselinecomputation} shows an example of the result of this baseline computation. The baseline is used to reduce the influence of extensive ligatures in cursive handwriting when generation suspicious segmentation points, among other things.
 
 	% ACW and MCW
 	The average character width (\texttt{ACW}), minimum character width (\texttt{MCW}), minimum character height (\texttt{MCW}) and the minimum number of foreground pixels (\texttt{MFP}) are computed based on the training data.
 
 	\begin{figure}
+		\laura{For the final version show both the histogram and the computed baselines in one image.}
 		\centering
-		\missingfigure{Image of the baseline calculation, show a image of a word with a horizontal pixel density histogram}
-		% \includegraphics[width=\columnwidth]{}
-		\caption{An example of the computation of a baseline with a horizontal pixel density histogram. On the left the histogram is shown, the red line indicates the computed baseline.}
+		\includegraphics[width=\columnwidth]{shared/img/method/baseline_computation.jpg}
+		\caption{An example of the computed baselines.}
 		\label{fig:method:segmentation:baselinecomputation}
 	\end{figure}
 
