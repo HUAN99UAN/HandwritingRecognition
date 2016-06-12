@@ -1,2 +1,4 @@
 %!TEX root = ../main.tex
-Nothing to see here.
+As stated before we have chosen to focus most of the efforts of our classifier on the earlier stages in the process. Consequently we have opted for a simple classifier, that performs well on handwriting\cite{lee1991handwritten,smith1994handwritten,ha1997off}, namely the $k$-nearest neighbor algorithm. This classifier assigns to a new pattern the most frequent class of its $k$ nearest neighbors according to some distance measure. 
+
+We have chosen $k = \sqrt{n}$ where $n$ is the number of neighbors of the unclassified pattern \cite{duda2012pattern}. As a distance measure we use the Minkowski similarity measure with $p = 2$ to determine the distance between two patterns.
