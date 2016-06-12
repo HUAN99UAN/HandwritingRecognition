@@ -1,4 +1,4 @@
-\documentclass[a4paper, conference,compsoc,peerreview]{IEEEtran}
+\documentclass[a4paper, conference,compsoc,peerreview, final]{IEEEtran}
 \usepackage[utf8]{inputenc}
 
 %Language
@@ -63,9 +63,12 @@
 %Lists
 \usepackage[inline]{enumitem}
 
+%Custom commands
+\newcommand{\bigOh}[1]{\ensuremath{\mathcal{O}\left(#1\right)}}
+
 %Temporary
 \usepackage{layouts}
-\usepackage{todonotes}
+\usepackage[obeyFinal]{todonotes}
 \newcommand{\angelo}[1]{\todo[color=blue!20, inline]{\textbf{Angelo: }#1}}
 \newcommand{\laura}[1]{\todo[color=green!20, inline]{\textbf{Laura: }#1}}
 
