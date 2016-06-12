@@ -80,6 +80,18 @@ def generate_character_images(segmenter, cli_arguments):
         image_to_file(image, file_path)
 
 
+def show_baseline_computation(segmenter, cli_arguments):
+    output_file_path = build_file_path(
+        path=cli_arguments.get('outputDirectory'),
+        file_name='baseline_computation',
+        extension=cli_arguments.get('outputExtension')
+    )
+    base_lines = segmenter.base_lines
+    image = segmenter.image.copy()
+    base_lines.paint(image)
+    image_to_file(image, output_file_path)
+
+
 if __name__ == '__main__':
     Image.init()
     cli_arguments = parse_command_line_arguments()
@@ -88,5 +100,6 @@ if __name__ == '__main__':
     image = ImageOpener(image_file_path=cli_arguments.get('image')).open()
     character_segmenter = characterSegmenter.CharacterSegmenter(word_image=image, parameters=parameters)
 
-    show_segmentation_lines(character_segmenter, cli_arguments)
-    generate_character_images(character_segmenter, cli_arguments)
+    # show_segmentation_lines(character_segmenter, cli_arguments)
+    # generate_character_images(character_segmenter, cli_arguments)
+    show_baseline_computation(character_segmenter, cli_arguments)
