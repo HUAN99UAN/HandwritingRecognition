@@ -44,6 +44,10 @@ class CharacterSegmenter:
         return SSPGenerator(self._word_image, **self._parameters).suspicious_segmentation_points
 
     @property
+    def base_lines(self):
+        return SSPGenerator(self._word_image, **self._parameters).base_lines
+
+    @property
     def character_images(self):
         return self._character_images
 
