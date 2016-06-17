@@ -5,6 +5,8 @@ import cv2
 class Image(np.ndarray):
     # source: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html
 
+    _show_image_for_ms = 3000
+
     def __new__(cls, input_array):
         # Create the ndarray instance of our type, given the usual
         # ndarray input arguments.  This will call the standard
@@ -46,14 +48,16 @@ class Image(np.ndarray):
     def sub_image(self, bounding_box):
         raise NotImplementedError()
 
-    def show(self):
-        raise NotImplementedError()
+    def show(self, window_name = None):
+        cv2.namedWindow(window_name)
+        cv2.imshow(window_name, self)
+        cv2.waitKey(self.__class__._show_image_for_ms)
+        cv2.destroyAllWindows()
 
     @staticmethod
     def from_file(input_file):
         np_image = cv2.imread(input_file)
         image = Image(np_image)
-        image.show()
         return image
 
 
