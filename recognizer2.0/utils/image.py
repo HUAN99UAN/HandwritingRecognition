@@ -46,7 +46,14 @@ class Image(np.ndarray):
         # We do not need to return anything
 
     def sub_image(self, bounding_box):
-        raise NotImplementedError()
+        """
+        Get the sub_image of this image, based on the bounding box. Note that this performs a SHALLOW COPY of the
+        original image. Operations performed on the original image DO NOT affect the subimage.
+        :param bounding_box: The bounding box like objects, should have the following properties: top, bottom, right,
+        left as ints.
+        """
+        sub_image = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
+        return Image(sub_image)
 
     def show(self, window_name = None):
         cv2.namedWindow(window_name)
