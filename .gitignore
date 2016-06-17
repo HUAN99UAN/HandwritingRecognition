@@ -500,6 +500,9 @@ sympy-plots-for-*.tex/
 # proportion of contributors will probably not be using SublimeText
 # *.sublime-project
 
+# Ignore all ppm files
+*.ppm
+
 # sftp configuration file
 sftp-config.json
 
@@ -509,3 +512,5 @@ report/main.pdf
 report/individual/*
 
 report2/hwr_report.sublime-workspace
+
+
