@@ -70,4 +70,5 @@ class Image(np.ndarray):
 
 if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
-    Image.from_file(image_file)
+    image = Image.from_file(image_file)
+
