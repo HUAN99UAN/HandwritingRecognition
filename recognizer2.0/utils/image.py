@@ -1,23 +1,28 @@
 import numpy as np
 import cv2
+from enum import Enum
+
+
+class ColorMode(Enum):
+    gray, bgr = range(2)
 
 
 class Image(np.ndarray):
-    """Reprsentation of an image, images are stored as B G R
+    """Representation of an image, images are stored as B G R
 
     """
     # source: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html
 
     _show_image_for_ms = 2000
 
-    def __new__(cls, input_array):
+    def __new__(cls, input_array, color_mode=None):
         # Create the ndarray instance of our type, given the usual
         # ndarray input arguments.  This will call the standard
         # ndarray constructor, but return an object of our type.
         # It also triggers a call to InfoArray.__array_finalize__
         obj = np.asarray(input_array).view(cls)
         # set the new 'info' attribute to the value passed
-        # obj.info = info
+        obj._color_mode = color_mode
         # Finally, we must return the newly created object:
         return obj
 
@@ -33,7 +38,8 @@ class Image(np.ndarray):
         #    (we're in the middle of the InfoArray.__new__
         #    constructor, and self.info will be set when we return to
         #    InfoArray.__new__)
-        if obj is None: return
+        if obj is None:
+            return
         # From view casting - e.g arr.view(InfoArray):
         #    obj is arr
         #    (type(obj) can be InfoArray)
@@ -45,7 +51,7 @@ class Image(np.ndarray):
         # method sees all creation of default objects - with the
         # InfoArray.__new__ constructor, but also with
         # arr.view(InfoArray).
-        # self.info = getattr(obj, 'info', None)
+        self._color_mode = getattr(obj, '_color_mode', ColorMode.bgr)
         # We do not need to return anything
 
     def sub_image(self, bounding_box):
@@ -58,16 +64,28 @@ class Image(np.ndarray):
         sub_image = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
         return Image(sub_image)
 
-    def show(self, window_name = None):
+    def show(self, window_name=None):
         cv2.namedWindow(window_name)
         cv2.imshow(window_name, self)
         cv2.waitKey(self.__class__._show_image_for_ms)
         cv2.destroyAllWindows()
 
+    @property
+    def is_gray_scale(self):
+        return self._color_mode is ColorMode.gray
+
+    @property
+    def is_bgr(self):
+        return self._color_mode is ColorMode.bgr
+
+    @property
+    def color_mode(self):
+        return self._color_mode
+
     @staticmethod
     def from_file(input_file):
         np_array = cv2.imread(input_file, cv2.IMREAD_COLOR)
-        image = Image(np_array)
+        image = Image(np_array, color_mode=ColorMode.bgr)
         return image
 
 
