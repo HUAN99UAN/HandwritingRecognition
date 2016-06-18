@@ -3,6 +3,9 @@ import cv2
 
 
 class Image(np.ndarray):
+    """Reprsentation of an image, images are stored as B G R
+
+    """
     # source: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html
 
     _show_image_for_ms = 3000
@@ -63,12 +66,13 @@ class Image(np.ndarray):
 
     @staticmethod
     def from_file(input_file):
-        np_image = cv2.imread(input_file)
-        image = Image(np_image)
+        np_array = cv2.imread(input_file, cv2.IMREAD_COLOR)
+        image = Image(np_array)
         return image
 
 
 if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
     image = Image.from_file(image_file)
+    image.show()
 
