@@ -6,6 +6,14 @@ from enum import Enum
 class ColorMode(Enum):
     gray, bgr = range(2)
 
+    @property
+    def is_gray(self):
+        return self == ColorMode.gray
+
+    @property
+    def is_bgr(self):
+        return self == ColorMode.bgr
+
 
 class Image(np.ndarray):
     """Representation of an image, images are stored as B G R
@@ -15,7 +23,7 @@ class Image(np.ndarray):
 
     _show_image_for_ms = 2000
 
-    def __new__(cls, input_array, color_mode=None):
+    def __new__(cls, input_array, color_mode):
         # Create the ndarray instance of our type, given the usual
         # ndarray input arguments.  This will call the standard
         # ndarray constructor, but return an object of our type.
@@ -69,14 +77,6 @@ class Image(np.ndarray):
         cv2.imshow(window_name, self)
         cv2.waitKey(self.__class__._show_image_for_ms)
         cv2.destroyAllWindows()
-
-    @property
-    def is_gray_scale(self):
-        return self._color_mode is ColorMode.gray
-
-    @property
-    def is_bgr(self):
-        return self._color_mode is ColorMode.bgr
 
     @property
     def color_mode(self):

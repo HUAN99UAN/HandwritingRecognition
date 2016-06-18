@@ -13,8 +13,8 @@ class ToGrayScale(interface.AbstractFilter):
         super(ToGrayScale, self).__init__()
 
     def apply(self, image):
-        if image.is_gray_scale:
-            warnings.warn('The image seems to be gray scale, thus it is not converted, but returned as is.')
+        if image.color_mode.is_gray:
+            warnings.warn('The image is already in gray scale, it is returned as is.')
             return image
         return Image(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), color_mode=ColorMode.gray)
 
@@ -26,8 +26,8 @@ class ToColor(interface.AbstractFilter):
         super(ToColor, self).__init__()
 
     def apply(self, image):
-        if not image.is_gray_scale:
-            warnings.warn('The image seems not to be gray scale, thus it is not converted, but returned as is.')
+        if not image.color_mode.is_bgr:
+            warnings.warn('The image is already in colormode, it is returned as is.')
             return image
         return Image(cv2.cvtColor(image, cv2.COLOR_GRAY2BGR), color_mode=ColorMode.bgr)
 
