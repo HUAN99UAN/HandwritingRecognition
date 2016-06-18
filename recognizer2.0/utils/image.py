@@ -8,7 +8,6 @@ class Image(np.ndarray):
     """
     # source: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html
 
-    _show_image_for_ms = 3000
 
     def __new__(cls, input_array):
         # Create the ndarray instance of our type, given the usual
