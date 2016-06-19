@@ -25,14 +25,6 @@ class _MorphologicalFilter(interface.AbstractFilter):
         if image.color_mode is not ColorMode.binary:
             raise WrongColorModeError("This operation can only be performed on binary images.")
 
-    @classmethod
-    def _apply_until_stability(self, image, operation):
-        new_image = operation.apply(image)
-        raise NotImplementedError("Implementatie is nog niet 100% correct.")
-        # while new_image is not image:
-        #     image, new_image = new_image, operation.apply(new_image)
-        # return image
-
 
 class Erosion(_MorphologicalFilter):
     _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
@@ -142,60 +134,71 @@ class GeodesicErosion(_MorphologicalFilter):
         )
 
 
-class ReconstructionByErosion(_MorphologicalFilter):
-    _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+class _AbstractSimpleReconstructionFilter(_MorphologicalFilter):
+    def __init__(self, structuring_element, operation):
+        super(_AbstractSimpleReconstructionFilter, self).__init__(structuring_element=structuring_element, iterations=1)
+        self._operation = operation
 
-    def __init__(self, mask=None):
+    def apply(self, image):
+        image.show(window_name="image")
+        new_image = self._operation.apply(image)
+        new_image.show(window_name="new image")
+        while not (new_image == image).all():
+            image, new_image = new_image, self._operation.apply(new_image)
+            new_image.show(window_name="new image")
+            image.show(window_name="image")
+        return image
+
+
+class ReconstructionByErosion(_AbstractSimpleReconstructionFilter):
+    _default_structuring_element = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+
+    def __init__(self, mask_image, structuring_element=_default_structuring_element):
         super(ReconstructionByErosion, self).__init__(
-            mask=mask or self.__class__._default_mask,
-            iterations=1)
-
-    def apply(self, image):
-        erosion = Erosion(mask=self._mask, iterations=1)
-        self._apply_until_stability(image, erosion)
+            structuring_element=structuring_element,
+            operation=GeodesicErosion(mask_image=mask_image, structuring_element=structuring_element))
 
 
-class ReconstructionByDilation(_MorphologicalFilter):
-    _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+class ReconstructionByDilation(_AbstractSimpleReconstructionFilter):
+    _default_structuring_element = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    def apply(self, image):
-        dilation = Dilation(mask=self._mask, iterations=1)
-        self._apply_until_stability(image, dilation)
+    def __init__(self, mask_image, structuring_element=_default_structuring_element):
+        super(ReconstructionByDilation, self).__init__(
+            structuring_element=structuring_element,
+            operation=GeodesicDilation(mask_image=mask_image, structuring_element=structuring_element))
 
 
 class ReconstructionByOpening(_MorphologicalFilter):
-    _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    _default_structuring_element = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    def __init__(self, mask, size=1):
-        super(ReconstructionByOpening, self).__init__(
-            mask=mask or self._default_mask,
-            iterations=size
-        )
+    def __init__(self, iterations=1, structuring_element=_default_structuring_element):
+        super(ReconstructionByOpening, self).__init__(structuring_element=structuring_element, iterations=iterations)
 
     def apply(self, image):
-        image = self.fix_image_color_mode(image)
-        eroded_image = Erosion(mask=self._mask, iterations=self._iterations).apply(image)
-        return ReconstructionByDilation(mask=self._mask).apply(eroded_image)
+        erosion = Erosion(iterations=self._iterations, structuring_element=self._structuring_element).apply(image)
+        return ReconstructionByDilation(
+            mask_image=image, structuring_element=self._structuring_element
+        ).apply(erosion)
 
 
 class ReconstructionByClosing(_MorphologicalFilter):
     _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    def __init__(self, mask, size=1):
+    def __init__(self, structuring_element=_default_mask, size=1):
         super(ReconstructionByClosing, self).__init__(
-            mask=mask or self._default_mask,
+            structuring_element=structuring_element,
             iterations=size
         )
 
     def apply(self, image):
-        image = self.fix_image_color_mode(image)
-        eroded_image = Dilation(mask=self._mask, iterations=self._iterations).apply(image)
-        return ReconstructionByErosion(mask=self._mask).apply(eroded_image)
+        raise NotImplementedError()
 
 if __name__ == '__main__':
     # image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
-    image_file = '/Users/laura/Desktop/opening_1.png'
+    image_file = '/Users/laura/Desktop/reconstruction.png'
     image = Image.from_file(image_file)
-    image.show(wait_key=0)
-    new_image = Dilation().apply(image)
-    new_image.show(wait_key=0)
+
+    image = ToBinary().apply(image)
+
+    new_image = ReconstructionByOpening(structuring_element=cv2.getStructuringElement(cv2.MORPH_RECT, (1, 51))).apply(image)
+    new_image.show(wait_key=0, window_name='The Reconstruction by Opening.')
