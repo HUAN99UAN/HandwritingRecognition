@@ -1,73 +1,77 @@
 import warnings
 
 import cv2
+import numpy as np
 
 import interface
-from utils.image import Image
-from colorspaces import ToGrayScale
+from utils.image import Image, ColorMode, WrongColorModeError
+from colorspaces import ToGrayScale, ToBinary
 
 
 class _MorphologicalFilter(interface.AbstractFilter):
 
-    def __init__(self, mask, iterations):
+    def __init__(self, structuring_element, iterations):
         super(_MorphologicalFilter, self).__init__()
-        self._mask = mask
+        self._structuring_element = structuring_element
         self._iterations = iterations
 
     @classmethod
-    def fix_image_color_mode(cls, image):
-        if not image.color_mode.is_gray:
-            warnings.warn('Morphological operations are only supported on gray scale images, converting '
-                          'the image to gray scale before applying the operation.')
-            image = ToGrayScale().apply(image)
-        return image
+    def gray_scale_or_binary_check(cls, image):
+        if image.color_mode not in [ColorMode.gray, ColorMode.binary]:
+            raise WrongColorModeError("This operation can only be performed on binary or gray scale images.")
+
+    @classmethod
+    def binary_check(cls, image):
+        if image.color_mode is not ColorMode.binary:
+            raise WrongColorModeError("This operation can only be performed on binary images.")
 
     @classmethod
     def _apply_until_stability(self, image, operation):
         new_image = operation.apply(image)
-        while new_image is not image:
-            image, new_image = new_image, operation.apply(new_image)
-        return image
+        raise NotImplementedError("Implementatie is nog niet 100% correct.")
+        # while new_image is not image:
+        #     image, new_image = new_image, operation.apply(new_image)
+        # return image
 
 
 class Erosion(_MorphologicalFilter):
     _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    def __init__(self, mask=None, iterations=1):
+    def __init__(self, structuring_element=_default_mask, iterations=1):
         super(Erosion, self).__init__(
-            mask=mask or self.__class__._default_mask,
+            structuring_element=structuring_element,
             iterations=iterations)
 
     def apply(self, image):
-        image = self.fix_image_color_mode(image)
-        return Image(cv2.erode(image, self._mask, iterations=self._iterations), color_mode=image.color_mode)
+        self.gray_scale_or_binary_check(image)
+        return Image(cv2.erode(image, self._structuring_element, iterations=self._iterations), color_mode=image.color_mode)
 
 
 class Dilation(_MorphologicalFilter):
     _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    def __init__(self, mask=None, iterations=1):
+    def __init__(self, structuring_element=_default_mask, iterations=1):
         super(Dilation, self).__init__(
-            mask=mask or self.__class__._default_mask,
+            structuring_element=structuring_element,
             iterations=iterations)
 
     def apply(self, image):
-        image = self.fix_image_color_mode(image)
-        return Image(cv2.dilate(image, self._mask, iterations=self._iterations), color_mode=image.color_mode)
+        self.gray_scale_or_binary_check(image)
+        return Image(cv2.dilate(image, self._structuring_element, iterations=self._iterations), color_mode=image.color_mode)
 
 
 class Opening(_MorphologicalFilter):
     _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    def __init__(self, mask=None, iterations=1):
+    def __init__(self, structuring_element=None, iterations=1):
         super(Opening, self).__init__(
-            mask=mask or self.__class__._default_mask,
+            structuring_element=structuring_element or self._default_mask,
             iterations=iterations)
 
     def apply(self, image):
-        image = self.fix_image_color_mode(image)
+        self.gray_scale_or_binary_check(image)
         return Image(
-            cv2.morphologyEx(image, cv2.MORPH_OPEN, self.mask, iterations=self._iterations),
+            cv2.morphologyEx(image, cv2.MORPH_OPEN, self._structuring_element, iterations=self._iterations),
             color_mode=image.color_mode
         )
 
@@ -75,15 +79,15 @@ class Opening(_MorphologicalFilter):
 class Closing(_MorphologicalFilter):
     _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    def __init__(self, mask=None, iterations=1):
+    def __init__(self, structuring_element=_default_mask, iterations=1):
         super(Closing, self).__init__(
-            mask=mask or self.__class__._default_mask,
+            structuring_element=structuring_element,
             iterations=iterations)
 
     def apply(self, image):
-        image = self.fix_image_color_mode(image)
+        self.gray_scale_or_binary_check(image)
         return Image(
-            cv2.morphologyEx(image, cv2.MORPH_CLOSE, self.mask, iterations=self._iterations),
+            cv2.morphologyEx(image, cv2.MORPH_CLOSE, self._structuring_element, iterations=self._iterations),
             color_mode=image.color_mode
         )
 
