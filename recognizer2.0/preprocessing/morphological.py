@@ -1,11 +1,8 @@
-import warnings
-
 import cv2
 import numpy as np
 
 import interface
 from utils.image import Image, ColorMode, WrongColorModeError
-from colorspaces import ToGrayScale, ToBinary
 
 
 class _MorphologicalFilter(interface.AbstractFilter):
