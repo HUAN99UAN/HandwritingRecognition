@@ -129,7 +129,7 @@ class GeodesicErosion(_MorphologicalFilter):
     def _apply_once(self, marker_image):
         erosion = self._erosion.apply(marker_image)
         return Image(
-            np.asarray(np.logical_or(erosion, self._mask_image), dtype=np.uint8),
+            np.asarray(np.logical_or(erosion, self._mask_image), dtype=np.float64),
             color_mode=ColorMode.binary
         )
 
