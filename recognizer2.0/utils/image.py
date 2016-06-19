@@ -19,6 +19,13 @@ class ColorMode(Enum):
         return self == ColorMode.binary
 
 
+class WrongColorModeError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
 class Image(np.ndarray):
     """Representation of an image, images are stored as B G R
 
@@ -83,7 +90,7 @@ class Image(np.ndarray):
         wait_key=0 if you want the window shown until a key is pressed.
         :param window_name: The name of the window.
         """
-        cv2.namedWindow(window_name)
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
