@@ -140,13 +140,9 @@ class _AbstractSimpleReconstructionFilter(_MorphologicalFilter):
         self._operation = operation
 
     def apply(self, image):
-        image.show(window_name="image")
         new_image = self._operation.apply(image)
-        new_image.show(window_name="new image")
         while not (new_image == image).all():
             image, new_image = new_image, self._operation.apply(new_image)
-            new_image.show(window_name="new image")
-            image.show(window_name="image")
         return image
 
 
@@ -173,9 +169,10 @@ class ReconstructionByOpening(_MorphologicalFilter):
 
     def __init__(self, iterations=1, structuring_element=_default_structuring_element):
         super(ReconstructionByOpening, self).__init__(structuring_element=structuring_element, iterations=iterations)
+        self.erosion = Erosion(iterations=self._iterations, structuring_element=self._structuring_element)
 
     def apply(self, image):
-        erosion = Erosion(iterations=self._iterations, structuring_element=self._structuring_element).apply(image)
+        erosion = self.erosion.apply(image)
         return ReconstructionByDilation(
             mask_image=image, structuring_element=self._structuring_element
         ).apply(erosion)
@@ -184,44 +181,15 @@ class ReconstructionByOpening(_MorphologicalFilter):
 class ReconstructionByClosing(_MorphologicalFilter):
     _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    def __init__(self, structuring_element=_default_mask, size=1):
+    def __init__(self, structuring_element=_default_mask, iterations=1):
         super(ReconstructionByClosing, self).__init__(
             structuring_element=structuring_element,
-            iterations=size
+            iterations=iterations
         )
+        self.dilation = Dilation(iterations=self._iterations, structuring_element=self._structuring_element)
 
     def apply(self, image):
-        raise NotImplementedError()
-
-if __name__ == '__main__':
-    # image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
-    # image_file = '/Users/laura/Desktop/reconstruction.png'
-    # image = Image.from_file(image_file)
-    # image = ToBinary().apply(image)
-
-    marker = np.zeros((9, 10))
-    marker[2, 2] = 1
-    # marker = cv2.resize(marker, (900, 1000), interpolation=cv2.INTER_NEAREST)
-    marker = Image(marker, color_mode=ColorMode.binary)
-    marker.show(window_name='marker')
-
-    structuring_element = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    # structuring_element = cv2.getStructuringElement(cv2.MORPH_RECT, (90, 90))
-
-    mask= np.zeros((9, 10))
-    mask[2, 2] = mask[3, 2] = 1
-    mask[3:8, 3] = mask[7, 3:6] = mask[5, 3:6] = mask[6, 5] = 1
-    # mask = cv2.resize(mask, (900, 1000), interpolation=cv2.INTER_NEAREST)
-    mask = Image(mask, color_mode=ColorMode.binary)
-    mask.show(window_name='mask')
-
-    new_image = GeodesicDilation(mask_image=mask, structuring_element=structuring_element).apply(marker)
-    new_image.show(wait_key=0, window_name='Geodesic Dilation')
-
-
-
-
-
-
-    # new_image = ReconstructionByOpening(structuring_element=cv2.getStructuringElement(cv2.MORPH_RECT, (1, 51))).apply(image)
-    # new_image.show(wait_key=0, window_name='The Reconstruction by Opening.')
+        dilation = self.dilation.apply(image)
+        return ReconstructionByErosion(
+            mask_image=image, structuring_element=self._structuring_element
+        ).apply(dilation)
