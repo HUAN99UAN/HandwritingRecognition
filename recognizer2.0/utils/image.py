@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 from enum import Enum
 
+from utils.things import Range, Size
+
 
 class ColorMode(Enum):
     gray, bgr, binary = range(3)
@@ -94,6 +96,25 @@ class Image(np.ndarray):
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
+
+    @property
+    def width(self):
+        shape = self.shape
+        return shape[1]
+
+    @property
+    def height(self):
+        shape = self.shape
+        return shape[0]
+
+    @property
+    def size(self):
+        shape = self.shape
+        return Size(width=shape[1], height=shape[0])
+
+    @property
+    def luminosity_range(self):
+        raise NotImplementedError()
 
     @property
     def color_mode(self):
