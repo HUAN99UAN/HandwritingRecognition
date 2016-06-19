@@ -36,6 +36,6 @@ if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
     image = Image.from_file(image_file)
     gray_image = ToGrayScale().apply(image)
-    gray_image.show('Gray Scale')
+    gray_image.show(window_name='Gray Scale')
     color_image = ToColor().apply(gray_image)
-    color_image.show('Color Scale, but still BW')
+    color_image.show(window_name='Color Scale, but still BW')

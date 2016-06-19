@@ -21,7 +21,7 @@ class Image(np.ndarray):
     """
     # source: http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html
 
-    _show_image_for_ms = 2000
+    _default_wait_key = 2000
 
     def __new__(cls, input_array, color_mode):
         # Create the ndarray instance of our type, given the usual
@@ -72,10 +72,10 @@ class Image(np.ndarray):
         sub_image = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
         return Image(sub_image)
 
-    def show(self, window_name=None):
+    def show(self, wait_key=_default_wait_key, window_name=None):
         cv2.namedWindow(window_name)
         cv2.imshow(window_name, self)
-        cv2.waitKey(self.__class__._show_image_for_ms)
+        cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
 
     @property
