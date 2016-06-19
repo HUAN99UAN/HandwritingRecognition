@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class ColorMode(Enum):
-    gray, bgr = range(2)
+    gray, bgr, binary = range(3)
 
     @property
     def is_gray(self):
@@ -13,6 +13,10 @@ class ColorMode(Enum):
     @property
     def is_bgr(self):
         return self == ColorMode.bgr
+
+    @property
+    def is_binary(self):
+        return self == ColorMode.binary
 
 
 class Image(np.ndarray):
@@ -73,6 +77,12 @@ class Image(np.ndarray):
         return Image(sub_image)
 
     def show(self, wait_key=_default_wait_key, window_name=None):
+        """
+        Show this image.
+        :param wait_key: How long to wait for a key, before closing the image and continuing program execution. Choose
+        wait_key=0 if you want the window shown until a key is pressed.
+        :param window_name: The name of the window.
+        """
         cv2.namedWindow(window_name)
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)

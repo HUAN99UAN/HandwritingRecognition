@@ -13,10 +13,13 @@ class ToGrayScale(interface.AbstractFilter):
         super(ToGrayScale, self).__init__()
 
     def apply(self, image):
+        cv2_transformation_key = cv2.COLOR_BGR2GRAY
         if image.color_mode.is_gray:
             warnings.warn('The image is already in gray scale, it is returned as is.')
             return image
-        return Image(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), color_mode=ColorMode.gray)
+        if image.color_mode.is_binary:
+            cv2_transformation_key = cv2.COLOR_GRAY2BGR
+        return Image(cv2.cvtColor(image, cv2_transformation_key), color_mode=ColorMode.gray)
 
 
 class ToColor(interface.AbstractFilter):
@@ -26,16 +29,33 @@ class ToColor(interface.AbstractFilter):
         super(ToColor, self).__init__()
 
     def apply(self, image):
-        if not image.color_mode.is_bgr:
+        if image.color_mode.is_bgr:
             warnings.warn('The image is already in colormode, it is returned as is.')
             return image
         return Image(cv2.cvtColor(image, cv2.COLOR_GRAY2BGR), color_mode=ColorMode.bgr)
 
 
+class ToBinary(interface.AbstractFilter):
+    """Convert an image to binary."""
+
+    def __init__(self, threshold=128):
+        super(ToBinary, self).__init__()
+        self._threshold = threshold
+
+    def apply(self, image):
+        if image.color_mode.is_binary:
+            warnings.warn('The image is already in binary, it is returned as is.')
+            return image
+        if image.color_mode.is_bgr:
+            image = ToGrayScale().apply(image)
+        _, binary_image_array = cv2.threshold(image, self._threshold, 255, cv2.THRESH_BINARY)
+        return Image(binary_image_array, color_mode=ColorMode.binary)
+
+
 if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
     image = Image.from_file(image_file)
-    gray_image = ToGrayScale().apply(image)
-    gray_image.show(window_name='Gray Scale')
-    color_image = ToColor().apply(gray_image)
-    color_image.show(window_name='Color Scale, but still BW')
+    binary_image = ToBinary().apply(image)
+    color_image = ToGrayScale().apply(binary_image)
+    print(color_image.shape)
+    color_image.show(window_name='Binary')
