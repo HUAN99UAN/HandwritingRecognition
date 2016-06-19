@@ -92,6 +92,56 @@ class Closing(_MorphologicalFilter):
         )
 
 
+class GeodesicDilation(_MorphologicalFilter):
+    _default_structuring_element = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+
+    def __init__(self, mask_image, structuring_element=_default_structuring_element, iterations=1):
+        super(GeodesicDilation, self).__init__(
+            structuring_element=structuring_element,
+            iterations=iterations)
+        self.binary_check(mask_image)
+        self._mask_image = mask_image
+        self._dilation = Dilation(structuring_element=self._structuring_element)
+
+    def apply(self, image):
+        self.binary_check(image)
+        for _ in range(self._iterations):
+            image = self._apply_once(image)
+        return image
+
+    def _apply_once(self, marker_image):
+        dilation = self._dilation.apply(marker_image)
+        return Image(
+            np.asarray(np.logical_and(dilation, self._mask_image), dtype=np.uint8),
+            color_mode=ColorMode.binary
+        )
+
+
+class GeodesicErosion(_MorphologicalFilter):
+    _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+
+    def __init__(self, mask_image, structuring_element=_default_mask, iterations=1):
+        super(GeodesicErosion, self).__init__(
+            structuring_element=structuring_element,
+            iterations=iterations)
+        self.binary_check(mask_image)
+        self._mask_image = mask_image
+        self._erosion= Erosion(structuring_element=self._structuring_element)
+
+    def apply(self, image):
+        self.binary_check(image)
+        for _ in range(self._iterations):
+            image = self._apply_once(image)
+        return image
+
+    def _apply_once(self, marker_image):
+        erosion = self._erosion.apply(marker_image)
+        return Image(
+            np.asarray(np.logical_or(erosion, self._mask_image), dtype=np.uint8),
+            color_mode=ColorMode.binary
+        )
+
+
 class ReconstructionByErosion(_MorphologicalFilter):
     _default_mask = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
