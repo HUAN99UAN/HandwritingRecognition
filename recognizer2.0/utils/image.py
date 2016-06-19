@@ -92,7 +92,7 @@ class Image(np.ndarray):
         wait_key=0 if you want the window shown until a key is pressed.
         :param window_name: The name of the window.
         """
-        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.namedWindow(window_name)
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
@@ -108,13 +108,18 @@ class Image(np.ndarray):
         return shape[0]
 
     @property
-    def size(self):
+    def dimension(self):
         shape = self.shape
         return Size(width=shape[1], height=shape[0])
 
     @property
     def luminosity_range(self):
-        raise NotImplementedError()
+        if self.color_mode in [ColorMode.gray, ColorMode.binary]:
+            return Range(
+                min=np.min(self), max=np.max(self)
+            )
+        else:
+            raise NotImplementedError("Luminosity range is not supported for color images.")
 
     @property
     def color_mode(self):

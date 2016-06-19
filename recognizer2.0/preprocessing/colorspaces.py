@@ -57,5 +57,4 @@ if __name__ == '__main__':
     image = Image.from_file(image_file)
     binary_image = ToBinary().apply(image)
     color_image = ToGrayScale().apply(binary_image)
-    print(color_image.shape)
     color_image.show(window_name='Binary')
