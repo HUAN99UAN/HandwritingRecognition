@@ -51,10 +51,3 @@ class ToBinary(interface.AbstractFilter):
         _, binary_image_array = cv2.threshold(image, self._threshold, 255, cv2.THRESH_BINARY)
         return Image(binary_image_array, color_mode=ColorMode.binary)
 
-
-if __name__ == '__main__':
-    image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
-    image = Image.from_file(image_file)
-    binary_image = ToBinary().apply(image)
-    color_image = ToGrayScale().apply(binary_image)
-    color_image.show(window_name='Binary')

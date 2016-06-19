@@ -67,11 +67,3 @@ class LuminosityNormalization(interface.AbstractFilter):
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
-
-if __name__ == '__main__':
-    image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
-    image = Image.from_file(image_file)
-    normalized = LuminosityNormalization().apply(image)
-    original_gray = colorspaces.ToGrayScale().apply(image)
-    original_gray.show()
-    normalized.show(wait_key=0)
