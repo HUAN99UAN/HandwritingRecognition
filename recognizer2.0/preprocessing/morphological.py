@@ -104,7 +104,7 @@ class GeodesicDilation(_MorphologicalFilter):
     def _apply_once(self, marker_image):
         dilation = self._dilation.apply(marker_image)
         return Image(
-            np.asarray(np.logical_and(dilation, self._mask_image), dtype=np.uint8),
+            np.asarray(np.logical_and(dilation, self._mask_image), dtype=np.float64),
             color_mode=ColorMode.binary
         )
 
@@ -195,10 +195,33 @@ class ReconstructionByClosing(_MorphologicalFilter):
 
 if __name__ == '__main__':
     # image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
-    image_file = '/Users/laura/Desktop/reconstruction.png'
-    image = Image.from_file(image_file)
+    # image_file = '/Users/laura/Desktop/reconstruction.png'
+    # image = Image.from_file(image_file)
+    # image = ToBinary().apply(image)
 
-    image = ToBinary().apply(image)
+    marker = np.zeros((9, 10))
+    marker[2, 2] = 1
+    # marker = cv2.resize(marker, (900, 1000), interpolation=cv2.INTER_NEAREST)
+    marker = Image(marker, color_mode=ColorMode.binary)
+    marker.show(window_name='marker')
 
-    new_image = ReconstructionByOpening(structuring_element=cv2.getStructuringElement(cv2.MORPH_RECT, (1, 51))).apply(image)
-    new_image.show(wait_key=0, window_name='The Reconstruction by Opening.')
+    structuring_element = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    # structuring_element = cv2.getStructuringElement(cv2.MORPH_RECT, (90, 90))
+
+    mask= np.zeros((9, 10))
+    mask[2, 2] = mask[3, 2] = 1
+    mask[3:8, 3] = mask[7, 3:6] = mask[5, 3:6] = mask[6, 5] = 1
+    # mask = cv2.resize(mask, (900, 1000), interpolation=cv2.INTER_NEAREST)
+    mask = Image(mask, color_mode=ColorMode.binary)
+    mask.show(window_name='mask')
+
+    new_image = GeodesicDilation(mask_image=mask, structuring_element=structuring_element).apply(marker)
+    new_image.show(wait_key=0, window_name='Geodesic Dilation')
+
+
+
+
+
+
+    # new_image = ReconstructionByOpening(structuring_element=cv2.getStructuringElement(cv2.MORPH_RECT, (1, 51))).apply(image)
+    # new_image.show(wait_key=0, window_name='The Reconstruction by Opening.')
