@@ -4,7 +4,6 @@ from unittest import TestCase
 import numpy as np
 
 from utils.image import Image, ColorMode
-from utils.things import Size
 
 
 class TestImage(TestCase):
