@@ -2,7 +2,7 @@ import interface
 import colorspaces
 from utils.things import Range, Size
 from utils.image import Image, ColorMode
-
+from cv2 import equalizeHist
 import numpy as np
 
 
@@ -67,3 +67,33 @@ class LuminosityNormalization(interface.AbstractFilter):
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
+
+
+class HistogramsEqualization(interface.AbstractFilter):
+
+    def __init__(self):
+        super(HistogramsEqualization, self).__init__()
+
+    @classmethod
+    def verify_image(cls, image):
+        if not image.color_mode.is_gray:
+            image = colorspaces.ToGrayScale().apply(image)
+        return image
+
+    def apply(self, image):
+        image = self.verify_image(image)
+
+        return self._linear_scaling(
+            image=image,
+            old_range=image.luminosity_range
+        )
+
+    @classmethod
+    def _linear_scaling(cls, image):
+        return equalizeHist(image)
+
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
+
+
+

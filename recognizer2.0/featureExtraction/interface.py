@@ -15,3 +15,11 @@ class AbstractFeatureExtractor(object):
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
+
+    @staticmethod
+    def _concat(matrix):
+        return matrix.ravel()
+
+    @staticmethod
+    def _invert_image(img):
+        return (img == 0).astype(int)
