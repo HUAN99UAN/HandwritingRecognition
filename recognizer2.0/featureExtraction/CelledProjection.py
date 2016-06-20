@@ -10,21 +10,20 @@ class CellProjection(interface.AbstractFeatureExtractor):
     def _split_regions(img, regions=4, axis=1):
         return np.split(img, regions, axis=axis)
 
-    @staticmethod
-    def _invert_image(img):
-        return (img == 0).astype(int)
+    def _invert_image(self, image):
+        return super(CellProjection, self)._invert_image(image)
 
-    @staticmethod
-    def _concat(matrix):
-        return matrix.ravel()
+    def _concat(self, image):
+        return super(CellProjection, self)._concat(image)
 
     def extract(self, image):
+        inverted_image = self._invert_image(image)
         regions = self._split_regions(image)
         feature_matrix = self._horizontal_celled_prj_feature(regions)
         return self._concat(feature_matrix)
 
-
-    def _horizontal_celled_prj_feature(self, regions):
+    @staticmethod
+    def _horizontal_celled_prj_feature(regions):
 
         total_rows = 0
         counter = 0
