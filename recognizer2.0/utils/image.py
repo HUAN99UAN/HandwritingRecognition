@@ -20,6 +20,17 @@ class ColorMode(Enum):
     def is_binary(self):
         return self == ColorMode.binary
 
+class InterpolationMethod(Enum):
+    nearest_neighbour, bilinear, bicubic = range(3)
+
+    @property
+    def as_open_cv(self):
+        mapping = {
+            self.nearest_neighbour : cv2.INTER_NEAREST,
+            self.bilinear : cv2.INTER_LINEAR,
+            self.bicubic : cv2.INTER_CUBIC
+        }
+        return mapping.get(self)
 
 class WrongColorModeError(Exception):
     def __init__(self, value):
@@ -27,6 +38,7 @@ class WrongColorModeError(Exception):
 
     def __str__(self):
         return repr(self.value)
+
 
 class Image(np.ndarray):
     """Representation of an image, images are stored as B G R
@@ -96,6 +108,10 @@ class Image(np.ndarray):
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
+
+    def resize(self, new_size, interpolation_method=InterpolationMethod.bilinear):
+        image = cv2.resize(src=self, dsize=new_size, interpolation=interpolation_method.as_open_cv)
+        return Image(image, self.color_mode)
 
     @property
     def width(self):
