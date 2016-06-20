@@ -20,6 +20,17 @@ class ColorMode(Enum):
     def is_binary(self):
         return self == ColorMode.binary
 
+class InterpolationMethod(Enum):
+    nearest_neighbour, bilinear, bicubic = range(3)
+
+    @property
+    def as_open_cv(self):
+        mapping = {
+            self.nearest_neighbour : cv2.INTER_NEAREST,
+            self.bilinear : cv2.INTER_LINEAR,
+            self.bicubic : cv2.INTER_CUBIC
+        }
+        return mapping.get(self)
 
 class WrongColorModeError(Exception):
     def __init__(self, value):
@@ -27,6 +38,7 @@ class WrongColorModeError(Exception):
 
     def __str__(self):
         return repr(self.value)
+
 
 class Image(np.ndarray):
     """Representation of an image, images are stored as B G R
@@ -97,6 +109,47 @@ class Image(np.ndarray):
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
 
+    def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.bilinear):
+        """
+        Resize an image to a new size. Note that the aspect ratio of the image is not take into account.
+        :param width: The width of the new image, if only width is given keep_aspect_ratio is set to True.
+        :param height: The height of the new image, if only height is given keep_aspect_ratio is set to True.
+        :param keepaspect_ratio: if the apsect ratio is to be kept intact, is True, unless both width and height are passed.
+        :param interpolation_method: The interpolation method to use, default is bilinear. Should be either an
+        image.InterpolateMethod or cv2.INTER_*
+        :return: A new image of size new_size.
+        """
+        def compute_ratio(base_value, other_value):
+            return base_value / float(other_value)
+
+        def compute_new_size(image, width, height, keep_aspect_ratio):
+            if width and not height:
+                ratio = compute_ratio(width, image.width)
+                height = round(ratio * image.height)
+                return Size(width=int(width), height=int(height))
+            if height and not width:
+                ratio = compute_ratio(height, image.height)
+                width = round(ratio * image.width)
+                return Size(width=int(width), height=int(height))
+            if height and width and keep_aspect_ratio:
+                ratio = min(compute_ratio(height, image.height), compute_ratio(width, image.width))
+                width = ratio * image.width
+                height = ratio*image.height
+                return Size(width=int(width), height=int(height))
+            if height and width and not keep_aspect_ratio:
+                return Size(width=int(width), height=int(height))
+            raise TypeError('Invalid combination of arguments.')
+
+        def verify_size(size):
+            if size.width < 1 or size.height < 1:
+                raise KeyError('Both width and height should be >= 1.')
+
+        correct_size = compute_new_size(self, width, height, keepaspect_ratio)
+        verify_size(correct_size)
+
+        scaled_image = cv2.resize(src=self, dsize=correct_size, interpolation=interpolation_method.as_open_cv)
+        return Image(scaled_image, self.color_mode)
+
     @property
     def width(self):
         shape = self.shape
@@ -135,5 +188,7 @@ class Image(np.ndarray):
 if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
     image = Image.from_file(image_file)
+    import preprocessing.colorspaces
+    gray_scale = preprocessing.colorspaces.ToGrayScale().apply(image)
     image.show()
 
