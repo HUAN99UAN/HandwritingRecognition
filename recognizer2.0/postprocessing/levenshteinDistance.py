@@ -7,10 +7,18 @@ class LevenshteinDistance(interface.AbstractPostProcessor):
     https://en.wikipedia.org/wiki/Levenshtein_distance
     """
     def __init__(self):
-        super(LevenshteinDistance, self).__init__()
+        pass
+        #super(LevenshteinDistance, self).__init__()
 
     def _find_levenshtein_distance(self, word1, word1_len, word2, word2_len):
-        cost = 0
+        """
+
+        :param word1: word to be compared
+        :param word1_len: the length of the first word
+        :param word2: word to be compared
+        :param word2_len: the length of thr second word
+        :return: (int)
+        """
         if word1_len == 0:
             return word2_len
         if word2_len == 0:
@@ -26,7 +34,7 @@ class LevenshteinDistance(interface.AbstractPostProcessor):
                              self._find_levenshtein_distance(word1, word1_len - 1, word2, word2_len - 1) + cost)
 
     def find_distance(self, lexicon_words, word):
-        most_probable = {'lexicon_word': '', 'result_word': word, 'distance': 100}
+        most_probable = {'lexicon_word': '', 'result_word': word, 'distance': 1000}
         dist = 100
         for lexicon_word in lexicon_words:
             new_dist = self._find_levenshtein_distance(word, len(word), lexicon_word.word, len(lexicon_word.word))
@@ -39,6 +47,12 @@ class LevenshteinDistance(interface.AbstractPostProcessor):
 
     @staticmethod
     def _minimum(z, x, c):
+        """
+        :param z:
+        :param x:
+        :param c:
+        :return: (int) return the minimum of the three params
+        """
         if z < x:
             if x <= c:
                 return z
@@ -54,4 +68,4 @@ class LevenshteinDistance(interface.AbstractPostProcessor):
 if __name__ == '__main__':
     l = LevenshteinDistance()
     lex = createLexicon.CreateLexicon.create('lexicon.txt')
-    l.find_distance(lex, 'asdf')
+    l.find_distance(lex, 'qwerty')
