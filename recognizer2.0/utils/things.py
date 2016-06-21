@@ -3,6 +3,7 @@ from collections import namedtuple
 
 _RangeTuple = namedtuple('Range', ['min', 'max'], verbose=True)
 _SizeTuple = namedtuple('Size', ['width', 'height'], verbose=True)
+Point = namedtuple('Point', ['x', 'y'])
 
 
 class Range(_RangeTuple):
