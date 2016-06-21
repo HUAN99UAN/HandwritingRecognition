@@ -5,16 +5,16 @@ from utils.image import WrongColorModeError
 from utils.shapes import HorizontalLine
 
 
-class _AbstractStrokeWidthEstimator(object):
+class _AbstractBaseLineEstimator(object):
 
     def __init__(self):
-        super(_AbstractStrokeWidthEstimator, self).__init__()
+        super(_AbstractBaseLineEstimator, self).__init__()
 
     def estimate(self, image):
         pass
 
 
-class VerticalHistogram(_AbstractStrokeWidthEstimator):
+class VerticalHistogram(_AbstractBaseLineEstimator):
 
     @classmethod
     def _verify_image(cls, image):
