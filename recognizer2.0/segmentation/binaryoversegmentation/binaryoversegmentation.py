@@ -1,10 +1,12 @@
 import segmentation.interface
 import segmentation.binaryoversegmentation.baseline as baseline
 from utils.image import Image
+import segmentation.binaryoversegmentation.strokewidth as strokewidth
 from postprocessing.lexicon import Lexicon
 
 red = (0, 0, 255)
 blue = (255, 0, 0)
+
 
 class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     """Internal segmentation based on binary over segmentation.
@@ -13,21 +15,27 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     recognition." Pattern Recognition 45.4 (2012): 1306-1317.
     """
 
-    def __init__(self, lexicon, max_segmentation=12, stroke_width_estimator=baseline.VerticalHistogram()):
+    def __init__(self, lexicon,
+                 base_line_estimator=baseline.VerticalHistogram(),
+                 stroke_width_estimator=strokewidth.RasterTechnique()):
         super(BinaryOverSegmentation, self).__init__()
-        self._max_segmentation = max_segmentation
-        self._base_line_estimator = stroke_width_estimator
         self._lexicon = lexicon
+        self._max_segmentation = lexicon.longest_word.length
+        self._base_line_estimator = base_line_estimator
+        self._stroke_width_estimator = stroke_width_estimator
 
         # Depend on the input image, but are handy to store in the object.
         self._low_base_line = None
         self._high_base_line = None
+        self._stroke_width = None
 
     def segment(self, image):
         self._low_base_line, self._high_base_line = self._base_line_estimator.estimate(image)
-        image = self._low_base_line.paint_on(image, color=red)
-        image = self._high_base_line.paint_on(image, color=blue)
-        image.show(wait_key=0)
+        self._stroke_width = self._stroke_width_estimator.estimate(image)
+
+        # image = self._low_base_line.paint_on(image, color=red)
+        # image = self._high_base_line.paint_on(image, color=blue)
+        # image.show(wait_key=0)
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
@@ -40,4 +48,7 @@ if __name__ == '__main__':
     image = Image.from_file(image_file)
     image = ToBinary().apply(image)
 
-    BinaryOverSegmentation().segment(image)
+    lexicon_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/lexicon.txt'
+    lexicon = Lexicon.from_file(lexicon_file)
+
+    BinaryOverSegmentation(lexicon=lexicon).segment(image)
