@@ -21,10 +21,7 @@ class Error():
                 oracle_word = self._extract_word(oracle_lines[line])
                 result_word = self._extract_word(result_lines[line])
                 self._compare_words(oracle_word, result_word)
-                self._words.append(Words(oracle_word, result_word))
-
-        for w in self._words:
-            print w
+                self._words.append(Word(oracle_word, result_word))
 
         return {'total_words': self._total_words_compared,
                 'correct_words': self._total_matched_words,
@@ -66,7 +63,7 @@ class Error():
                         results[k].append(tmp_results[k])
 
 
-class Words():
+class Word():
     def __init__(self, oracle_word, result_word):
         self._oracle_word = oracle_word
         self._result_word = result_word
