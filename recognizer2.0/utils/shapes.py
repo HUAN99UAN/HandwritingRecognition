@@ -44,7 +44,7 @@ class Line(Shape):
         return self._p2.y
 
     def paint_on(self, image, color=(0, 0, 0), width=10):
-        if not image.color_mode.is_bgr:
+        if not image.color_mode.is_color:
             image = preprocessing.colorspaces.ToColor().apply(image)
         cv2.line(image, self.p1, self.p2, color=color, thickness=width)
         return image
@@ -116,7 +116,7 @@ class Rectangle(Shape):
         return abs(self.bottom - self.top)
 
     def paint_on(self, image, color=(0, 0, 0), width=10, filled=False):
-        if not image.color_mode.is_bgr:
+        if not image.color_mode.is_color:
             image = preprocessing.colorspaces.ToColor().apply(image)
         if filled:
             width = -1
