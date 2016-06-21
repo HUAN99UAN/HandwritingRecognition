@@ -1,1 +1,1 @@
-from binaroversegmentation.binaryoversegmentation import BinaryOverSegmentation
+from binaryoversegmentation.binaryoversegmentation import BinaryOverSegmentation
