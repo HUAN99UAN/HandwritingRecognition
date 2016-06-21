@@ -1,7 +1,8 @@
 import segmentation.interface
+from segmentation.verticalpixeldensity import VerticalPixelDensity
 import segmentation.binaryoversegmentation.baseline as baseline
-from utils.image import Image
 import segmentation.binaryoversegmentation.strokewidth as strokewidth
+from utils.image import Image
 from postprocessing.lexicon import Lexicon
 
 red = (0, 0, 255)
@@ -18,6 +19,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def __init__(self, lexicon,
                  base_line_estimator=baseline.VerticalHistogram(),
                  stroke_width_estimator=strokewidth.RasterTechnique()):
+
         super(BinaryOverSegmentation, self).__init__()
         self._lexicon = lexicon
         self._max_segmentation = lexicon.longest_word.length
@@ -33,9 +35,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._low_base_line, self._high_base_line = self._base_line_estimator.estimate(image)
         self._stroke_width = self._stroke_width_estimator.estimate(image)
 
-        # image = self._low_base_line.paint_on(image, color=red)
-        # image = self._high_base_line.paint_on(image, color=blue)
-        # image.show(wait_key=0)
+        segmentation_lines = VerticalPixelDensity(threshold=self._stroke_width * 2).segment(image, as_images=False)
+        image = segmentation_lines.paint_on(image)
+        image.show(wait_key=0)
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
