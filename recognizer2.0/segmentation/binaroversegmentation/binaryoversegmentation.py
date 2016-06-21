@@ -1,7 +1,7 @@
-import interface
+import segmentation.interface
 
 
-class BinaryOverSegmentation(interface.AbstractSegmenter):
+class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     """Internal segmentation based on binary over segmentation.
 
     This method is based on Lee, Hong, and Brijesh Verma. "Binary segmentation algorithm for English cursive handwriting
