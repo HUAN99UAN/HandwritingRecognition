@@ -13,7 +13,7 @@ class ColorMode(Enum):
         return self == ColorMode.gray
 
     @property
-    def is_bgr(self):
+    def is_color(self):
         return self == ColorMode.bgr
 
     @property
