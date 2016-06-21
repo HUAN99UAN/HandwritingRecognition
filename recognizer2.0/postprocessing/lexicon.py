@@ -1,7 +1,10 @@
-class CreateLexicon():
+class Lexicon():
+
+    def __init__(self, words):
+        self._words = words
 
     @staticmethod
-    def create(file_name):
+    def from_file(file_name):
         lexicon = []
         total_words = 0
         with open(file_name, 'r') as f:
@@ -13,9 +16,14 @@ class CreateLexicon():
 
         for l in lexicon:
             l.frequency_in_text = (l.times_in_text*100.0)/total_words
+        return Lexicon(words=lexicon)
 
-        return lexicon
+    @property
+    def longest_word(self):
+        return max(self._words, key=lambda word: word.length).word
 
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
 
 class LexiconWord():
     def __init__(self, word, times_in_text):
@@ -35,6 +43,10 @@ class LexiconWord():
     def frequency_in_text(self):
         return self._frequency_in_text
 
+    @property
+    def length(self):
+        return len(self._word)
+
     @frequency_in_text.setter
     def frequency_in_text(self, freq):
         self._frequency_in_text = freq
@@ -43,5 +55,5 @@ class LexiconWord():
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 if __name__ == '__main__':
-    c = CreateLexicon()
-    print c.create('lexicon.txt')
+    lexicon = Lexicon.from_file('lexicon.txt')
+    print(lexicon.longest_word)

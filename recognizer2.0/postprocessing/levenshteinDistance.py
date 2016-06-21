@@ -1,5 +1,5 @@
 import interface
-import createLexicon
+import lexicon
 
 
 class LevenshteinDistance(interface.AbstractPostProcessor):
@@ -53,5 +53,5 @@ class LevenshteinDistance(interface.AbstractPostProcessor):
 
 if __name__ == '__main__':
     l = LevenshteinDistance()
-    lex = createLexicon.CreateLexicon.create('lexicon.txt')
+    lex = lexicon.Lexicon.from_file('lexicon.txt')
     l.find_distance(lex, 'asdf')
