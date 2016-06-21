@@ -29,7 +29,7 @@ class ToColor(interface.AbstractFilter):
         super(ToColor, self).__init__()
 
     def apply(self, image):
-        if image.color_mode.is_bgr:
+        if image.color_mode.is_color:
             warnings.warn('The image is already in colormode, it is returned as is.')
             return image
         return Image(cv2.cvtColor(image, cv2.COLOR_GRAY2BGR), color_mode=ColorMode.bgr)
@@ -46,7 +46,7 @@ class ToBinary(interface.AbstractFilter):
         if image.color_mode.is_binary:
             warnings.warn('The image is already in binary, it is returned as is.')
             return image
-        if image.color_mode.is_bgr:
+        if image.color_mode.is_color:
             image = ToGrayScale().apply(image)
         _, binary_image_array = cv2.threshold(image, self._threshold, 255, cv2.THRESH_BINARY)
         return Image(binary_image_array, color_mode=ColorMode.binary)
