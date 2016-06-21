@@ -20,7 +20,7 @@ class Lexicon():
 
     @property
     def longest_word(self):
-        return max(self._words, key=lambda word: word.length).word
+        return max(self._words, key=lambda word: word.length)
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
