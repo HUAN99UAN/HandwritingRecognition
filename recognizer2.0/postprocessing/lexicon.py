@@ -25,6 +25,7 @@ class Lexicon():
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
+
 class LexiconWord():
     def __init__(self, word, times_in_text):
         self._word = word
