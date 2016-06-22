@@ -1,9 +1,9 @@
-import segmentation.interface
-from segmentation.verticalpixeldensity import VerticalPixelDensity
 import segmentation.binaryoversegmentation.baseline as baseline
 import segmentation.binaryoversegmentation.strokewidth as strokewidth
-from utils.image import Image
+import segmentation.interface
 from postprocessing.lexicon import Lexicon
+from segmentation.binaryoversegmentation.suspiciousregions import SuspiciousRegionsComputer
+from utils.image import Image
 
 red = (0, 0, 255)
 blue = (255, 0, 0)
@@ -34,10 +34,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def segment(self, image):
         self._low_base_line, self._high_base_line = self._base_line_estimator.estimate(image)
         self._stroke_width = self._stroke_width_estimator.estimate(image)
-
-        segmentation_lines = VerticalPixelDensity(threshold=self._stroke_width * 2).segment(image, as_images=False)
-        image = segmentation_lines.paint_on(image)
-        image.show(wait_key=0)
+        suspicious_regions = SuspiciousRegionsComputer(threshold=self._stroke_width * 2).compute(image)
+        segmentation_lines = suspicious_regions.to_segmentation_lines()
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)

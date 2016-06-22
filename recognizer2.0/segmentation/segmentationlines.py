@@ -26,5 +26,12 @@ class SegmentationLines(object):
             lines.append(VerticalLine(x=x, y1=0, y2=image_height))
         return SegmentationLines(lines)
 
+    @staticmethod
+    def from_suspicious_regions(regions, stroke_width):
+        lines = list()
+        for region in regions:
+            lines.extend(region.to_segmentation_lines())
+        return SegmentationLines(lines)
+
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
