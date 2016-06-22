@@ -6,6 +6,7 @@ from preprocessing.colorspaces import ToBinary
 from preprocessing.invert import Invert
 from utils.shapes import Rectangle
 from utils.things import Point
+from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine, SegmentationLines
 
 
 class SuspiciousRegionsComputer:
@@ -31,11 +32,11 @@ class SuspiciousRegionsComputer:
 
     def _to_suspicious_regions(self, frequencies, image_height):
         sequences_of_suspicious_segmentation_lines = self._to_sequences(frequencies)
-        return [
+        return SuspiciousRegions([
             SuspiciousRegion(x0=x0, x1=x1, image_height=image_height)
             for (x0, x1)
             in sequences_of_suspicious_segmentation_lines
-        ]
+        ])
 
     def _to_sequences(self, frequencies):
         bits = np.asarray(frequencies <= self._threshold, dtype=np.uint8)
@@ -48,6 +49,22 @@ class SuspiciousRegionsComputer:
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
+
+
+class SuspiciousRegions():
+    def __init__(self, regions):
+        self._regions = regions
+
+    def to_segmentation_lines(self, stroke_width):
+        lines = []
+        for region in self._regions:
+            lines.extend(region.to_segmentation_lines(stroke_width))
+        return SegmentationLines(lines)
+
+    def paint_on(self, image, color=(0,0,0), width=10, filled=False):
+        for region in self._regions:
+            image = region.paint_on(image, color=color, width=width, filled=filled)
+        return image
 
 
 class SuspiciousRegion(Rectangle):
@@ -64,12 +81,15 @@ class SuspiciousRegion(Rectangle):
         if self.width >= stroke_width:
             return self._to_segmentation_lines(stroke_width)
 
-    @classmethod
-    def _segmentation_line_in_center(cls):
-        raise NotImplementedError()
-        # should return a list!
+    def _segmentation_line_in_center(self):
+        x = round((self.left + self.right)/ 2.0)
+        return [SegmentationLine(x=x, y1=self.top, y2=self.bottom)]
 
-    @classmethod
-    def _to_segmentation_lines(cls):
-        raise NotImplementedError()
-        # should return a list!
+    def _to_segmentation_lines(self, stroke_width):
+        segmentation_lines = []
+        for x in range(self.left, self.right, stroke_width):
+            segmentation_lines.append(
+                SegmentationLine(x=x, y1=self.top, y2=self.bottom)
+            )
+        segmentation_lines.append(SegmentationLine(x=self.right, y1=self.top, y2=self.bottom))
+        return segmentation_lines
