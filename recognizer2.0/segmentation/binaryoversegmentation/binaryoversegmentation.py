@@ -3,7 +3,8 @@ import segmentation.binaryoversegmentation.strokewidth as strokewidth
 import segmentation.interface
 from postprocessing.lexicon import Lexicon
 from segmentation.binaryoversegmentation.suspiciousregions import SuspiciousRegionsComputer
-import segmentation.binaryoversegmentation.segmentatoinlinesfilters as filters
+from segmentation.binaryoversegmentation.segmentationlines import SegmentationLines
+import segmentation.binaryoversegmentation.segmentationlinesfilters as filters
 from utils.image import Image
 from utils.shapes import Rectangle
 from utils.things import Point
@@ -58,8 +59,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
     def _filter_segmentation_lines(self, image, segmentation_lines):
         hole_filter = filters.HoleFilter(image=image)
-        for line in segmentation_lines.lines:
-            hole_filter.keep(line)
+
+        segmentation_lines = segmentation_lines.filter(hole_filter.keep)
+        self._log['segmentation_lines_after_hole_filter'] = segmentation_lines
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
