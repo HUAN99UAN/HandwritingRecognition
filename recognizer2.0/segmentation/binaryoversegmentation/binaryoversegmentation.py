@@ -95,7 +95,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                 )
 
         def select_next_image(images):
-            images.sort(key=lambda image: image.widt_over_height_ratio)
+            images.sort(key=lambda image: image.width_over_height_ratio)
             return images[0]
 
         character_images = list()
