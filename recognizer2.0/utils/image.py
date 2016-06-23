@@ -95,7 +95,7 @@ class Image(np.ndarray):
         left as ints.
         """
         sub_image = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
-        return Image(sub_image)
+        return Image(sub_image, color_mode=self.color_mode)
 
     def show(self, wait_key=_default_wait_key, window_name=None):
         """
