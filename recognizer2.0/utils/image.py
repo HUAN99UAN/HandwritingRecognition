@@ -155,6 +155,12 @@ class Image(np.ndarray):
         shape = self.shape
         return shape[1]
 
+    def get_pixel(self, pixel):
+        try:
+            return self[pixel.row, pixel.column]
+        except IndexError:
+            return None
+
     @property
     def height(self):
         shape = self.shape
@@ -177,6 +183,10 @@ class Image(np.ndarray):
     @property
     def color_mode(self):
         return self._color_mode
+
+    @property
+    def vertical_center(self):
+        return round(self.width / 2.0)
 
     @property
     def number_of_foreground_pixels(self):
