@@ -9,15 +9,31 @@ class SegmentationLines(object):
     def __init__(self, lines):
         super(SegmentationLines, self).__init__()
         self._lines= lines
+        self._idx = 0
 
     def lines(self):
         for line in self._lines:
             yield line
 
-    def paint_on(self, image, color=(0, 0, 0), width=10):
+    def paint_on(self, image, color=(0, 0, 0), width=1):
         for line in self._lines:
             image = line.paint_on(image, color=color, width=width)
         return image
+
+    def __iter__(self):
+        self._idx = 0
+        return self
+
+    def next(self):
+        if self._idx < len(self._lines):
+            self._idx += 1
+            return self._lines[self._idx - 1]
+        else:
+            raise StopIteration
+
+    def filter(self, filter_method):
+        new_lines = filter(filter_method, self._lines)
+        return SegmentationLines(lines=new_lines)
 
     @staticmethod
     def from_x_coordinates(x_coordinates, image_height):
@@ -38,4 +54,6 @@ class SegmentationLines(object):
 
 
 class SegmentationLine(VerticalLine):
-    pass
+    @property
+    def x(self):
+        return self.x1
