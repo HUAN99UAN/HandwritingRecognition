@@ -15,25 +15,29 @@ class SuspiciousRegionsComputer:
     def __init__(self, threshold):
         self._threshold = threshold
 
-    @classmethod
-    def _binarize_image(cls, image):
-        if not image.color_mode.binary:
+        self._image = None
+
+    def _binarize_image(self):
+        if not self._image.color_mode.binary:
             warnings.warn('Expected a binary image, the image is converted to binary with a default threshold.')
-        return ToBinary(maximum_value=1).apply(image)
+        return ToBinary(maximum_value=1).apply(self._image)
 
     def compute(self, image):
-        frequencies = self._vertical_pixel_densities(image)
-        return self._to_suspicious_regions(frequencies=frequencies, image_height=image.height)
+        self._image = image
+        frequencies = self._vertical_pixel_densities()
+        suspicious_regions =  self._to_suspicious_regions(frequencies=frequencies)
+        self.clean_up()
+        return suspicious_regions
 
-    def _vertical_pixel_densities(self, image):
-        image = Invert().apply(self._binarize_image(image))
+    def _vertical_pixel_densities(self):
+        image = Invert().apply(self._binarize_image())
         frequencies = np.sum(image, axis=0)
         return frequencies
 
-    def _to_suspicious_regions(self, frequencies, image_height):
+    def _to_suspicious_regions(self, frequencies):
         sequences_of_suspicious_segmentation_lines = self._to_sequences(frequencies)
         return SuspiciousRegions([
-            SuspiciousRegion(x0=x0, x1=x1, image_height=image_height)
+            SuspiciousRegion(x0=x0, x1=x1, image_height=self._image.height)
             for (x0, x1)
             in sequences_of_suspicious_segmentation_lines
         ])
@@ -45,7 +49,15 @@ class SuspiciousRegionsComputer:
         difs = np.diff(bounded)
         run_starts, = np.where(difs > 0)
         run_ends, = np.where(difs < 0)
+        self._fix_boundary_of_last_suspicious_region(run_ends)
         return zip(run_starts, run_ends)
+
+    def _fix_boundary_of_last_suspicious_region(self, run_ends):
+        if run_ends[-1:] == self._image.width:
+            run_ends[-1:] -= 1
+
+    def clean_up(self):
+        self._image = None
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
