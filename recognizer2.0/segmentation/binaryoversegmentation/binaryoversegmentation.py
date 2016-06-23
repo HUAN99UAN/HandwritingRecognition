@@ -35,8 +35,6 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._high_base_line = None
         self._stroke_width = None
 
-        self._log = dict()
-
     def extract_body_bounding_box(self, image):
         return Rectangle(
             top_left=Point(x=0, y=self._high_base_line.y),
@@ -50,21 +48,15 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         body_region = image.sub_image(bounding_box=self.extract_body_bounding_box(image))
 
         suspicious_regions = SuspiciousRegionsComputer(threshold=self._stroke_width * 2).compute(body_region)
-        self._log['suspicious_regions'] = suspicious_regions
 
         segmentation_lines = suspicious_regions.to_segmentation_lines(stroke_width=self._stroke_width)
-        self._log['initial_segmentation_lines'] = segmentation_lines
 
         self._filter_segmentation_lines(image=image, segmentation_lines=segmentation_lines)
 
-    def _filter_segmentation_lines(self, image, segmentation_lines):
+    @classmethod
+    def _filter_segmentation_lines(cls, image, segmentation_lines):
         hole_filter = filters.HoleFilter(image=image)
-
         segmentation_lines = segmentation_lines.filter(hole_filter.keep)
-        self._log['segmentation_lines_after_hole_filter'] = segmentation_lines
-
-        image = segmentation_lines.paint_on(image)
-        image.show(wait_key=0)
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
