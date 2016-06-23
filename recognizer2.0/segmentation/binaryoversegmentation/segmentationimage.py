@@ -1,13 +1,16 @@
+import numpy as np
+
 from utils.image import Image
 
 
 class SegmentationImage(Image):
     """An image that is being segmented"""
 
-    def __init__(self, image, segmentation_lines, validators=[]):
-        super(SegmentationImage, self).__init__(image, image.color_mode)
-        self._segmentation_lines = segmentation_lines
-        self._validators = validators
+    def __new__(cls, image, segmentation_lines, validators=[]):
+        obj = Image.__new__(cls, image, image.color_mode)
+        obj._segmentation_lines = segmentation_lines
+        obj._validators = validators
+        return obj
 
     def segment(self):
         splitting_line = self._segmentation_lines.middle_segmentation_line
