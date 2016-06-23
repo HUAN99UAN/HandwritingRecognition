@@ -35,6 +35,10 @@ class SegmentationLines(object):
         new_lines = filter(filter_method, self._lines)
         return SegmentationLines(lines=new_lines)
 
+    @property
+    def middle_segmentation_line(self):
+        raise NotImplementedError()
+
     @staticmethod
     def from_x_coordinates(x_coordinates, image_height):
         lines = list()
