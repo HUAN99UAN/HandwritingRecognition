@@ -63,6 +63,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         segmentation_lines = segmentation_lines.filter(hole_filter.keep)
         self._log['segmentation_lines_after_hole_filter'] = segmentation_lines
 
+        image = segmentation_lines.paint_on(image)
+        image.show(wait_key=0)
+
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 

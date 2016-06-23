@@ -53,7 +53,17 @@ class SegmentationLines(object):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 
-class SegmentationLine(VerticalLine):
+class SegmentationLine():
+    def __init__(self, x):
+        self._x = x
+
     @property
     def x(self):
-        return self.x1
+        return self._x
+
+    def paint_on(self, image, color=(0,0,0), width=1, top=None, bottom=None):
+        top = top or 0
+        bottom = bottom or image.height
+        return VerticalLine(
+            x=self.x, y1=top, y2=bottom
+        ).paint_on(image, color=color, width=width)

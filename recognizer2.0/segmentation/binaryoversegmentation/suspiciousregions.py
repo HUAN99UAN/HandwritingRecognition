@@ -95,13 +95,13 @@ class SuspiciousRegion(Rectangle):
 
     def _segmentation_line_in_center(self):
         x = round((self.left + self.right)/ 2.0)
-        return [SegmentationLine(x=x, y1=self.top, y2=self.bottom)]
+        return [SegmentationLine(x=x)]
 
     def _to_segmentation_lines(self, stroke_width):
         segmentation_lines = []
         for x in range(self.left, self.right, stroke_width):
             segmentation_lines.append(
-                SegmentationLine(x=x, y1=self.top, y2=self.bottom)
+                SegmentationLine(x=x)
             )
-        segmentation_lines.append(SegmentationLine(x=self.right, y1=self.top, y2=self.bottom))
+        segmentation_lines.append(SegmentationLine(x=self.right))
         return segmentation_lines
