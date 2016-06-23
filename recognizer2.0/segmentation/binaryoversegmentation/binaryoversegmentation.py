@@ -1,10 +1,10 @@
 import segmentation.binaryoversegmentation.baseline as baseline
+import segmentation.binaryoversegmentation.segmentationlinesfilters as filters
 import segmentation.binaryoversegmentation.strokewidth as strokewidth
 import segmentation.interface
 from postprocessing.lexicon import Lexicon
-from segmentation.binaryoversegmentation.suspiciousregions import SuspiciousRegionsComputer
 from segmentation.binaryoversegmentation.segmentationimage import SegmentationImage
-import segmentation.binaryoversegmentation.segmentationlinesfilters as filters
+from segmentation.binaryoversegmentation.suspiciousregions import SuspiciousRegionsComputer
 from segmentationimage import ValidateOnForegroundPixels, ValidateOnWidth
 from utils.image import Image
 from utils.shapes import Rectangle
@@ -40,8 +40,10 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def segment(self, image):
         self._compute_parameters(image)
         segmentation_lines = self._compute_segmentation_lines(image)
-        segmentation_image = SegmentationImage(segmentation_lines)
         self._validators = self._build_validators()
+        segmentation_image = SegmentationImage(
+            image=image, segmentation_lines=segmentation_lines, validators=self._validators
+        )
         return self._binary_segmentation(segmentation_image)
 
     def _compute_parameters(self, image):
@@ -66,7 +68,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
     @property
     def minimum_num_foreground_pixels(self):
-        return (self._high_base_line - self._low_base_line) * self._stroke_width
+        return (self._high_base_line.y - self._low_base_line.y) * self._stroke_width
 
     def _build_validators(self):
         return [

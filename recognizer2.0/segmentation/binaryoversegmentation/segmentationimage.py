@@ -4,7 +4,7 @@ from utils.image import Image
 class SegmentationImage(Image):
     """An image that is being segmented"""
 
-    def __init__(self, image, segmentation_lines, validators = []):
+    def __init__(self, image, segmentation_lines, validators=[]):
         super(SegmentationImage, self).__init__(image, image.color_mode)
         self._segmentation_lines = segmentation_lines
         self._validators = validators
@@ -55,20 +55,18 @@ class _AbstractSegmentationImageValidator(object):
 
 
 class ValidateOnWidth(_AbstractSegmentationImageValidator):
-    def __init__(self, minimum_character_width=None):
+    def __init__(self, minimum_character_width):
         _AbstractSegmentationImageValidator.__init__(self)
         self._minimum_character_width = minimum_character_width
-        raise NotImplementedError("What should the minimum character width be?")
 
     def is_valid(self, image):
         return image.width > self._minimum_character_width
 
 
 class ValidateOnForegroundPixels(_AbstractSegmentationImageValidator):
-    def __init__(self, minimum_num_foreground_pixels=None):
+    def __init__(self, minimum_num_foreground_pixels):
         _AbstractSegmentationImageValidator.__init__(self)
         self._minimum_num_foreground_pixels = minimum_num_foreground_pixels
-        raise NotImplementedError("What should the number of foreground pixels be?")
 
     def is_valid(self, image):
         return image.number_of_foreground_pixels> self._minimum_num_foreground_pixels
