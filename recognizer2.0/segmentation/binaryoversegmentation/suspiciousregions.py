@@ -4,7 +4,7 @@ import numpy as np
 
 from preprocessing.colorspaces import ToBinary
 from preprocessing.invert import Invert
-from utils.shapes import Rectangle
+from utils.shapes import Rectangle, HorizontalLine
 from utils.things import Point
 from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine, SegmentationLines
 
@@ -79,13 +79,13 @@ class SuspiciousRegions():
         return image
 
 
-class SuspiciousRegion(Rectangle):
+class SuspiciousRegion(HorizontalLine):
 
     def __init__(self, x0, x1, image_height):
         x0, x1 = min(x0, x1), max(x0, x1)
         top_left = Point(x=x0, y=0)
         bottom_right = Point(x=x1, y=image_height)
-        super(SuspiciousRegion, self).__init__(top_left=top_left, bottom_right=bottom_right)
+        super(SuspiciousRegion, self).__init__(x1=x0, x2=x1, y=0)
 
     def to_segmentation_lines(self, stroke_width):
         if self.width < stroke_width:
@@ -105,3 +105,16 @@ class SuspiciousRegion(Rectangle):
             )
         segmentation_lines.append(SegmentationLine(x=self.right))
         return segmentation_lines
+
+    def paint_on(self, image, color=(0, 0, 0), width=10, as_rectangle=True, bottom=None, top=None, filled=True):
+        if as_rectangle:
+            top = top or 0
+            bottom = bottom or image.height
+            return Rectangle(
+                top_left=Point(x=self.left, y=top),
+                bottom_right=Point(x=self.right, y=bottom)
+            ).paint_on(
+                image=image, color=color, width=width, filled=filled
+            )
+        else:
+            return super(SuspiciousRegion, self).paint_on(image, color, width)
