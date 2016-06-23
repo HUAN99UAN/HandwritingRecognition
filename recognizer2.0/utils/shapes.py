@@ -63,8 +63,20 @@ class HorizontalLine(Line):
         super(HorizontalLine, self).__init__(Point(x1, y), Point(x2, y))
 
     @property
+    def left(self):
+        return min(self.x1, self.x2)
+
+    @property
+    def right(self):
+        return max(self.x1, self.x2)
+
+    @property
     def y(self):
         return self._p1.y
+
+    @property
+    def width(self):
+        return abs(self.x1 - self.x2)
 
     def distance_to(self, other):
         return abs(self.y - other.y)
