@@ -178,6 +178,13 @@ class Image(np.ndarray):
     def color_mode(self):
         return self._color_mode
 
+    @property
+    def number_of_foreground_pixels(self):
+        if self.color_mode in [ColorMode.gray, ColorMode.bgr]:
+            raise NotImplementedError("Number of foreground pixel is only supported for binary images.")
+        else:
+            return np.sum(self)
+
     @staticmethod
     def from_file(input_file):
         np_array = cv2.imread(input_file, cv2.IMREAD_COLOR)
