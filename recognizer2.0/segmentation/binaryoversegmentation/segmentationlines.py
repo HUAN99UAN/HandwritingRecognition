@@ -35,9 +35,13 @@ class SegmentationLines(object):
         new_lines = filter(filter_method, self._lines)
         return SegmentationLines(lines=new_lines)
 
+    def line_closest_to(self, value):
+        idx = np.argmin(abs(self.coordinates - value))
+        return self._lines[idx]
+
     @property
-    def middle_segmentation_line(self):
-        raise NotImplementedError()
+    def coordinates(self):
+        return np.array([line.x for line in self._lines])
 
     @staticmethod
     def from_x_coordinates(x_coordinates, image_height):
@@ -71,3 +75,6 @@ class SegmentationLine():
         return VerticalLine(
             x=self.x, y1=top, y2=bottom
         ).paint_on(image, color=color, width=width)
+
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
