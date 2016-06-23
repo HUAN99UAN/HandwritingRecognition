@@ -1,29 +1,23 @@
-import copy
-
-import numpy as np
-
 from utils.image import Image
+from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
 
 
 class SegmentationImage(Image):
     """An image that is being segmented"""
 
-    def __new__(cls, image, segmentation_lines, validators=[]):
+    def __new__(cls, image, segmentation_lines, validators=[], image_splitter=ForegroundPixelContourTracing()):
         obj = Image.__new__(cls, image, image.color_mode)
         obj._segmentation_lines = segmentation_lines
         obj._validators = validators
+        obj._image_splitter = image_splitter
         return obj
 
     def segment(self):
-        splitting_line = self._segmentation_lines.middle_segmentation_line
+        splitting_line = self._segmentation_lines.line_closest_to(self.vertical_center)
         return self._split_along(splitting_line)
 
     def _split_along(self, line):
-        left = None
-        right = None
-        raise NotImplementedError
-        # left and right are segmentation images
-        return (left, right)
+        return self._image_splitter.split(self, line)
 
     @property
     def is_valid_character_image(self):
