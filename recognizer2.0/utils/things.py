@@ -14,6 +14,14 @@ class Pixel(_Pixel):
         return abs((self.row - other.row)) + abs((self.column - other.column))
 
     @property
+    def x(self):
+        return self.column
+
+    @property
+    def y(self):
+        return self.row
+
+    @property
     def move_left(self):
         return Pixel(row=self.row, column=self.column - 1)
 
@@ -29,6 +37,9 @@ class Pixel(_Pixel):
     def move_down(self):
         return Pixel(row=self.row + 1, column=self.column)
 
+    def is_background_in(self, image, background_color=255):
+        return bool(image.get_pixel(self) == background_color)
+
     def neighbours_in(self, image):
         if image.get_pixel(self.move_left) is not None:
             yield self.move_left
@@ -38,6 +49,13 @@ class Pixel(_Pixel):
             yield self.move_up
         if image.get_pixel(self.move_down) is not None:
             yield self.move_down
+
+    def is_on(self, line):
+        return self.x == line.x
+
+    def paint_on(self, image, color=(0, 0, 0)):
+        raise NotImplementedError()
+        return image
 
 
 class Range(_RangeTuple):
@@ -106,4 +124,18 @@ class Size(_SizeTuple):
 
     def __rtruediv__(self, other):
         raise NotImplementedError("Dividing a float through a Size is not supported.")
+
+
+class PixelPath(object):
+
+    def __init__(self, pixels):
+        self._pixels = pixels
+
+    def paint_on(self, image, color=(0, 0, 0)):
+        for pixel in self._pixels:
+            image = pixel.paint_on(image, color)
+        return image
+
+    def __repr__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
 
