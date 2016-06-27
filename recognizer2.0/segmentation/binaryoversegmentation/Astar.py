@@ -9,7 +9,7 @@ from utils.image import Image, ColorMode, InterpolationMethod
 class AStar(object):
     """A Star in an image"""
 
-    def __init__(self, image, start, goal, heuristic, default_g_score=sys.maxint, default_f_score=sys.maxint):
+    def __init__(self, image, start, goal, heuristic, distance_function, default_g_score=sys.maxint, default_f_score=sys.maxint):
         super(AStar, self).__init__()
         self._image = image
         self._start = start
@@ -22,6 +22,7 @@ class AStar(object):
         self._came_from = dict()
 
         self._heuristic = heuristic
+        self._distance_function = distance_function
 
         self._g_score = {start: 0}
         self._f_score = {start: heuristic(start, goal)}
@@ -71,7 +72,7 @@ class AStar(object):
         self._f_score[neighbour] = self._g_score.get(neighbour) + self._heuristic(neighbour, self._goal)
 
     def _tentative_score(self, node, neighbour):
-        return self._g_score.get(node) + node.manhattan_distance_to(neighbour)
+        return self._g_score.get(node) + self._distance_function(node, neighbour)
 
     @property
     def path(self):
@@ -92,8 +93,11 @@ class AStar(object):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 
-# This method should take the status of the pixel, foreground, background, on the segmentation_line, into account.
 def heuristic(origin, destination):
+    return origin.manhattan_distance_to(destination)
+
+# This method should take the status of the pixel, foreground, background, on the segmentation_line, into account.
+def distance_function(origin, destination):
     return origin.manhattan_distance_to(destination)
 
 if __name__ == '__main__':
@@ -110,4 +114,4 @@ if __name__ == '__main__':
     start = Pixel(row=3, column=2)
     end = Pixel(row=0, column=2)
 
-    print(AStar(image, start=start, goal=end, heuristic=heuristic).path)
+    print(AStar(image, start=start, goal=end, heuristic=heuristic, distance_function=distance_function).path)
