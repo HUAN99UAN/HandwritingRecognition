@@ -2,8 +2,9 @@ import sys
 
 import numpy as np
 
-from utils.things import Pixel
-from utils.image import Image, ColorMode, InterpolationMethod
+from utils.things import Pixel, PixelPath
+from utils.image import Image, ColorMode
+from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine
 
 
 class AStar(object):
@@ -96,22 +97,53 @@ class AStar(object):
 def heuristic(origin, destination):
     return origin.manhattan_distance_to(destination)
 
+
 # This method should take the status of the pixel, foreground, background, on the segmentation_line, into account.
-def distance_function(origin, destination):
-    return origin.manhattan_distance_to(destination)
+def distance_function(origin, destination,
+                      is_fully_accessible, is_accessible_with_intersecting,
+                      intersection_penalty=5, maximum_distance=sys.maxint):
+    if is_fully_accessible:
+        return origin.manhattan_distance_to(destination)
+    if is_accessible_with_intersecting:
+        return intersection_penalty * origin.manhattan_distance_to(destination)
+    return maximum_distance
+
+
+# def is_fully_accesible(destination, image):
+#     return destination.is_background(image)
+#
+# def is_accessible_with_intersecting(destination, segmentation_line):
+#     return destination.is_on(segmentation_line)
+
 
 if __name__ == '__main__':
     image = Image(
         np.array([
             [1, 0, 1, 0, 0],
-            [1, 0, 1, 0, 1],
+            [1, 1, 1, 0, 1],
             [1, 1, 0, 0, 1],
             [1, 1, 1, 1, 1]
         ], dtype=np.uint8) * 255,
         color_mode=ColorMode.binary
     )
 
+    segmentation_line = SegmentationLine(x=2)
+
     start = Pixel(row=3, column=2)
     end = Pixel(row=0, column=2)
 
-    print(AStar(image, start=start, goal=end, heuristic=heuristic, distance_function=distance_function).path)
+    d_func = lambda origin, destination : distance_function(origin, destination,
+                                                            is_fully_accessible=destination.is_background_in(image),
+                                                            is_accessible_with_intersecting=destination.is_on(segmentation_line))
+
+    # # Distance = 2
+    # print(d_func(start, Pixel(row=2, column=2)))
+    #
+    # # Distance = 1
+    # print(d_func(start, Pixel(row=3, column=3)))
+    #
+    # # Distance = max_int
+    # print(d_func(end, Pixel(row=0, column=3)))
+
+    path = PixelPath(AStar(image, start=start, goal=end, heuristic=heuristic, distance_function=d_func).path)
+    print(path)
