@@ -1,4 +1,4 @@
-class ExternalLexicon():
+class ExternalLexicon(object):
     # TODO add save function
     # TODO add load function
     def __init__(self):
@@ -8,7 +8,6 @@ class ExternalLexicon():
 
     def parse_documents(self, documents):
         """
-
         :param documents: list(Str)
         :return:
         """
@@ -36,21 +35,36 @@ class ExternalLexicon():
         # TODO finish this
         for idx in range(len(words)):
             tmp_word = self._clean_term(words[idx])
-            self._check_if_in_lexicon(words[idx], self._word_lexicon)
+            #self._check_if_in_lexicon(words[idx], self._word_lexicon)
             self._parse_characters(list(tmp_word), self._ch_lexicon)
 
     def _parse_characters(self, characters, lexicon):
         # TODO finish this
         for idx, ch in enumerate(characters):
             self._check_if_in_lexicon(ch, lexicon)
+        self._find_neighbours(characters)
+            # if (idx > 1) and (idx < len(characters) - 2):
+            #     self._check_if_in_lexicon(ch, lexicon, characters[idx - 2], characters[idx + 2])
+            # elif (idx > 0) and (idx < len(characters) - 1):
+            #     self._check_if_in_lexicon(ch, lexicon, characters[idx - 1], characters[idx + 1])
+            # else:
 
-        # if (idx > 1) and (idx < len(characters) - 2):
-        #     self._check_if_in_lexicon(ch, lexicon, characters[idx - 2], characters[idx + 2])
-        # elif (idx > 0) and (idx < len(characters) - 1):
-        #     self._check_if_in_lexicon(ch, lexicon, characters[idx - 1], characters[idx + 1])
-        # else:
+    def _find_neighbours(self, characters, nbghrs=3):
+        for idx, ch in enumerate(characters):
+            for term in self._ch_lexicon:
+                if term.term == ch:
+                    for i in range(-nbghrs, 0):
+                        if idx+i > 0:
+                            tmp_ch = characters[idx+i]
+                            term.left_neighbors(tmp_ch)
+                    for i in range(1, nbghrs+1):
+                        try:
+                            tmp_ch = characters[idx+i]
+                            term.right_neighbors(tmp_ch)
+                        except IndexError:
+                            continue
 
-    def _check_if_in_lexicon(self, term, lexicon): # , left_term=None, right_term=None
+    def _check_if_in_lexicon(self, term, lexicon):  # , left_term=None, right_term=None
         """
         This will check if word exists in our lexicon and if not it will add it.
         :param term:
@@ -71,8 +85,10 @@ class ExternalLexicon():
         :return:
         """
         term = self._clean_term(term)
-        if len(term) > 0:
-            lexicon.append(Term(term))
+        if len(term) > 1:
+            lexicon.append(Word(term))
+        elif len(term) > 0:
+            lexicon.append(Character(term))
 
     def _clean_term(self, term):
         """
@@ -85,13 +101,13 @@ class ExternalLexicon():
             term = term.replace(ch, '')
         return term
 
-    def _check_neighbours(self, term): # , left_term=None, right_term=None
+    def _check_neighbours(self, term):  # , left_term=None, right_term=None
         # TODO finish this
         for lex in self._word_lexicon:
             pass
 
 
-class Term:
+class Term(object):
     def __init__(self, term, frequency=1):
         self.__term = term
         self.__frequency = frequency
@@ -110,17 +126,21 @@ class Term:
     def left_neighbors(self):
         return self.__left_terms
 
-    @left_neighbors.setter
     def left_neighbors(self, value):
-        self.__left_terms[value] = 1
+        if value in self.__left_terms:
+            self.__left_terms[value] += 1
+        else:
+            self.__left_terms[value] = 1
 
     @property
     def right_neighbors(self):
         return self.__right_terms
 
-    @right_neighbors.setter
     def right_neighbors(self, value):
-        self.__right_terms[value] = 1
+        if value in self.__right_terms:
+            self.__right_terms[value] += 1
+        else:
+            self.__right_terms[value] = 1
 
     def increase_frequency(self):
         self.__frequency += 1
@@ -129,14 +149,16 @@ class Term:
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 
-# class Character():
-#     def __init__(self):
-#         # TODO add character
-#         # TODO add frequency
-#         # TODO add char to the right
-#         # TODO add char to the left
-#         pass
+class Character(Term):
+    def __init__(self, character):
+        Term.__init__(self, character)
+
+
+class Word(Term):
+    def __init__(self, word):
+        Term.__init__(self, word)
+
 
 if __name__ == '__main__':
     E = ExternalLexicon()
-    E.parse_documents(['lexicon1.txt', 'lexicon2.txt']) #,
+    E.parse_documents(['lexicon2.txt']) # 'lexicon1.txt',
