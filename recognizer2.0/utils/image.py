@@ -155,6 +155,10 @@ class Image(np.ndarray):
         shape = self.shape
         return shape[1]
 
+    def _is_valid_pixel(self, pixel):
+        return (pixel.column in range(self.width)) and \
+               (pixel.row in range(self.height))
+
     def get_pixel(self, pixel):
         if self._is_valid_pixel(pixel):
             return self[pixel.row, pixel.column]
