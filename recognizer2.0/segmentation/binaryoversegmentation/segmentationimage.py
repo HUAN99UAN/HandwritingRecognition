@@ -1,3 +1,4 @@
+from utils import image
 from utils.image import Image
 from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
 
@@ -11,6 +12,12 @@ class SegmentationImage(Image):
         obj._validators = validators
         obj._image_splitter = image_splitter
         return obj
+
+    def __array_finalize__(self, obj):
+        super(SegmentationImage, self).__array_finalize__(obj)
+        self._segmentation_lines = getattr(obj, '_segmentation_lines', list())
+        self._validators = getattr(obj, '_validators', list())
+        self._image_splitter = getattr(obj, '_image_splitter', ForegroundPixelContourTracing())
 
     def segment(self):
         splitting_line = self._segmentation_lines.line_closest_to(self.vertical_center)
