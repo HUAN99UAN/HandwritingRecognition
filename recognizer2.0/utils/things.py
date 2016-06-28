@@ -1,5 +1,5 @@
 from collections import namedtuple
-import math
+import copy
 
 
 _RangeTuple = namedtuple('Range', ['min', 'max'], verbose=True)
@@ -54,8 +54,9 @@ class Pixel(_Pixel):
         return self.x == line.x
 
     def paint_on(self, image, color=(0, 0, 0)):
-        raise NotImplementedError()
-        return image
+        image_copy = copy.deepcopy(image)
+        image_copy.set_pixel(self, color)
+        return image_copy
 
 
 class Range(_RangeTuple):
