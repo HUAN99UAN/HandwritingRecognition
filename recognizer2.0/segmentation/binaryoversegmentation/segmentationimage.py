@@ -50,6 +50,16 @@ class SegmentationImage(Image):
         image_with_ssp = self._segmentation_lines.paint_on(self, **kwargs)
         image_with_ssp.show(wait_key=wait_key, window_name=window_name)
 
+    def sub_image(self, bounding_box):
+        sub_image_pixels = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
+        sub_image_segmentation_lines = self._segmentation_lines.get_subset_in(bounding_box)
+        return SegmentationImage(
+            image=sub_image_pixels,
+            segmentation_lines=sub_image_segmentation_lines,
+            validators=self._validators,
+            image_splitter=self._image_splitter
+        )
+
     def dumps(self):
         super(SegmentationImage, self).dumps()
 

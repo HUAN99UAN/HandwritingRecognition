@@ -8,7 +8,7 @@ class SegmentationLines(object):
 
     def __init__(self, lines):
         super(SegmentationLines, self).__init__()
-        self._lines= lines
+        self._lines = lines
         self._idx = 0
 
     def lines(self):
@@ -19,6 +19,12 @@ class SegmentationLines(object):
         for line in self._lines:
             image = line.paint_on(image, color=color, width=width)
         return image
+
+    def get_subset_in(self, bounding_box):
+        new_set = filter(
+            lambda line: line.x in range(bounding_box.left, bounding_box.right),
+            self._lines)
+        return SegmentationLines(new_set)
 
     def __iter__(self):
         self._idx = 0
