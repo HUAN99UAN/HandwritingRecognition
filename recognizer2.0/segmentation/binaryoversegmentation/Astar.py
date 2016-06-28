@@ -5,12 +5,13 @@ import numpy as np
 from utils.things import Pixel, PixelPath
 from utils.image import Image, ColorMode
 from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine
+from preprocessing.colorspaces import ToBinary
 
 
 class AStar(object):
     """A Star in an image"""
 
-    def __init__(self, image, start, goal, heuristic, distance_function, default_g_score=sys.maxint, default_f_score=sys.maxint):
+    def __init__(self, image, start, goal, heuristic, distance_function, neighbour_filter, default_g_score=sys.maxint, default_f_score=sys.maxint):
         super(AStar, self).__init__()
         self._image = image
         self._start = start
@@ -24,6 +25,7 @@ class AStar(object):
 
         self._heuristic = heuristic
         self._distance_function = distance_function
+        self._neighbour_filter = neighbour_filter
 
         self._g_score = {start: 0}
         self._f_score = {start: heuristic(start, goal)}
@@ -47,7 +49,7 @@ class AStar(object):
         return current_pixel
 
     def _review_node(self, node):
-        for neighbour in node.neighbours_in(self._image):
+        for neighbour in filter(self._neighbour_filter, node.neighbours_in(self._image)):
             if self.has_path:
                 break
             self._review_neighbour(node, neighbour)
@@ -65,15 +67,15 @@ class AStar(object):
         if tentative_score >= self._g_score.get(neighbour, self._default_g_score):
             return
 
-        self._add_new_best_path(node, neighbour, score=tentative_score)
+        self._add_new_best_path(node, neighbour, g_score=tentative_score)
 
-    def _add_new_best_path(self, node, neighbour, score):
+    def _add_new_best_path(self, node, neighbour, g_score):
         self._came_from[neighbour] = node
-        self._g_score[neighbour] = score
-        self._f_score[neighbour] = self._g_score.get(neighbour) + self._heuristic(neighbour, self._goal)
+        self._g_score[neighbour] = g_score
+        self._f_score[neighbour] = g_score + self._heuristic(neighbour, self._goal)
 
     def _tentative_score(self, node, neighbour):
-        return self._g_score.get(node) + self._distance_function(node, neighbour)
+        return self._g_score.get(node, self._default_g_score) + self._distance_function(node, neighbour)
 
     @property
     def path(self):
@@ -109,11 +111,10 @@ def distance_function(origin, destination,
     return maximum_distance
 
 
-# def is_fully_accesible(destination, image):
-#     return destination.is_background(image)
-#
-# def is_accessible_with_intersecting(destination, segmentation_line):
-#     return destination.is_on(segmentation_line)
+def ne_filter(node, segmentation_line, average_character_width):
+    left_boundary = segmentation_line.x - average_character_width
+    right_boundary = segmentation_line.x + average_character_width + 1
+    return node.x in range(left_boundary, right_boundary)
 
 
 if __name__ == '__main__':
@@ -127,14 +128,26 @@ if __name__ == '__main__':
         color_mode=ColorMode.binary
     )
 
-    segmentation_line = SegmentationLine(x=2)
+    # image = Image(
+    #     np.array(np.ones((3, 5)), dtype=np.uint8) * 255,
+    #     color_mode=ColorMode.binary
+    # )
 
-    start = Pixel(row=3, column=2)
-    end = Pixel(row=0, column=2)
+    # image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/word_2.png'
+    # image = Image.from_file(image_file)
+    # image = ToBinary().apply(image)
+
+    x = 2
+
+    segmentation_line = SegmentationLine(x=x)
+
+    segmentation_line.paint_on(image).show(wait_key=0)
 
     d_func = lambda origin, destination : distance_function(origin, destination,
                                                             is_fully_accessible=destination.is_background_in(image),
                                                             is_accessible_with_intersecting=destination.is_on(segmentation_line))
+
+    neighbour_filter = lambda node: ne_filter(node=node, segmentation_line=segmentation_line, average_character_width=7)
 
     # # Distance = 2
     # print(d_func(start, Pixel(row=2, column=2)))
@@ -145,5 +158,8 @@ if __name__ == '__main__':
     # # Distance = max_int
     # print(d_func(end, Pixel(row=0, column=3)))
 
-    path = PixelPath(AStar(image, start=start, goal=end, heuristic=heuristic, distance_function=d_func).path)
-    print(path)
+    path = PixelPath(AStar(image, start=Pixel(row=0, column=x), goal=Pixel(row=image.height - 1, column=x),
+                           heuristic=heuristic, distance_function=d_func, neighbour_filter=neighbour_filter).path)
+    image = path.paint_on(image, color=125)
+    image = image.resize(height=600)
+    image.show(wait_key=0)
