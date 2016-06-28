@@ -1,11 +1,11 @@
 from collections import namedtuple
 import copy
 
-
-_RangeTuple = namedtuple('Range', ['min', 'max'], verbose=True)
-_SizeTuple = namedtuple('Size', ['width', 'height'], verbose=True)
+_RangeTuple = namedtuple('Range', ['min_column_idx', 'max_column_idx'])
+_SizeTuple = namedtuple('Size', ['width', 'height'])
 _Pixel = namedtuple('Pixel', ['row', 'column'])
 Point = namedtuple('Point', ['x', 'y'])
+BoundingBox = namedtuple('BoundingBox', ['top', 'bottom', 'left', 'right'])
 
 
 class Pixel(_Pixel):
@@ -36,6 +36,12 @@ class Pixel(_Pixel):
     @property
     def move_down(self):
         return Pixel(row=self.row + 1, column=self.column)
+
+    def pixels_left_of_in(self, image):
+        return [Pixel(row=self.row, column=x) for x in range(self.column + 1)]
+
+    def pixels_right_of_in(self, image):
+        return [Pixel(row=self.row, column=x) for x in range(self.column, image.width)]
 
     def is_background_in(self, image, background_color=255):
         return bool(image.get_pixel(self) == background_color)
@@ -131,11 +137,31 @@ class PixelPath(object):
 
     def __init__(self, pixels):
         self._pixels = pixels
+        self._idx = 0
 
     def paint_on(self, image, color=(0, 0, 0)):
         for pixel in self._pixels:
             image = pixel.paint_on(image, color)
         return image
+
+    def __iter__(self):
+        self._idx = 0
+        return self
+
+    def next(self):
+        if self._idx < len(self._pixels):
+            self._idx += 1
+            return self._pixels[self._idx - 1]
+        else:
+            raise StopIteration
+
+    @property
+    def min_column_idx(self):
+        return min(self._pixels, key=lambda pixel: pixel.column).column
+
+    @property
+    def max_column_idx(self):
+        return max(self._pixels, key=lambda pixel: pixel.column).column
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)

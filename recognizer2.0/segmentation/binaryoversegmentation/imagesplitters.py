@@ -1,9 +1,10 @@
 import sys
+import copy
 
 import numpy as np
 
 from segmentation.binaryoversegmentation.astar import AStar
-from utils.things import Pixel, PixelPath
+from utils.things import Pixel, PixelPath, BoundingBox
 from utils.image import Image, ColorMode
 from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine
 from preprocessing.colorspaces import ToBinary
@@ -33,10 +34,13 @@ def default_neighbour_filter(node, segmentation_line, character_width):
 
 class _AbstractImageSplitter(object):
 
-    def __init__(self):
+    def __init__(self, background_color=255, foreground_color=0):
         self._image = None
         self._segmentation_line = None
         self._pixel_path = None
+
+        self._foreground_pixel_color = foreground_color
+        self._background_color = background_color
 
     def _clean_up(self):
         self._image = None
@@ -47,24 +51,57 @@ class _AbstractImageSplitter(object):
         self._clean_up()
         self._image = image
         self._segmentation_line = segmentation_line
-        self._split()
+        return self._split()
 
     def _split(self):
         pass
+
+    def _split_images(self):
+        return self._left_image(), self._right_image()
+
+    def _pixels_on_one_side_of_pixel_path(self, getter):
+        pixels = set() #Don't use a list, you'll get duplicate pixels.
+        for pixel in self._pixel_path:
+            new_pixels = getter(pixel, self._image)
+            pixels.update(new_pixels)
+        return zip(*pixels)
+
+    def _set_to_background(self, x_coordinates, y_coordinates):
+        image_copy = copy.deepcopy(self._image)
+        image_copy[x_coordinates, y_coordinates] = self._background_color
+        return image_copy
+
+    def _right_image(self):
+        (x_coordinates, y_coordinates) = self._pixels_on_one_side_of_pixel_path(Pixel.pixels_left_of_in)
+        image = self._set_to_background(x_coordinates, y_coordinates)
+        bounding_box = BoundingBox(
+            top=0, bottom=self._image.height,
+            left=self._pixel_path.min_column_idx, right=self._image.width
+        )
+        return image.sub_image(bounding_box=bounding_box)
+
+    def _left_image(self):
+        (x_coordinates, y_coordinates) = self._pixels_on_one_side_of_pixel_path(Pixel.pixels_right_of_in)
+        image = self._set_to_background(x_coordinates, y_coordinates)
+        bounding_box = BoundingBox(
+            top=0, bottom=self._image.height,
+            left=0, right=self._pixel_path.max_column_idx
+        )
+        return image.sub_image(bounding_box=bounding_box)
 
     @property
     def path(self):
         return self._pixel_path
 
+
 class ForegroundPixelContourTracing(_AbstractImageSplitter):
     """Use foreground get_pixel contour tracing to split segment the image into two along the passed line."""
 
-    def __init__(self, foreground_pixel_color=0, character_width=7,
+    def __init__(self, character_width=7,
                  distance_function=default_distance_function,
                  heuristic=default_heuristic,
                  neighbour_filter=default_neighbour_filter):
         super(ForegroundPixelContourTracing, self).__init__()
-        self._foreground_pixel_color = foreground_pixel_color
         self._character_width = character_width
         self._distance_function = lambda origin, destination: distance_function(
             origin, destination,
@@ -81,21 +118,21 @@ class ForegroundPixelContourTracing(_AbstractImageSplitter):
                                            neighbour_filter=self._neighbour_filter,
                                            distance_function=self._distance_function,
                                            heuristic=self._heuristic).path)
-        print('HI!')
+        return self._split_images()
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 if __name__ == '__main__':
-    # image = Image(
-    #     np.array([
-    #         [1, 0, 1, 0, 0],
-    #         [1, 1, 1, 0, 1],
-    #         [1, 1, 0, 0, 1],
-    #         [1, 1, 1, 1, 1]
-    #     ], dtype=np.uint8) * 255,
-    #     color_mode=ColorMode.binary
-    # )
+    image = Image(
+        np.array([
+            [1, 0, 1, 0, 0],
+            [1, 1, 1, 0, 1],
+            [1, 1, 0, 0, 1],
+            [1, 1, 1, 1, 1]
+        ], dtype=np.uint8) * 255,
+        color_mode=ColorMode.binary
+    )
 
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/word_2.png'
     image = Image.from_file(image_file)
@@ -104,10 +141,12 @@ if __name__ == '__main__':
     segmentation_line = SegmentationLine(x=182)
 
     f = ForegroundPixelContourTracing()
-    _ = f.split(image=image, segmentation_line=segmentation_line)
+    left, right = f.split(image=image, segmentation_line=segmentation_line)
     pixel_path = f.path
 
+    right.resize(height=400).show(window_name='Right', wait_key=0)
+    left.resize(height=400).show(window_name='Left', wait_key=0)
 
     image = segmentation_line.paint_on(image, color=(255, 0, 0))
     image = pixel_path.paint_on(image, color=(0, 0, 255))
-    image.show(wait_key=0)
+    image.resize(height=400).show(wait_key=0)
