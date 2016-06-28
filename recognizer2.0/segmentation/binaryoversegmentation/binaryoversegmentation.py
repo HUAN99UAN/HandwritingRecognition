@@ -83,7 +83,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         return segmentation_lines
 
     def _binary_segmentation(self, segmentation_image):
-        def add_to_list(image, done, segment_more):
+        def add_to_correct_list(image, done, segment_more):
             if image.segment_further:
                 segment_more.append(image)
             elif image.is_valid_character_image:
@@ -106,8 +106,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
             (left, right) = segmentation_image.segment()
 
-            add_to_list(left, character_images, images_for_further_segmentation)
-            add_to_list(right, character_images, images_for_further_segmentation)
+            add_to_correct_list(left, character_images, images_for_further_segmentation)
+            add_to_correct_list(right, character_images, images_for_further_segmentation)
         return character_images
 
     def __repr__(self):
