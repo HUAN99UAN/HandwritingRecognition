@@ -134,19 +134,21 @@ if __name__ == '__main__':
         color_mode=ColorMode.binary
     )
 
-    image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/word_2.png'
-    image = Image.from_file(image_file)
-    image = ToBinary().apply(image)
+    image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/segmentation_image.pkl'
+    with open(image_file, 'r') as input:
+        import pickle
+        image = pickle.load(input)
 
     segmentation_line = SegmentationLine(x=182)
 
     f = ForegroundPixelContourTracing()
     left, right = f.split(image=image, segmentation_line=segmentation_line)
-    pixel_path = f.path
 
-    right.resize(height=400).show(window_name='Right', wait_key=0)
-    left.resize(height=400).show(window_name='Left', wait_key=0)
+    print('HI!')
 
-    image = segmentation_line.paint_on(image, color=(255, 0, 0))
-    image = pixel_path.paint_on(image, color=(0, 0, 255))
-    image.resize(height=400).show(wait_key=0)
+    # right.resize(height=400).show(window_name='Right', wait_key=0)
+    # left.resize(height=400).show(window_name='Left', wait_key=0)
+    #
+    # image = segmentation_line.paint_on(image, color=(255, 0, 0))
+    # image = pixel_path.paint_on(image, color=(0, 0, 255))
+    # image.resize(height=400).show(wait_key=0)
