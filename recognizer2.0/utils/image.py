@@ -158,8 +158,9 @@ class Image(np.ndarray):
     def get_pixel(self, pixel):
         if self._is_valid_pixel(pixel):
             return self[pixel.row, pixel.column]
-        except IndexError:
-            return None
+
+    def set_pixel(self, pixel, value):
+        self[pixel.row, pixel.column] = value
 
     @property
     def height(self):
