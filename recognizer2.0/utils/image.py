@@ -109,7 +109,7 @@ class Image(np.ndarray):
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
 
-    def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.bilinear):
+    def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.nearest_neighbour):
         """
         Resize an image to a new size. Note that the aspect ratio of the image is not take into account.
         :param width: The width of the new image, if only width is given keep_aspect_ratio is set to True.
