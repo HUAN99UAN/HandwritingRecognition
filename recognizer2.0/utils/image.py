@@ -109,7 +109,7 @@ class Image(np.ndarray):
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
 
-    def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.bilinear):
+    def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.nearest_neighbour):
         """
         Resize an image to a new size. Note that the aspect ratio of the image is not take into account.
         :param width: The width of the new image, if only width is given keep_aspect_ratio is set to True.
@@ -155,6 +155,17 @@ class Image(np.ndarray):
         shape = self.shape
         return shape[1]
 
+    def _is_valid_pixel(self, pixel):
+        return (pixel.column in range(self.width)) and \
+               (pixel.row in range(self.height))
+
+    def get_pixel(self, pixel):
+        if self._is_valid_pixel(pixel):
+            return self[pixel.row, pixel.column]
+
+    def set_pixel(self, pixel, value):
+        self[pixel.row, pixel.column] = value
+
     @property
     def height(self):
         shape = self.shape
@@ -177,6 +188,10 @@ class Image(np.ndarray):
     @property
     def color_mode(self):
         return self._color_mode
+
+    @property
+    def vertical_center(self):
+        return round(self.width / 2.0)
 
     @property
     def number_of_foreground_pixels(self):
