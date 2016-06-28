@@ -156,7 +156,7 @@ class Image(np.ndarray):
         return shape[1]
 
     def get_pixel(self, pixel):
-        try:
+        if self._is_valid_pixel(pixel):
             return self[pixel.row, pixel.column]
         except IndexError:
             return None
