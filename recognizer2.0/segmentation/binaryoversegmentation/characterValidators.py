@@ -17,12 +17,13 @@ class _AbstractCharacterValidator(CommonEqualityMixin):
 
 
 class ValidateOnWidth(_AbstractCharacterValidator):
-    def __init__(self, minimum_character_width):
+    def __init__(self, minimum_character_width, maximum_character_width):
         _AbstractCharacterValidator.__init__(self)
         self._minimum_character_width = minimum_character_width
+        self._maximum_character_width = maximum_character_width
 
     def is_valid(self, image):
-        return image.width > self._minimum_character_width
+        return (image.width >= self._minimum_character_width) and (image.width <= self._maximum_character_width)
 
 
 class ValidateOnForegroundPixels(_AbstractCharacterValidator):
@@ -31,4 +32,4 @@ class ValidateOnForegroundPixels(_AbstractCharacterValidator):
         self._minimum_num_foreground_pixels = minimum_num_foreground_pixels
 
     def is_valid(self, image):
-        return image.number_of_foreground_pixels> self._minimum_num_foreground_pixels
+        return image.number_of_foreground_pixels >= self._minimum_num_foreground_pixels
