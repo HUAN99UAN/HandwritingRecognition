@@ -116,6 +116,10 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
             (left, right) = segmentation_image.segment()
 
+            # segmentation_image.show(wait_key=0, window_name='')
+            # left.show(wait_key=0, window_name='Left')
+            # right.show(wait_key=0, window_name='Right')
+
             add_to_correct_list(left, character_images, images_for_further_segmentation)
             add_to_correct_list(right, character_images, images_for_further_segmentation)
         return character_images
