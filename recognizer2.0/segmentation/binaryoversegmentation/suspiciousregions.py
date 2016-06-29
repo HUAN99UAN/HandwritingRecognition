@@ -84,8 +84,6 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
 
     def __init__(self, x0, x1, image_height):
         x0, x1 = min(x0, x1), max(x0, x1)
-        top_left = Point(x=x0, y=0)
-        bottom_right = Point(x=x1, y=image_height)
         super(SuspiciousRegion, self).__init__(x1=x0, x2=x1, y=0)
 
     def to_segmentation_lines(self, stroke_width):
