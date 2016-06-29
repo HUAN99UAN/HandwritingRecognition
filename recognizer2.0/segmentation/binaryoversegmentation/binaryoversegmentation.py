@@ -77,7 +77,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def _extract_body_bounding_box(self, image):
         return Rectangle(
             top_left=Point(x=0, y=self._high_base_line.y),
-            bottom_right=Point(x=image.width, y=self._low_base_line.y)
+            bottom_right=Point(x=image.width - 1, y=self._low_base_line.y)
         )
 
     @property
@@ -119,10 +119,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                 return
             elif image.is_valid_character_image:
                 done.append(image)
-                image.show(window_name='Character')
             elif image.segment_further:
                 segment_more.append(image)
-                image.show(window_name='Segment More')
             else:
                 raise NotImplementedError(
                     "No way to handle images that are neither a valid character image or "

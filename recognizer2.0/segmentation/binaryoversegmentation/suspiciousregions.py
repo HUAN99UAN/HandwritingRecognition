@@ -93,7 +93,7 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
             return self._to_segmentation_lines(stroke_width)
 
     def _segmentation_line_in_center(self):
-        x = round((self.left + self.right)/ 2.0)
+        x = int(round((self.left + self.right)/ 2.0))
         return [SegmentationLine(x=x)]
 
     def _to_segmentation_lines(self, stroke_width):
@@ -102,7 +102,7 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
             segmentation_lines.append(
                 SegmentationLine(x=x)
             )
-        segmentation_lines.append(SegmentationLine(x=self.right))
+        segmentation_lines.append(SegmentationLine(x=int(self.right)))
         return segmentation_lines
 
     def paint_on(self, image, color=(0, 0, 0), width=10, as_rectangle=True, bottom=None, top=None, filled=True):
