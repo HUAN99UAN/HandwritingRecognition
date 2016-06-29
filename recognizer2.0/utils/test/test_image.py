@@ -61,6 +61,7 @@ class TestImage(TestCase):
         with self.assertRaises(TypeError):
             self.image.resize()
 
+
 class TestSubImage(TestCase):
 
     def test_no_white_space(self):
@@ -94,14 +95,14 @@ class TestSubImage(TestCase):
             [1, 1, 1, 0]
         ], dtype=np.uint8) * 255
         image = Image(image_array, ColorMode.binary)
-        bounding_box = BoundingBox(top=0, bottom=2, left=0, right=2)
+        bounding_box = BoundingBox(top=0, bottom=2, left=0, right=3)
 
         actual = image.sub_image(bounding_box, remove_white_borders=True)
         expected = Image(
             np.array([
-                [0, 0],
-                [0, 1],
-                [1, 1]
+                [0, 0, 1],
+                [0, 1, 0],
+                [1, 1, 0]
             ], dtype=np.uint8) * 255,
             ColorMode.binary
         )
@@ -109,9 +110,9 @@ class TestSubImage(TestCase):
 
     def test_right_white_space(self):
         image_array = np.array([
-            [1, 0, 1, 0, 1],
-            [0, 1, 0, 1, 1],
-            [1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 1, 1],
+            [0, 1, 0, 1, 1, 1],
+            [1, 1, 1, 0, 1, 1],
         ], dtype=np.uint8) * 255
         image = Image(image_array, ColorMode.binary)
         bounding_box = BoundingBox(top=0, bottom=2, left=2, right=4)
@@ -130,17 +131,19 @@ class TestSubImage(TestCase):
     def test_top_white_space(self):
         image_array = np.array([
             [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
             [0, 1, 0, 1, 1],
             [1, 1, 1, 0, 1],
         ], dtype=np.uint8) * 255
         image = Image(image_array, ColorMode.binary)
-        bounding_box = BoundingBox(top=0, bottom=2, left=0, right=4)
+        bounding_box = BoundingBox(top=0, bottom=4, left=0, right=4)
 
         actual = image.sub_image(bounding_box, remove_white_borders=True)
         expected = Image(
             np.array([
-                [0, 1, 0, 1, 1],
-                [1, 1, 1, 0, 1],
+                [0, 1, 0, 1],
+                [1, 1, 1, 0],
             ], dtype=np.uint8) * 255,
             ColorMode.binary
         )
@@ -151,14 +154,17 @@ class TestSubImage(TestCase):
             [1, 1, 1, 0, 1],
             [0, 1, 0, 1, 1],
             [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
         ], dtype=np.uint8) * 255
         image = Image(image_array, ColorMode.binary)
-        bounding_box = BoundingBox(top=0, bottom=2, left=0, right=4)
+        bounding_box = BoundingBox(top=0, bottom=5, left=0, right=4)
 
         expected = Image(
             np.array([
-                [1, 1, 1, 0, 1],
-                [0, 1, 0, 1, 1],
+                [1, 1, 1, 0],
+                [0, 1, 0, 1],
             ], dtype=np.uint8) * 255,
             ColorMode.binary
         )
@@ -167,16 +173,18 @@ class TestSubImage(TestCase):
 
     def test_white_space_on_all_sides(self):
         image_array = np.array([
-            [1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 1, 1],
+            [1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1],
         ], dtype=np.uint8) * 255
         image = Image(image_array, ColorMode.binary)
         bounding_box = BoundingBox(top=0, bottom=2, left=0, right=4)
 
         expected = Image(
             np.array([
-                [1, 0, 0, 0, 1],
+                [0, 0, 0],
             ], dtype=np.uint8) * 255,
             ColorMode.binary
         )
@@ -189,8 +197,7 @@ class TestSubImage(TestCase):
         bounding_box = BoundingBox(top=0, bottom=4, left=0, right=4)
 
         actual = image.sub_image(bounding_box, remove_white_borders=True)
-        self.assertIsNone(actual)
-
+        self.assertTrue(actual.is_empty)
 
 if __name__ == '__main__':
     unittest.main()
