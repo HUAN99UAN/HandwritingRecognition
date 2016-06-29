@@ -5,10 +5,10 @@ import numpy as np
 from utils.things import Pixel, PixelPath
 from utils.image import Image, ColorMode
 from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine
-from preprocessing.colorspaces import ToBinary
+from utils.mixins import CommonEqualityMixin
 
 
-class AStar(object):
+class AStar(CommonEqualityMixin):
     """A Star in an image"""
 
     def __init__(self, image, start, goal, heuristic, distance_function, neighbour_filter, default_g_score=sys.maxint, default_f_score=sys.maxint):

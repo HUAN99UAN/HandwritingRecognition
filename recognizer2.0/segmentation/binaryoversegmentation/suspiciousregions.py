@@ -7,6 +7,7 @@ from preprocessing.invert import Invert
 from utils.shapes import Rectangle, HorizontalLine
 from utils.things import Point
 from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine, SegmentationLines
+from utils.mixins import CommonEqualityMixin
 
 
 class SuspiciousRegionsComputer:
@@ -63,7 +64,7 @@ class SuspiciousRegionsComputer:
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 
-class SuspiciousRegions():
+class SuspiciousRegions(CommonEqualityMixin):
     def __init__(self, regions):
         self._regions = regions
 
@@ -79,7 +80,7 @@ class SuspiciousRegions():
         return image
 
 
-class SuspiciousRegion(HorizontalLine):
+class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
 
     def __init__(self, x0, x1, image_height):
         x0, x1 = min(x0, x1), max(x0, x1)

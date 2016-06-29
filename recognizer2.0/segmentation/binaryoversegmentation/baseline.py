@@ -3,9 +3,10 @@ import numpy as np
 from utils.statistics import mode
 from utils.image import WrongColorModeError
 from utils.shapes import HorizontalLine
+from utils.mixins import CommonEqualityMixin
 
 
-class _AbstractBaseLineEstimator(object):
+class _AbstractBaseLineEstimator(CommonEqualityMixin):
 
     def __init__(self):
         super(_AbstractBaseLineEstimator, self).__init__()

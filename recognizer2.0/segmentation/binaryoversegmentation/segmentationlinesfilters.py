@@ -5,8 +5,10 @@ import numpy as np
 
 from preprocessing.invert import Invert
 from utils.image import Image, ColorMode
+from utils.mixins import CommonEqualityMixin
 
-class _AbstractSegmentationLineFilter(object):
+
+class _AbstractSegmentationLineFilter(CommonEqualityMixin):
     """Abstract class to define the interface of segmentation line filters, for use with the build-in filter()."""
 
     def __init__(self, image):
