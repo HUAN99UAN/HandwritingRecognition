@@ -5,7 +5,8 @@ import segmentation.interface
 from postprocessing.lexicon import Lexicon
 from segmentation.binaryoversegmentation.segmentationimage import SegmentationImage
 from segmentation.binaryoversegmentation.suspiciousregions import SuspiciousRegionsComputer
-from segmentation.binaryoversegmentation.characterValidators import ValidateOnWidth, ValidateOnForegroundPixels
+import characterValidators
+import continuesegmentationchecks
 from utils.image import Image
 from utils.shapes import Rectangle
 from utils.things import Point
@@ -23,13 +24,20 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
     def __init__(self, lexicon,
                  base_line_estimator=baseline.VerticalHistogram(),
-                 stroke_width_estimator=strokewidth.RasterTechnique()):
+                 stroke_width_estimator=strokewidth.RasterTechnique(),
+                 minimum_character_width=30,
+                 average_character_width=64):
+
+        import warnings
+        warnings.warn("The average character width uses some silly default, right now. Fix this to make sure that it uses the actual average character width.")
 
         super(BinaryOverSegmentation, self).__init__()
         self._lexicon = lexicon
         self._max_segmentation = lexicon.longest_word.length
         self._base_line_estimator = base_line_estimator
         self._stroke_width_estimator = stroke_width_estimator
+        self._average_character_width = average_character_width
+        self._minimum_character_width = minimum_character_width
 
         # Depend on the input image, but are handy to store in the object.
         self._low_base_line = None
@@ -71,19 +79,26 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         )
 
     @property
-    def minimum_num_foreground_pixels(self):
+    def _minimum_num_foreground_pixels(self):
         return (self._high_base_line.y - self._low_base_line.y) * self._stroke_width
 
     def _build_character_validators(self):
         return [
-            ValidateOnWidth(minimum_character_width=self._stroke_width),
-            ValidateOnForegroundPixels(minimum_num_foreground_pixels=self.minimum_num_foreground_pixels)
+            characterValidators.ValidateOnWidth(
+                minimum_character_width=self._minimum_character_width
+            ),
+            characterValidators.ValidateOnForegroundPixels(
+                minimum_num_foreground_pixels=self._minimum_num_foreground_pixels
+            )
         ]
 
     def _build_continue_segmentation_checks(self):
-        raise NotImplementedError()
         return [
-
+            continuesegmentationchecks.ContinueOnSSPCheck(),
+            continuesegmentationchecks.ContinueOnWidthCheck(
+                average_character_width=self._average_character_width,
+                minimum_character_width=self._stroke_width
+            )
         ]
 
     @classmethod
@@ -106,7 +121,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
         def select_next_image(images):
             images.sort(key=lambda image: image.width_over_height_ratio)
-            return images[0]
+            return images.pop(0)
 
         character_images = list()
         images_for_further_segmentation = [segmentation_image]
