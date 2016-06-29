@@ -3,6 +3,7 @@ import cv2
 from enum import Enum
 
 from utils.things import Range, Size
+from preprocessing.backgroundremoval import BackgroundBorderRemoval
 
 
 class ColorMode(Enum):
@@ -105,10 +106,13 @@ class Image(np.ndarray):
         left as ints.
         """
         self._validate_bounding_box(bounding_box)
-        sub_image = self[
+        sub_image_pixels = self[
                     bounding_box.top:(bounding_box.bottom + 1),
                     bounding_box.left:(bounding_box.right + 1)]
-        return Image(sub_image, color_mode=self.color_mode)
+        sub_image = Image(sub_image_pixels, color_mode=self.color_mode)
+        if remove_white_borders:
+            sub_image = BackgroundBorderRemoval(background_color=255).apply(sub_image)
+        return sub_image
 
     def show(self, wait_key=_default_wait_key, window_name=None):
         """
