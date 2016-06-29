@@ -115,7 +115,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
     def _binary_segmentation(self, segmentation_image):
         def add_to_correct_list(image, done, segment_more):
-            if image.is_valid_character_image:
+            if image.is_empty:
+                return
+            elif image.is_valid_character_image:
                 done.append(image)
                 image.show(window_name='Character')
             elif image.segment_further:
