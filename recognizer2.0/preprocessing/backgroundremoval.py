@@ -1,7 +1,10 @@
+import numpy as np
+
 import interface
 from preprocessing.colorspaces import ToBinary
+from utils.things import BoundingBox
 
-import numpy as np
+
 
 
 class BackgroundBorderRemoval(interface.AbstractFilter):
@@ -13,37 +16,38 @@ class BackgroundBorderRemoval(interface.AbstractFilter):
     def apply(self, image):
         super(BackgroundBorderRemoval, self).apply(image)
         bits = ToBinary(maximum_value=1).apply(image)
-        bits = self._remove_white_rows(bits)
-        bits = self._remove_white_columns(bits)
-        return bits * 255
+        top, bottom = self._compute_top_and_bottom(bits)
+        left, right = self._compute_left_and_right(bits)
+        return image.sub_image(
+            BoundingBox(left=left, right=right, top=top, bottom=bottom),
+            remove_white_borders=False
+        )
 
-    def _remove_white_rows(self, bits):
+    def _compute_top_and_bottom(self, bits):
         row_bits = (np.sum(bits, axis=1) == bits.width)
-        non_border_rows_idx = self._get_initial_and_final_zeros_idx(row_bits)
-        return bits[non_border_rows_idx, ]
+        return self._get_initial_and_final_zeros_idx(row_bits)
 
-    def _remove_white_columns(self, bits):
+    def _compute_left_and_right(self, bits):
         column_bits = (np.sum(bits, axis=0) == bits.height)
-        non_border_columns_idx = self._get_initial_and_final_zeros_idx(column_bits)
-        return bits[:,non_border_columns_idx]
+        return self._get_initial_and_final_zeros_idx(column_bits)
 
     def _get_initial_and_final_zeros_idx(self, bits):
         sequences = self._to_sequences(bits)
         left = 0
-        right = len(bits)
+        right = len(bits) - 1
 
         if sequences:
             first_sequence = sequences.pop(0)
             if self.is_initial_border(first_sequence):
                 left = first_sequence[1]
             if self.is_final_border(first_sequence, len(bits)):
-                right = first_sequence[0]
+                right = first_sequence[0] - 1
 
         if sequences:
             last_sequence = sequences.pop()
             if self.is_final_border(last_sequence, len(bits)):
-                right = last_sequence[0]
-        return range(left, right)
+                right = last_sequence[0] - 1
+        return left, right
 
     @classmethod
     def is_initial_border(cls, sequence):
