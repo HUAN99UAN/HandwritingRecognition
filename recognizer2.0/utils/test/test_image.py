@@ -75,6 +75,18 @@ class TestSubImage(TestCase):
         )
         np.testing.assert_array_equal(actual, expected)
 
+    def test_no_white_space_2(self):
+        image_array = np.array(np.zeros((5,5)), dtype=np.uint8)
+        image = Image(image_array, ColorMode.binary)
+        bounding_box = BoundingBox(top=0, bottom=2, left=0, right=2)
+
+        actual = image.sub_image(bounding_box, remove_white_borders=False)
+        expected = Image(
+            np.array(np.zeros((3, 3)), dtype=np.uint8),
+            ColorMode.binary
+        )
+        np.testing.assert_array_equal(actual, expected)
+
     def test_left_white_space(self):
         image_array = np.array([
             [1, 0, 0, 1],
