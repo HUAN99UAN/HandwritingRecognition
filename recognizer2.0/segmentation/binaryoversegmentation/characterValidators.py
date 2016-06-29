@@ -6,6 +6,9 @@ class _AbstractCharacterValidator(object):
     def is_valid(self, image):
         pass
 
+    def is_valid(self, image):
+        pass
+
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
