@@ -26,7 +26,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                  base_line_estimator=baseline.VerticalHistogram(),
                  stroke_width_estimator=strokewidth.RasterTechnique(),
                  minimum_character_width=30,
-                 average_character_width=64):
+                 average_character_width=64,
+                 maximum_character_width=84):
 
         import warnings
         warnings.warn("The average character width uses some silly default, right now. Fix this to make sure that it uses the actual average character width.")
@@ -38,6 +39,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._stroke_width_estimator = stroke_width_estimator
         self._average_character_width = average_character_width
         self._minimum_character_width = minimum_character_width
+        self._maximum_character_width = maximum_character_width
 
         # Depend on the input image, but are handy to store in the object.
         self._low_base_line = None
@@ -85,7 +87,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def _build_character_validators(self):
         return [
             characterValidators.ValidateOnWidth(
-                minimum_character_width=self._minimum_character_width
+                minimum_character_width=self._minimum_character_width,
+                maximum_character_width=self._maximum_character_width
             ),
             characterValidators.ValidateOnForegroundPixels(
                 minimum_num_foreground_pixels=self._minimum_num_foreground_pixels
@@ -98,6 +101,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
             continuesegmentationchecks.ContinueOnWidthCheck(
                 average_character_width=self._average_character_width,
                 minimum_character_width=self._stroke_width
+            ),
+            continuesegmentationchecks.ContinueOnNumberOfForegroundPixels(
+                minimum_number_of_foreground_pixels=self._minimum_num_foreground_pixels
             )
         ]
 
@@ -109,10 +115,12 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
     def _binary_segmentation(self, segmentation_image):
         def add_to_correct_list(image, done, segment_more):
-            if image.segment_further:
-                segment_more.append(image)
-            elif image.is_valid_character_image:
+            if image.is_valid_character_image:
                 done.append(image)
+                image.show(window_name='Character')
+            elif image.segment_further:
+                segment_more.append(image)
+                image.show(window_name='Segment More')
             else:
                 raise NotImplementedError(
                     "No way to handle images that are neither a valid character image or "
@@ -121,7 +129,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
         def select_next_image(images):
             images.sort(key=lambda image: image.width_over_height_ratio)
-            return images.pop(0)
+            return images.pop()
 
         character_images = list()
         images_for_further_segmentation = [segmentation_image]
@@ -131,12 +139,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
             (left, right) = segmentation_image.segment()
 
-            # segmentation_image.show(wait_key=0, window_name='')
-            # left.show(wait_key=0, window_name='Left')
-            # right.show(wait_key=0, window_name='Right')
-
             add_to_correct_list(left, character_images, images_for_further_segmentation)
             add_to_correct_list(right, character_images, images_for_further_segmentation)
+
         return character_images
 
     def __repr__(self):
