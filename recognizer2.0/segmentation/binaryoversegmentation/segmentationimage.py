@@ -41,7 +41,7 @@ class SegmentationImage(Image):
 
     @property
     def width_over_height_ratio(self):
-        return self.width / self.height
+        return float(self.width) / float(self.height)
 
     @property
     def number_of_foreground_pixels(self):
