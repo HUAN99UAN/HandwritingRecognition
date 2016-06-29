@@ -31,7 +31,6 @@ class TestSegmentationImage(TestCase):
         with self.assertRaises(IndexError):
             self.image.sub_image(bounding_box)
 
-
     def test_sub_image_2(self):
         # Index out of range, should give original image.
         bounding_box = BoundingBox(top=-1, bottom=2, left=0, right=5)

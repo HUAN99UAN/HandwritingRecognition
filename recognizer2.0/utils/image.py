@@ -87,6 +87,16 @@ class Image(np.ndarray):
         self._color_mode = getattr(obj, '_color_mode', ColorMode.bgr)
         # We do not need to return anything
 
+    def _validate_bounding_box(self, bounding_box):
+        if bounding_box.left < 0:
+            raise IndexError()
+        if bounding_box.right >= self.width:
+            raise IndexError()
+        if bounding_box.top < 0:
+            raise IndexError()
+        if bounding_box.bottom >= self.height:
+            raise IndexError()
+
     def sub_image(self, bounding_box):
         """
         Get the sub_image of this image, based on the bounding box. Note that this performs a SHALLOW COPY of the
@@ -94,7 +104,10 @@ class Image(np.ndarray):
         :param bounding_box: The bounding box like objects, should have the following properties: top, bottom, right,
         left as ints.
         """
-        sub_image = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
+        self._validate_bounding_box(bounding_box)
+        sub_image = self[
+                    bounding_box.top:(bounding_box.bottom + 1),
+                    bounding_box.left:(bounding_box.right + 1)]
         return Image(sub_image, color_mode=self.color_mode)
 
     def show(self, wait_key=_default_wait_key, window_name=None):
