@@ -111,7 +111,7 @@ class Image(np.ndarray):
                     bounding_box.left:(bounding_box.right + 1)]
         sub_image = Image(sub_image_pixels, color_mode=self.color_mode)
         if remove_white_borders:
-            sub_image = BackgroundBorderRemoval(background_color=255).apply(sub_image)
+            sub_image = BackgroundBorderRemoval().apply(sub_image)
         return sub_image
 
     def show(self, wait_key=_default_wait_key, window_name=None):
@@ -166,6 +166,10 @@ class Image(np.ndarray):
 
         scaled_image = cv2.resize(src=self, dsize=correct_size, interpolation=interpolation_method.as_open_cv)
         return Image(scaled_image, self.color_mode)
+
+    @property
+    def is_empty(self):
+        return self.size == 0
 
     @property
     def width(self):
