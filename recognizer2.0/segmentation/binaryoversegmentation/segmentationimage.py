@@ -1,22 +1,23 @@
-from utils import image
-from utils.image import Image
 from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
+from utils.image import Image
 
 
 class SegmentationImage(Image):
     """An image that is being segmented"""
 
-    def __new__(cls, image, segmentation_lines, validators=[], image_splitter=ForegroundPixelContourTracing()):
+    def __new__(cls, image, segmentation_lines, character_validators=[], continue_segmentation_checks=[], image_splitter=ForegroundPixelContourTracing()):
         obj = Image.__new__(cls, image, image.color_mode)
         obj._segmentation_lines = segmentation_lines
-        obj._validators = validators
+        obj._character_validators = character_validators
+        obj._continue_segmentation_checks = continue_segmentation_checks
         obj._image_splitter = image_splitter
         return obj
 
     def __array_finalize__(self, obj):
         super(SegmentationImage, self).__array_finalize__(obj)
         self._segmentation_lines = getattr(obj, '_segmentation_lines', list())
-        self._validators = getattr(obj, '_validators', list())
+        self._character_validators = getattr(obj, '_character_validators', list())
+        self._continue_segmentation_checks = getattr(obj, '__continue_segmentation_checks', list())
         self._image_splitter = getattr(obj, '_image_splitter', ForegroundPixelContourTracing())
 
     def segment(self):
@@ -28,7 +29,7 @@ class SegmentationImage(Image):
 
     @property
     def is_valid_character_image(self):
-        all([validator.is_valid(self) for validator in self._validators])
+        all([validator.is_valid(self) for validator in self._character_validators])
 
     @property
     def has_segmentation_lines(self):
@@ -40,7 +41,7 @@ class SegmentationImage(Image):
 
     @property
     def segment_further(self):
-        raise NotImplementedError()
+        all([validator.is_valid(self) for validator in self._continue_segmentation_checks])
         # width < MinimumCharacterWidth + AverageCharacterWidth
         # Still has some SSP's left
 
@@ -56,7 +57,7 @@ class SegmentationImage(Image):
         return SegmentationImage(
             image=sub_image_pixels,
             segmentation_lines=sub_image_segmentation_lines,
-            validators=self._validators,
+            validators=self._character_validators,
             image_splitter=self._image_splitter
         )
 
@@ -67,31 +68,3 @@ class SegmentationImage(Image):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 
-class _AbstractSegmentationImageValidator(object):
-
-    def __init__(self):
-        super(_AbstractSegmentationImageValidator, self).__init__()
-
-    def is_valid(self, image):
-        pass
-
-    def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
-
-
-class ValidateOnWidth(_AbstractSegmentationImageValidator):
-    def __init__(self, minimum_character_width):
-        _AbstractSegmentationImageValidator.__init__(self)
-        self._minimum_character_width = minimum_character_width
-
-    def is_valid(self, image):
-        return image.width > self._minimum_character_width
-
-
-class ValidateOnForegroundPixels(_AbstractSegmentationImageValidator):
-    def __init__(self, minimum_num_foreground_pixels):
-        _AbstractSegmentationImageValidator.__init__(self)
-        self._minimum_num_foreground_pixels = minimum_num_foreground_pixels
-
-    def is_valid(self, image):
-        return image.number_of_foreground_pixels> self._minimum_num_foreground_pixels

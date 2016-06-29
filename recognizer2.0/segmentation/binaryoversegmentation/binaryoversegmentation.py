@@ -5,7 +5,7 @@ import segmentation.interface
 from postprocessing.lexicon import Lexicon
 from segmentation.binaryoversegmentation.segmentationimage import SegmentationImage
 from segmentation.binaryoversegmentation.suspiciousregions import SuspiciousRegionsComputer
-from segmentationimage import ValidateOnForegroundPixels, ValidateOnWidth
+from segmentation.binaryoversegmentation.characterValidators import ValidateOnWidth, ValidateOnForegroundPixels
 from utils.image import Image
 from utils.shapes import Rectangle
 from utils.things import Point
@@ -35,14 +35,18 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._low_base_line = None
         self._high_base_line = None
         self._stroke_width = None
-        self._validators = list()
+        self._character_validators = list()
+        self._continue_segmentation_checks = list()
 
     def segment(self, image):
         self._compute_parameters(image)
         segmentation_lines = self._compute_segmentation_lines(image)
-        self._validators = self._build_validators()
+        self._character_validators = self._build_character_validators()
+        self._continue_segmentation_checks = self._build_continue_segmentation_checks()
         segmentation_image = SegmentationImage(
-            image=image, segmentation_lines=segmentation_lines, validators=self._validators
+            image=image, segmentation_lines=segmentation_lines,
+            character_validators=self._character_validators,
+            continue_segmentation_checks=self._continue_segmentation_checks
         )
         return self._binary_segmentation(segmentation_image)
 
@@ -70,10 +74,16 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def minimum_num_foreground_pixels(self):
         return (self._high_base_line.y - self._low_base_line.y) * self._stroke_width
 
-    def _build_validators(self):
+    def _build_character_validators(self):
         return [
             ValidateOnWidth(minimum_character_width=self._stroke_width),
             ValidateOnForegroundPixels(minimum_num_foreground_pixels=self.minimum_num_foreground_pixels)
+        ]
+
+    def _build_continue_segmentation_checks(self):
+        raise NotImplementedError()
+        return [
+
         ]
 
     @classmethod
