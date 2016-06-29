@@ -26,6 +26,7 @@ class SegmentationImage(Image):
         splitting_line = self._segmentation_lines.line_closest_to(self.vertical_center)
 
         image = splitting_line.paint_on(self, color=(255, 0, 0))
+        image.show(wait_key=1000, window_name='Segementation Image')
         return self._split_along(splitting_line)
 
     def _split_along(self, line):
