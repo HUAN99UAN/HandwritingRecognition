@@ -97,7 +97,7 @@ class Image(np.ndarray):
         if bounding_box.bottom >= self.height:
             raise IndexError()
 
-    def sub_image(self, bounding_box):
+    def sub_image(self, bounding_box, remove_white_borders=True):
         """
         Get the sub_image of this image, based on the bounding box. Note that this performs a SHALLOW COPY of the
         original image. Operations performed on the original image DO NOT affect the subimage.
