@@ -26,7 +26,7 @@ class SuspiciousRegionsComputer:
     def compute(self, image):
         self._image = image
         frequencies = self._vertical_pixel_densities()
-        suspicious_regions =  self._to_suspicious_regions(frequencies=frequencies)
+        suspicious_regions = self._to_suspicious_regions(frequencies=frequencies)
         self.clean_up()
         return suspicious_regions
 
@@ -84,8 +84,6 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
 
     def __init__(self, x0, x1, image_height):
         x0, x1 = min(x0, x1), max(x0, x1)
-        top_left = Point(x=x0, y=0)
-        bottom_right = Point(x=x1, y=image_height)
         super(SuspiciousRegion, self).__init__(x1=x0, x2=x1, y=0)
 
     def to_segmentation_lines(self, stroke_width):
@@ -95,7 +93,7 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
             return self._to_segmentation_lines(stroke_width)
 
     def _segmentation_line_in_center(self):
-        x = round((self.left + self.right)/ 2.0)
+        x = int(round((self.left + self.right)/ 2.0))
         return [SegmentationLine(x=x)]
 
     def _to_segmentation_lines(self, stroke_width):
@@ -104,7 +102,7 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
             segmentation_lines.append(
                 SegmentationLine(x=x)
             )
-        segmentation_lines.append(SegmentationLine(x=self.right))
+        segmentation_lines.append(SegmentationLine(x=int(self.right)))
         return segmentation_lines
 
     def paint_on(self, image, color=(0, 0, 0), width=10, as_rectangle=True, bottom=None, top=None, filled=True):

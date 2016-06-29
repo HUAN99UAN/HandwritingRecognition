@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 import preprocessing.colorspaces
-from utils.image import Image
 from utils.things import Point
 
 

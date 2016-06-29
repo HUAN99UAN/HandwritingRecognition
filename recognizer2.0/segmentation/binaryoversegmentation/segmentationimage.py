@@ -71,26 +71,12 @@ class SegmentationImage(Image):
         :param bounding_box: Object with a top, bottom, left and right property.
         :return: A new segmentation image.
         """
-        def validate_bounding_box(image, bounding_box):
-            if bounding_box.left < 0:
-                raise IndexError()
-            if bounding_box.right >= image.width:
-                raise IndexError()
-            if bounding_box.top < 0:
-                raise IndexError()
-            if bounding_box.bottom >= image.height:
-                raise IndexError()
-
-        validate_bounding_box(self, bounding_box)
-        sub_image_pixels = self[
-                           bounding_box.top:(bounding_box.bottom+1),
-                           bounding_box.left:(bounding_box.right+1)
-                           ]
+        sub_image = super(SegmentationImage, self).sub_image(bounding_box)
         sub_image_segmentation_lines = self._segmentation_lines.get_subset_in(bounding_box)
         shift_distance = -1 * bounding_box.left
         sub_image_segmentation_lines = sub_image_segmentation_lines.shift_horizontally(shift_distance)
         return SegmentationImage(
-            image=sub_image_pixels,
+            image=sub_image,
             segmentation_lines=sub_image_segmentation_lines,
             character_validators=self._character_validators,
             continue_segmentation_checks=self._continue_segmentation_checks,

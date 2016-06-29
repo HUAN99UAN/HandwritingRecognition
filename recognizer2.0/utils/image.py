@@ -3,6 +3,7 @@ import cv2
 from enum import Enum
 
 from utils.things import Range, Size
+from preprocessing.backgroundremoval import BackgroundBorderRemoval
 
 
 class ColorMode(Enum):
@@ -87,15 +88,31 @@ class Image(np.ndarray):
         self._color_mode = getattr(obj, '_color_mode', ColorMode.bgr)
         # We do not need to return anything
 
-    def sub_image(self, bounding_box):
+    def _validate_bounding_box(self, bounding_box):
+        if bounding_box.left < 0:
+            raise IndexError()
+        if bounding_box.right >= self.width:
+            raise IndexError()
+        if bounding_box.top < 0:
+            raise IndexError()
+        if bounding_box.bottom >= self.height:
+            raise IndexError()
+
+    def sub_image(self, bounding_box, remove_white_borders=True):
         """
         Get the sub_image of this image, based on the bounding box. Note that this performs a SHALLOW COPY of the
         original image. Operations performed on the original image DO NOT affect the subimage.
         :param bounding_box: The bounding box like objects, should have the following properties: top, bottom, right,
         left as ints.
         """
-        sub_image = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
-        return Image(sub_image, color_mode=self.color_mode)
+        self._validate_bounding_box(bounding_box)
+        sub_image_pixels = self[
+                    bounding_box.top:(bounding_box.bottom + 1),
+                    bounding_box.left:(bounding_box.right + 1)]
+        sub_image = Image(sub_image_pixels, color_mode=self.color_mode)
+        if remove_white_borders:
+            sub_image = BackgroundBorderRemoval().apply(sub_image)
+        return sub_image
 
     def show(self, wait_key=_default_wait_key, window_name=None):
         """
@@ -149,6 +166,10 @@ class Image(np.ndarray):
 
         scaled_image = cv2.resize(src=self, dsize=correct_size, interpolation=interpolation_method.as_open_cv)
         return Image(scaled_image, self.color_mode)
+
+    @property
+    def is_empty(self):
+        return self.size == 0
 
     @property
     def width(self):
