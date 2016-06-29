@@ -198,7 +198,7 @@ class Image(np.ndarray):
         if self.color_mode in [ColorMode.gray, ColorMode.bgr]:
             raise NotImplementedError("Number of foreground pixel is only supported for binary images.")
         else:
-            return np.sum(self)
+            return np.sum(np.array(self))
 
     @staticmethod
     def from_file(input_file):

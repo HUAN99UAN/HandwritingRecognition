@@ -1,5 +1,7 @@
+import numpy as np
+
 from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
-from utils.image import Image
+from utils.image import Image, ColorMode
 
 
 class SegmentationImage(Image):
@@ -22,6 +24,8 @@ class SegmentationImage(Image):
 
     def segment(self):
         splitting_line = self._segmentation_lines.line_closest_to(self.vertical_center)
+
+        image = splitting_line.paint_on(self, color=(255, 0, 0))
         return self._split_along(splitting_line)
 
     def _split_along(self, line):
@@ -29,7 +33,7 @@ class SegmentationImage(Image):
 
     @property
     def is_valid_character_image(self):
-        all([validator.is_valid(self) for validator in self._character_validators])
+        return all([validator.is_valid(self) for validator in self._character_validators])
 
     @property
     def has_segmentation_lines(self):
@@ -40,8 +44,15 @@ class SegmentationImage(Image):
         return self.width / self.height
 
     @property
+    def number_of_foreground_pixels(self):
+        if self.color_mode in [ColorMode.gray, ColorMode.bgr]:
+            raise NotImplementedError("Number of foreground pixel is only supported for binary images.")
+        else:
+            return np.sum(np.array(self))
+
+    @property
     def segment_further(self):
-        all([validator.is_valid(self) for validator in self._continue_segmentation_checks])
+        return all([validator.is_valid(self) for validator in self._continue_segmentation_checks])
         # width < MinimumCharacterWidth + AverageCharacterWidth
         # Still has some SSP's left
 
@@ -57,7 +68,7 @@ class SegmentationImage(Image):
         return SegmentationImage(
             image=sub_image_pixels,
             segmentation_lines=sub_image_segmentation_lines,
-            validators=self._character_validators,
+            character_validators=self._character_validators,
             image_splitter=self._image_splitter
         )
 
