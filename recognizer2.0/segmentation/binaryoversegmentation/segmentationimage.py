@@ -23,11 +23,16 @@ class SegmentationImage(Image):
         self._image_splitter = getattr(obj, '_image_splitter', ForegroundPixelContourTracing())
 
     def segment(self):
-        splitting_line = self._segmentation_lines.line_closest_to(self.vertical_center)
+        splitting_line = self.select_splitting_line()
 
         image = splitting_line.paint_on(self, color=(255, 0, 0))
         image.show(wait_key=1000, window_name='Segementation Image')
         return self._split_along(splitting_line)
+
+    def select_splitting_line(self):
+        return self._segmentation_lines.line_closest_to(self.vertical_center)
+        # Criteria: Distance to the vertical_center
+        # Number of black pixels underneath the segmentation_line
 
     def _split_along(self, line):
         return self._image_splitter.split(self, line)
