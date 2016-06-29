@@ -26,36 +26,29 @@ class TestSegmentationImage(TestCase):
                                        self.image_splitter)
 
     def test_sub_image_1(self):
-        # Index out of range, should give original image.
-        # bounding_box = BoundingBox(top=0, bottom=2, left=-1, right=5)
-        # actual_image = self.image.sub_image(bounding_box)
-        # expected_image = self.image
-        # np.testing.assert_array_equal(actual_image, expected_image)
-        pass
+        # Index out of range, should give IndexError
+        bounding_box = BoundingBox(top=0, bottom=2, left=-1, right=5)
+        with self.assertRaises(IndexError):
+            self.image.sub_image(bounding_box)
+
 
     def test_sub_image_2(self):
         # Index out of range, should give original image.
-        # bounding_box = BoundingBox(top=-1, bottom=2, left=0, right=5)
-        # actual_image = self.image.sub_image(bounding_box)
-        # expected_image = self.image
-        # np.testing.assert_array_equal(actual_image, expected_image)
-        pass
+        bounding_box = BoundingBox(top=-1, bottom=2, left=0, right=5)
+        with self.assertRaises(IndexError):
+            self.image.sub_image(bounding_box)
 
     def test_sub_image_3(self):
         # Index out of range, should give original image
-        bounding_box = BoundingBox(top=0, bottom=20, left=0, right=5)
-        actual_image = self.image.sub_image(bounding_box)
-        expected_image = self.image
-        np.testing.assert_array_equal(actual_image, expected_image)
-        self.assertItemsEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
+        bounding_box = BoundingBox(top=0, bottom=self.image.height, left=0, right=5)
+        with self.assertRaises(IndexError):
+            self.image.sub_image(bounding_box)
 
     def test_sub_image_4(self):
         # Index out of range, should give original image
-        bounding_box = BoundingBox(top=0, bottom=2, left=0, right=20)
-        actual_image = self.image.sub_image(bounding_box)
-        expected_image = self.image
-        np.testing.assert_array_equal(actual_image, expected_image)
-        self.assertItemsEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
+        bounding_box = BoundingBox(top=0, bottom=2, left=0, right=self.image.width)
+        with self.assertRaises(IndexError):
+            self.image.sub_image(bounding_box)
 
     def test_sub_image_5(self):
         # Bounding box has image size, should give original image.
@@ -63,7 +56,10 @@ class TestSegmentationImage(TestCase):
         actual_image = self.image.sub_image(bounding_box)
         expected_image = self.image
         np.testing.assert_array_equal(actual_image, expected_image)
-        self.assertItemsEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
+        self.assertEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
+        self.assertItemsEqual(actual_image._character_validators, expected_image._character_validators)
+        self.assertItemsEqual(actual_image._continue_segmentation_checks, expected_image._continue_segmentation_checks)
+        self.assertItemsEqual(actual_image._image_splitter, expected_image._image_splitter)
 
     def test_sub_image_6(self):
         # Take the left half of the image

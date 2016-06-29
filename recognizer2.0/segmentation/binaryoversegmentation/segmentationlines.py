@@ -64,20 +64,26 @@ class SegmentationLines(object):
             lines.extend(region.to_segmentation_lines())
         return SegmentationLines(lines)
 
+    def shift_horizontally(self, distance_to_shift):
+        new_lines = [line.shift_horizontally(distance_to_shift) for line in self._lines]
+        return SegmentationLines(lines=new_lines)
+
     def __eq__(self, other):
-        return (isinstance(other, self.__class__)
-            and self._lines == other._lines)
+        return isinstance(other, self.__class__) and self._lines == other._lines
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
+        return "<SegmentationLines lines: {lines}>".format(lines=self._lines)
 
 
 class SegmentationLine(CommonEqualityMixin):
     def __init__(self, x):
         self._x = x
+
+    def shift_horizontally(self, distance_to_shift):
+        return SegmentationLine(x=self._x + distance_to_shift)
 
     @property
     def x(self):
@@ -91,4 +97,4 @@ class SegmentationLine(CommonEqualityMixin):
         ).paint_on(image, color=color, width=width)
 
     def __repr__(self):
-        return "SegmentationLine <x: {x}>".format(x=self.x)
+        return "SegmentationLine x: {x}>".format(x=self.x)
