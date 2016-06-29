@@ -20,9 +20,10 @@ class ContinueOnWidthCheck(_AbstractContinueSegmentationCheck):
     def __init__(self, minimum_character_width, average_character_width):
         super(ContinueOnWidthCheck, self).__init__()
         self._maximum_image_width = minimum_character_width + average_character_width
+        self._minimum_image_width = minimum_character_width
 
     def continue_segmentation(self, image):
-        return image.width > self._maximum_image_width
+        return (image.width > self._maximum_image_width) and (image.width > 2 * self._minimum_image_width)
 
 
 class ContinueOnSSPCheck(_AbstractContinueSegmentationCheck):
@@ -34,3 +35,12 @@ class ContinueOnSSPCheck(_AbstractContinueSegmentationCheck):
 
     def continue_segmentation(self, image):
         return image.has_segmentation_lines
+
+
+class ContinueOnNumberOfForegroundPixels(_AbstractContinueSegmentationCheck):
+
+    def __init__(self, minimum_number_of_foreground_pixels):
+        self._minimum_number_of_foregrond_pixesl = minimum_number_of_foreground_pixels
+
+    def continue_segmentation(self, image):
+        return image.number_of_foreground_pixels >= 2 * self._minimum_number_of_foregrond_pixesl
