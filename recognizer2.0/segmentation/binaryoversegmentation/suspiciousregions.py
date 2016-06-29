@@ -26,7 +26,7 @@ class SuspiciousRegionsComputer:
     def compute(self, image):
         self._image = image
         frequencies = self._vertical_pixel_densities()
-        suspicious_regions =  self._to_suspicious_regions(frequencies=frequencies)
+        suspicious_regions = self._to_suspicious_regions(frequencies=frequencies)
         self.clean_up()
         return suspicious_regions
 
