@@ -53,8 +53,6 @@ class SegmentationImage(Image):
     @property
     def segment_further(self):
         return all([validator.is_valid(self) for validator in self._continue_segmentation_checks])
-        # width < MinimumCharacterWidth + AverageCharacterWidth
-        # Still has some SSP's left
 
     def show(self, wait_key=None, window_name=None, **kwargs):
         if not wait_key and not wait_key == 0:
@@ -76,11 +74,11 @@ class SegmentationImage(Image):
         def validate_bounding_box(image, bounding_box):
             if bounding_box.left < 0:
                 raise IndexError()
-            if bounding_box.right >= self.width:
+            if bounding_box.right >= image.width:
                 raise IndexError()
             if bounding_box.top < 0:
                 raise IndexError()
-            if bounding_box.bottom >= self.height:
+            if bounding_box.bottom >= image.height:
                 raise IndexError()
 
         validate_bounding_box(self, bounding_box)
