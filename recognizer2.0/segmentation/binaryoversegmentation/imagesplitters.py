@@ -75,8 +75,8 @@ class _AbstractImageSplitter(CommonEqualityMixin):
         (x_coordinates, y_coordinates) = self._pixels_on_one_side_of_pixel_path(Pixel.pixels_left_of_in)
         image = self._set_to_background(x_coordinates, y_coordinates)
         bounding_box = BoundingBox(
-            top=0, bottom=self._image.height,
-            left=self._pixel_path.min_column_idx, right=self._image.width
+            top=0, bottom=self._image.height - 1,
+            left=self._pixel_path.min_column_idx, right=self._image.width - 1
         )
         return image.sub_image(bounding_box=bounding_box)
 
@@ -84,7 +84,7 @@ class _AbstractImageSplitter(CommonEqualityMixin):
         (x_coordinates, y_coordinates) = self._pixels_on_one_side_of_pixel_path(Pixel.pixels_right_of_in)
         image = self._set_to_background(x_coordinates, y_coordinates)
         bounding_box = BoundingBox(
-            top=0, bottom=self._image.height,
+            top=0, bottom=self._image.height - 1,
             left=0, right=self._pixel_path.max_column_idx
         )
         return image.sub_image(bounding_box=bounding_box)
