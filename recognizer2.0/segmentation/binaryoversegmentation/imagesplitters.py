@@ -7,7 +7,7 @@ from segmentation.binaryoversegmentation.astar import AStar
 from utils.things import Pixel, PixelPath, BoundingBox
 from utils.image import Image, ColorMode
 from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine
-from preprocessing.colorspaces import ToBinary
+from utils.mixins import CommonEqualityMixin
 
 
 def default_distance_function(origin, destination,
@@ -32,7 +32,7 @@ def default_neighbour_filter(node, segmentation_line, character_width):
     return node.x in range(left_boundary, right_boundary)
 
 
-class _AbstractImageSplitter(object):
+class _AbstractImageSplitter(CommonEqualityMixin):
 
     def __init__(self, background_color=255, foreground_color=0):
         self._image = None

@@ -63,19 +63,41 @@ class SegmentationImage(Image):
         image_with_ssp.show(wait_key=wait_key, window_name=window_name)
 
     def sub_image(self, bounding_box):
-        sub_image_pixels = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
+        """
+        Returns the sub_image, the borders of the bounding box are null-indexed and inclusive!
+
+        The validators are all copied. Only the segmentation lines that are still in the image are in
+        the subimage. Indices of the bounding box work the same as the slicing indices, i.e. negative indices wrap
+        around the iamge.
+
+        :param bounding_box: Object with a top, bottom, left and right property.
+        :return: A new segmentation image.
+        """
+        def validate_bounding_box(image, bounding_box):
+            if bounding_box.left < 0:
+                raise IndexError()
+            if bounding_box.right >= self.width:
+                raise IndexError()
+            if bounding_box.top < 0:
+                raise IndexError()
+            if bounding_box.bottom >= self.height:
+                raise IndexError()
+
+        validate_bounding_box(self, bounding_box)
+        sub_image_pixels = self[
+                           bounding_box.top:(bounding_box.bottom+1),
+                           bounding_box.left:(bounding_box.right+1)
+                           ]
         sub_image_segmentation_lines = self._segmentation_lines.get_subset_in(bounding_box)
+        shift_distance = -1 * bounding_box.left
+        sub_image_segmentation_lines = sub_image_segmentation_lines.shift_horizontally(shift_distance)
         return SegmentationImage(
             image=sub_image_pixels,
             segmentation_lines=sub_image_segmentation_lines,
             character_validators=self._character_validators,
+            continue_segmentation_checks=self._continue_segmentation_checks,
             image_splitter=self._image_splitter
         )
 
     def dumps(self):
         super(SegmentationImage, self).dumps()
-
-    def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
-
-

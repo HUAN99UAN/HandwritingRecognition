@@ -1,4 +1,7 @@
-class _AbstractCharacterValidator(object):
+from utils.mixins import CommonEqualityMixin
+
+
+class _AbstractCharacterValidator(CommonEqualityMixin):
 
     def __init__(self):
         super(_AbstractCharacterValidator, self).__init__()

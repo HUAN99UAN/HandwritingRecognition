@@ -1,6 +1,7 @@
-from utils.shapes import VerticalLine
-
 import numpy as np
+
+from utils.shapes import VerticalLine
+from utils.mixins import CommonEqualityMixin
 
 
 class SegmentationLines(object):
@@ -22,7 +23,7 @@ class SegmentationLines(object):
 
     def get_subset_in(self, bounding_box):
         new_set = filter(
-            lambda line: line.x in range(bounding_box.left, bounding_box.right),
+            lambda line: line.x in range(bounding_box.left, bounding_box.right + 1),
             self._lines)
         return SegmentationLines(new_set)
 
@@ -50,10 +51,10 @@ class SegmentationLines(object):
         return np.array([line.x for line in self._lines])
 
     @staticmethod
-    def from_x_coordinates(x_coordinates, image_height):
+    def from_x_coordinates(x_coordinates):
         lines = list()
-        for x in np.nditer(x_coordinates):
-            lines.append(VerticalLine(x=x, y1=0, y2=image_height))
+        for x in x_coordinates:
+            lines.append(SegmentationLine(x=x))
         return SegmentationLines(lines)
 
     @staticmethod
@@ -63,13 +64,26 @@ class SegmentationLines(object):
             lines.extend(region.to_segmentation_lines())
         return SegmentationLines(lines)
 
+    def shift_horizontally(self, distance_to_shift):
+        new_lines = [line.shift_horizontally(distance_to_shift) for line in self._lines]
+        return SegmentationLines(lines=new_lines)
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self._lines == other._lines
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
+        return "<SegmentationLines lines: {lines}>".format(lines=self._lines)
 
 
-class SegmentationLine():
+class SegmentationLine(CommonEqualityMixin):
     def __init__(self, x):
         self._x = x
+
+    def shift_horizontally(self, distance_to_shift):
+        return SegmentationLine(x=self._x + distance_to_shift)
 
     @property
     def x(self):
@@ -83,4 +97,4 @@ class SegmentationLine():
         ).paint_on(image, color=color, width=width)
 
     def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
+        return "SegmentationLine x: {x}>".format(x=self.x)

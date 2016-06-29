@@ -1,4 +1,7 @@
-class _AbstractContinueSegmentationCheck(object):
+from utils.mixins import CommonEqualityMixin
+
+
+class _AbstractContinueSegmentationCheck(CommonEqualityMixin):
 
     def __init__(self):
         super(_AbstractContinueSegmentationCheck, self).__init__()

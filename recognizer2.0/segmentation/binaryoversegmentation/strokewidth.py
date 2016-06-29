@@ -1,12 +1,11 @@
 import numpy as np
 
 from utils.statistics import mode
-from utils.image import WrongColorModeError
-from utils.shapes import HorizontalLine
 from preprocessing.invert import Invert
+from utils.mixins import CommonEqualityMixin
 
 
-class _AbstractStrokeWidthEstimator(object):
+class _AbstractStrokeWidthEstimator(CommonEqualityMixin):
 
     def __init__(self):
         super(_AbstractStrokeWidthEstimator, self).__init__()
