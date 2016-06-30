@@ -75,7 +75,7 @@ class SegmentationImage(Image):
 
     @property
     def segment_further(self):
-        return all([validator.is_valid(self) for validator in self._continue_segmentation_checks])
+        return all([validator.continue_segmentation(self) for validator in self._continue_segmentation_checks])
 
     def show(self, wait_key=None, window_name=None, **kwargs):
         if not wait_key and not wait_key == 0:
