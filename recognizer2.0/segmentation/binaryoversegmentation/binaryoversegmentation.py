@@ -110,19 +110,19 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         def add_to_correct_list(image, done, segment_more):
             if image.is_empty:
                 return
-            elif image.is_valid_character_image:
-                done.append(image)
-                # image.show(wait_key=1000, window_name='Character')
             elif image.segment_further:
                 segment_more.append(image)
-                # image.show(wait_key=1000, window_name='Segment More')
+                image.show(wait_key=1000, window_name='Segment More')
+            elif image.is_valid_character_image:
+                done.append(image)
+                image.show(wait_key=1000, window_name='Character')
             else:
                 pass
-                # image.show(wait_key=0, window_name='Discarded')
-                # raise NotImplementedError(
-                #     "No way to handle images that are neither a valid character image or "
-                #     "should be segmented further."
-                # )
+                image.show(wait_key=0, window_name='Discarded')
+                raise NotImplementedError(
+                    "No way to handle images that are neither a valid character image or "
+                    "should be segmented further."
+                )
 
         def select_next_image(images):
             images.sort(key=lambda image: image.width_over_height_ratio)
