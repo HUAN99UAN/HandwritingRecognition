@@ -5,6 +5,7 @@ import classification
 import preprocessing
 import featureExtraction
 
+
 def parse_command_line_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('imageDirectory', type=str,
