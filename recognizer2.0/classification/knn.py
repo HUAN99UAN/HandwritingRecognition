@@ -1,4 +1,10 @@
+import argparse
+
 import interface
+import utils.actions as actions
+import config
+from preprocessing.pipe import Pipe
+from featureExtraction.crossings import Crossings
 
 
 class KNN(interface.AbstractClassifier):
@@ -48,3 +54,29 @@ class _ModelBuilder(object):
 
     def build(self):
         raise NotImplementedError()
+        return None
+
+
+def parse_command_line_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('imageDirectory', type=str,
+                        action=actions.ExpandDirectoryPathAction,
+                        help='The path to the directory with images')
+    parser.add_argument('wordsFiles', nargs='+', type=str, action=actions.ExpandFilePathsAction,
+                        help='The words files, should be at least one file. Each words file should be associated with '
+                             'an image in the imageDirectory.')
+    parser.add_argument('--outputFile', type=str,
+                        default=config.model_file,
+                        action=actions.ExpandFilePathAction,
+                        help='The path to the output file.')
+    return vars(parser.parse_args())
+
+if __name__ == '__main__':
+    cli_arguments = parse_command_line_arguments()
+    model = KNN.build_model(
+        xml_files=cli_arguments.get('wordsFiles'),
+        image_folder=cli_arguments.get('imageDirectory'),
+        preprocessor=Pipe(),
+        feature_extractor=Crossings(),
+    )
+    model.to_file(cli_arguments.get('outputFile'))
