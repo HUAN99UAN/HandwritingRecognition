@@ -1,3 +1,4 @@
+import segmentation.binaryoversegmentation as config
 import segmentation.binaryoversegmentation.baseline as baseline
 import segmentation.binaryoversegmentation.segmentationlinesfilters as filters
 import segmentation.binaryoversegmentation.strokewidth as strokewidth
@@ -23,18 +24,13 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                  base_line_estimator=baseline.VerticalHistogram(),
                  stroke_width_estimator=strokewidth.RasterTechnique(),
                  longest_word_length=13,
-                 minimum_character_size=Size(width=20, height=50),
-                 average_character_size=Size(width=64, height=72),
-                 maximum_character_size=Size(width=84, height=92)):
-
-        import warnings
-        warnings.warn("The average character width uses some silly default, right now. Fix this to make sure that it uses the actual average character width.")
+                 minimum_character_size=config.default_minimum_character_size,
+                 maximum_character_size=config.default_maximum_character_size):
 
         super(BinaryOverSegmentation, self).__init__()
         self._max_segmentation = longest_word_length
         self._base_line_estimator = base_line_estimator
         self._stroke_width_estimator = stroke_width_estimator
-        self._average_character_size= average_character_size
         self._minimum_character_size = minimum_character_size
         self._maximum_character_size = maximum_character_size
 
@@ -96,7 +92,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         return [
             continuesegmentationchecks.ContinueOnSSPCheck(),
             continuesegmentationchecks.ContinueOnWidthCheck(
-                average_character_width=self._average_character_size.width,
+                maximum_character_width=self._maximum_character_size.width,
                 minimum_character_width=self._minimum_character_size.width
             ),
             continuesegmentationchecks.ContinueOnNumberOfForegroundPixels(

@@ -17,9 +17,9 @@ class ContinueOnWidthCheck(_AbstractContinueSegmentationCheck):
     """
     Segment the image further if its width is greater than minimum_character_width + average_character_width.
     """
-    def __init__(self, minimum_character_width, average_character_width):
+    def __init__(self, minimum_character_width, maximum_character_width):
         super(ContinueOnWidthCheck, self).__init__()
-        self._maximum_image_width = minimum_character_width + average_character_width
+        self._maximum_image_width = maximum_character_width
         self._minimum_image_width = minimum_character_width
 
     def continue_segmentation(self, image):
