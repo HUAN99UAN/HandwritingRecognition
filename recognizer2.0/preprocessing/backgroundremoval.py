@@ -14,12 +14,15 @@ class BackgroundBorderRemoval(interface.AbstractFilter):
     def apply(self, image):
         super(BackgroundBorderRemoval, self).apply(image)
         bits = preprocessing.colorspaces.ToBinary(maximum_value=1).apply(image)
-        top, bottom = self._compute_top_and_bottom(bits)
-        left, right = self._compute_left_and_right(bits)
-        return image.sub_image(
-            BoundingBox(left=left, right=right, top=top, bottom=bottom),
-            remove_white_borders=False
-        )
+        try:
+            top, bottom = self._compute_top_and_bottom(bits)
+            left, right = self._compute_left_and_right(bits)
+            return image.sub_image(
+                BoundingBox(left=left, right=right, top=top, bottom=bottom),
+                remove_white_borders=False
+            )
+        except ValueError:
+            return image.EmptyImage(image.color_mode)
 
     def _compute_top_and_bottom(self, bits):
         row_bits = (np.sum(bits, axis=1) == bits.width)

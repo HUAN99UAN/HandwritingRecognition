@@ -170,10 +170,11 @@ class _ModelBuilder(object):
 
     def _add_feature_from_character(self, character, image):
         character_image = image.sub_image(character, remove_white_borders=True)
-        self._add_feature_vector(
-            label=character.text,
-            feature_vector=self._feature_extractor.extract(character_image)
-        )
+        if not character_image.is_empty:
+            self._add_feature_vector(
+                label=character.text,
+                feature_vector=self._feature_extractor.extract(character_image)
+            )
 
     def _add_feature_vector(self, label, feature_vector):
         if self._model.has_key(label):

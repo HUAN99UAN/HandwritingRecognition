@@ -174,6 +174,10 @@ class Image(np.ndarray):
         scaled_image = cv2.resize(src=self, dsize=correct_size, interpolation=interpolation_method.as_open_cv)
         return Image(scaled_image, self.color_mode)
 
+    @classmethod
+    def EmptyImage(cls, color_mode = ColorMode.binary):
+        return cls([], color_mode)
+
     @property
     def is_empty(self):
         return self.size == 0
