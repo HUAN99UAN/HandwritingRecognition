@@ -83,10 +83,7 @@ class HistogramsEqualization(interface.AbstractFilter):
     def apply(self, image):
         image = self.verify_image(image)
 
-        return self._linear_scaling(
-            image=image,
-            old_range=image.luminosity_range
-        )
+        return self._linear_scaling(image=image)
 
     @classmethod
     def _linear_scaling(cls, image):
