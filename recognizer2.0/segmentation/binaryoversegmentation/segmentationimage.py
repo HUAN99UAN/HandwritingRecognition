@@ -81,6 +81,9 @@ class SegmentationImage(Image):
         if not wait_key and not wait_key == 0:
             wait_key = super(SegmentationImage, self)._default_wait_key
         image_with_ssp = self._segmentation_lines.paint_on(self, **kwargs)
+        if type(image_with_ssp) is SegmentationImage:
+            # Brrrr
+            image_with_ssp = Image(image_with_ssp, image_with_ssp.color_mode)
         image_with_ssp.show(wait_key=wait_key, window_name=window_name)
 
     def sub_image(self, bounding_box, remove_white_borders=True):
