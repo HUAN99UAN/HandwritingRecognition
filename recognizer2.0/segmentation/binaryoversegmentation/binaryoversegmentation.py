@@ -121,11 +121,12 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                 segment_more.append(image)
                 # image.show(wait_key=1000, window_name='Segment More')
             else:
-                image.show(wait_key=0, window_name='Discarded')
-                raise NotImplementedError(
-                    "No way to handle images that are neither a valid character image or "
-                    "should be segmented further."
-                )
+                pass
+                # image.show(wait_key=0, window_name='Discarded')
+                # raise NotImplementedError(
+                #     "No way to handle images that are neither a valid character image or "
+                #     "should be segmented further."
+                # )
 
         def select_next_image(images):
             images.sort(key=lambda image: image.width_over_height_ratio)
