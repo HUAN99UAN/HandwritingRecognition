@@ -28,9 +28,9 @@ class SegmentationImage(Image):
     def segment(self):
         splitting_line = self.select_splitting_line()
 
-        image = self._segmentation_lines.paint_on(self, color=(0, 255, 0))
-        image = splitting_line.paint_on(image, color=(255, 0, 0))
-        image.show(wait_key=0, window_name='Segementation Image')
+        # image = self._segmentation_lines.paint_on(self, color=(0, 255, 0))
+        # image = splitting_line.paint_on(image, color=(255, 0, 0))
+        # image.show(wait_key=0, window_name='Segementation Image')
         return self._split_along(splitting_line)
 
     def select_splitting_line(self):
@@ -60,7 +60,7 @@ class SegmentationImage(Image):
 
     @property
     def has_segmentation_lines(self):
-        return bool(self._segmentation_lines)
+        return not self._segmentation_lines.is_empty
 
     @property
     def width_over_height_ratio(self):

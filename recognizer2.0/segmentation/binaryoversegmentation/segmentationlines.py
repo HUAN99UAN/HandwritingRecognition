@@ -12,6 +12,10 @@ class SegmentationLines(object):
         self._lines = lines
         self._idx = 0
 
+    @property
+    def is_empty(self):
+        return not bool(self._lines)
+
     def lines(self):
         for line in self._lines:
             yield line

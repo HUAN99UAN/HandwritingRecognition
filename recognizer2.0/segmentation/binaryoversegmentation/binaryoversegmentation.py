@@ -116,10 +116,10 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                 return
             elif image.is_valid_character_image:
                 done.append(image)
-                image.show(wait_key=1000, window_name='Character')
+                # image.show(wait_key=1000, window_name='Character')
             elif image.segment_further:
                 segment_more.append(image)
-                image.show(wait_key=1000, window_name='Segment More')
+                # image.show(wait_key=1000, window_name='Segment More')
             else:
                 image.show(wait_key=0, window_name='Discarded')
                 raise NotImplementedError(
