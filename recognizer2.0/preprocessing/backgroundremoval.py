@@ -1,10 +1,8 @@
 import numpy as np
 
 import interface
-from preprocessing.colorspaces import ToBinary
+import preprocessing.colorspaces
 from utils.things import BoundingBox
-
-
 
 
 class BackgroundBorderRemoval(interface.AbstractFilter):
@@ -15,7 +13,7 @@ class BackgroundBorderRemoval(interface.AbstractFilter):
 
     def apply(self, image):
         super(BackgroundBorderRemoval, self).apply(image)
-        bits = ToBinary(maximum_value=1).apply(image)
+        bits = preprocessing.colorspaces.ToBinary(maximum_value=1).apply(image)
         top, bottom = self._compute_top_and_bottom(bits)
         left, right = self._compute_left_and_right(bits)
         return image.sub_image(
