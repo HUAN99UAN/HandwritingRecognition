@@ -143,6 +143,7 @@ class _ModelBuilder(object):
     def build(self):
         for xml_file in self._xml_files:
             self._add_features_from_file(xml_file)
+        return _Model(model=self._model)
 
     def _add_features_from_file(self, xml_file):
         image, lines = self._get_image_and_lines_from_file(xml_file)
