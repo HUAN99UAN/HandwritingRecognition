@@ -7,7 +7,7 @@ class AbstractSegmenter(object):
 
     def segment(self, image):
         """
-        :param image: the image to segment
+        :param image: the image to compute
         :rtype: List of subimages of image.
         """
         pass

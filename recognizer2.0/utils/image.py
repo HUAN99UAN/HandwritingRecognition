@@ -3,6 +3,7 @@ import cv2
 from enum import Enum
 
 from utils.things import Range, Size
+from preprocessing.backgroundremoval import BackgroundBorderRemoval
 
 
 class ColorMode(Enum):
@@ -13,7 +14,7 @@ class ColorMode(Enum):
         return self == ColorMode.gray
 
     @property
-    def is_bgr(self):
+    def is_color(self):
         return self == ColorMode.bgr
 
     @property
@@ -87,15 +88,31 @@ class Image(np.ndarray):
         self._color_mode = getattr(obj, '_color_mode', ColorMode.bgr)
         # We do not need to return anything
 
-    def sub_image(self, bounding_box):
+    def _validate_bounding_box(self, bounding_box):
+        if bounding_box.left < 0:
+            raise IndexError()
+        if bounding_box.right >= self.width:
+            raise IndexError()
+        if bounding_box.top < 0:
+            raise IndexError()
+        if bounding_box.bottom >= self.height:
+            raise IndexError()
+
+    def sub_image(self, bounding_box, remove_white_borders=False):
         """
         Get the sub_image of this image, based on the bounding box. Note that this performs a SHALLOW COPY of the
         original image. Operations performed on the original image DO NOT affect the subimage.
         :param bounding_box: The bounding box like objects, should have the following properties: top, bottom, right,
         left as ints.
         """
-        sub_image = self[bounding_box.top:bounding_box.bottom, bounding_box.left:bounding_box.right]
-        return Image(sub_image)
+        self._validate_bounding_box(bounding_box)
+        sub_image_pixels = self[
+                    bounding_box.top:(bounding_box.bottom + 1),
+                    bounding_box.left:(bounding_box.right + 1)]
+        sub_image = Image(sub_image_pixels, color_mode=self.color_mode)
+        if remove_white_borders:
+            sub_image = BackgroundBorderRemoval().apply(sub_image)
+        return sub_image
 
     def show(self, wait_key=_default_wait_key, window_name=None):
         """
@@ -109,7 +126,7 @@ class Image(np.ndarray):
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
 
-    def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.bilinear):
+    def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.nearest_neighbour):
         """
         Resize an image to a new size. Note that the aspect ratio of the image is not take into account.
         :param width: The width of the new image, if only width is given keep_aspect_ratio is set to True.
@@ -151,9 +168,24 @@ class Image(np.ndarray):
         return Image(scaled_image, self.color_mode)
 
     @property
+    def is_empty(self):
+        return self.size == 0
+
+    @property
     def width(self):
         shape = self.shape
         return shape[1]
+
+    def _is_valid_pixel(self, pixel):
+        return (pixel.column in range(self.width)) and \
+               (pixel.row in range(self.height))
+
+    def get_pixel(self, pixel):
+        if self._is_valid_pixel(pixel):
+            return self[pixel.row, pixel.column]
+
+    def set_pixel(self, pixel, value):
+        self[pixel.row, pixel.column] = value
 
     @property
     def height(self):
@@ -177,6 +209,17 @@ class Image(np.ndarray):
     @property
     def color_mode(self):
         return self._color_mode
+
+    @property
+    def vertical_center(self):
+        return round(self.width / 2.0)
+
+    @property
+    def number_of_foreground_pixels(self):
+        if self.color_mode in [ColorMode.gray, ColorMode.bgr]:
+            raise NotImplementedError("Number of foreground pixel is only supported for binary images.")
+        else:
+            return np.sum(np.array(self))
 
     @staticmethod
     def from_file(input_file):
