@@ -152,7 +152,4 @@ if __name__ == '__main__':
     image = Image.from_file(image_file)
     image = ToBinary().apply(image)
 
-    lexicon_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/lexicon.txt'
-    lexicon = Lexicon.from_file(lexicon_file)
-
-    BinaryOverSegmentation(lexicon=lexicon).segment(image)
+    BinaryOverSegmentation().segment(image)
