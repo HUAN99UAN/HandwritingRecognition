@@ -4,6 +4,7 @@ from os import path
 import msgpack
 import msgpack_numpy as m
 import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
 
 import inputOutput.wordio as xmlReader
 import interface
@@ -20,13 +21,17 @@ m.patch()
 class KNN(interface.AbstractClassifier):
     """Nearest Neighbour Classifier"""
 
-    def __init__(self, model_file, k=1, model=None):
+    def __init__(self, model_file=config.default_model_file_path, k=1, model=None):
         super(KNN, self).__init__()
-        self.k = k
-        self._model = _Model.read_from_file(model_file)
+        if not model:
+            model = _Model.read_from_file(model_file)
+        self._classifier = KNeighborsClassifier(n_neighbors=k, p=2, n_jobs=-1)
+        (patterns, labels) = model.patterns_and_labels
+        self._classifier.fit(patterns, labels)
 
     def classify(self, feature_vector):
-        raise NotImplementedError()
+        feature_vector = feature_vector.reshape(1, -1)
+        return self._classifier.predict(feature_vector)
 
     @staticmethod
     def build_model(xml_files, image_directory, preprocessor, feature_extractor):
