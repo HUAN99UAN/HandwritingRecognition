@@ -19,9 +19,10 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     recognition." Pattern Recognition 45.4 (2012): 1306-1317.
     """
 
-    def __init__(self, lexicon,
+    def __init__(self,
                  base_line_estimator=baseline.VerticalHistogram(),
                  stroke_width_estimator=strokewidth.RasterTechnique(),
+                 longest_word_length=13,
                  minimum_character_size=Size(width=30, height=63),
                  average_character_size=Size(width=64, height=72),
                  maximum_character_size=Size(width=84, height=92)):
@@ -30,8 +31,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         warnings.warn("The average character width uses some silly default, right now. Fix this to make sure that it uses the actual average character width.")
 
         super(BinaryOverSegmentation, self).__init__()
-        self._lexicon = lexicon
-        self._max_segmentation = lexicon.longest_word.length
+        self._max_segmentation = longest_word_length
         self._base_line_estimator = base_line_estimator
         self._stroke_width_estimator = stroke_width_estimator
         self._average_character_size= average_character_size
