@@ -28,8 +28,9 @@ class SegmentationImage(Image):
     def segment(self):
         splitting_line = self.select_splitting_line()
 
-        image = splitting_line.paint_on(self, color=(255, 0, 0))
-        image.show(wait_key=1000, window_name='Segementation Image')
+        image = self._segmentation_lines.paint_on(self, color=(0, 255, 0))
+        image = splitting_line.paint_on(image, color=(255, 0, 0))
+        image.show(wait_key=0, window_name='Segementation Image')
         return self._split_along(splitting_line)
 
     def select_splitting_line(self):
@@ -39,7 +40,7 @@ class SegmentationImage(Image):
         # Distance to the vertical_center of the images
         distance_to_center_scores = self._compute_distance_to_center_scores()
 
-        scores = [p + q for (p, q) in zip(pixel_density_scores, distance_to_center_scores)]
+        scores = [p + (3 * q) for (p, q) in zip(pixel_density_scores, distance_to_center_scores)]
         max_index, _ = max(enumerate(scores), key=operator.itemgetter(1))
         return self._segmentation_lines.line_at_idx(max_index)
 
