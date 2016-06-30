@@ -1,10 +1,12 @@
-class Lexicon():
+import postprocessing as config
+
+class Lexicon:
 
     def __init__(self, words):
         self._words = words
 
     @staticmethod
-    def from_file(file_name):
+    def from_file(file_name=config.default_lexicon_file):
         lexicon = []
         total_words = 0
         with open(file_name, 'r') as f:
