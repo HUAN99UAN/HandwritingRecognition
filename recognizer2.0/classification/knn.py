@@ -149,6 +149,10 @@ class _ModelBuilder(object):
         image, lines = self._get_image_and_lines_from_file(xml_file)
         image.show(wait_key=0)
 
+        preprocessed_image = self._preprocessor.apply(image)
+        preprocessed_image.resize(height=1200).show(wait_key=0)
+        for line in lines:
+            self._add_features_from_line(line=line, image=preprocessed_image)
 
     def _get_image_and_lines_from_file(self, xml_file):
         lines, image_name = xmlReader.read(xml_file)
@@ -158,6 +162,29 @@ class _ModelBuilder(object):
 
     def _build_image_file_path(self, image_name):
         return path.join(self._image_directory, image_name + '.' + self._image_extension)
+
+    def _add_features_from_line(self, line, image):
+        for word in line:
+            self._add_features_from_word(word, image)
+
+    def _add_features_from_word(self, word, image):
+        for character in word.characters:
+            self._add_feature_from_character(character, image)
+
+    def _add_feature_from_character(self, character, image):
+        character_image = image.sub_image(character, remove_white_borders=True)
+        character_image.resize(height=400).show(wait_key=0)
+        self._add_feature_vector(
+            label=character.text,
+            feature_vector=self._feature_extractor.extract(character_image)
+        )
+
+    def _add_feature_vector(self, label, feature_vector):
+        if self._model.has_key(label):
+            self._model.get(label).append(feature_vector)
+        else:
+            self._model[label] = [feature_vector]
+
 
 def parse_command_line_arguments():
     parser = argparse.ArgumentParser()
