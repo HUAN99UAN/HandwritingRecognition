@@ -22,7 +22,7 @@ class SegmentationImage(Image):
         super(SegmentationImage, self).__array_finalize__(obj)
         self._segmentation_lines = getattr(obj, '_segmentation_lines', list())
         self._character_validators = getattr(obj, '_character_validators', list())
-        self._continue_segmentation_checks = getattr(obj, '__continue_segmentation_checks', list())
+        self._continue_segmentation_checks = getattr(obj, '_continue_segmentation_checks', list())
         self._image_splitter = getattr(obj, '_image_splitter', ForegroundPixelContourTracing())
 
     def segment(self):
