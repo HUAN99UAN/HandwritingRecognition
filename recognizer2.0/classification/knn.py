@@ -175,8 +175,8 @@ class _ModelBuilder(object):
 
     def _add_feature_from_character(self, character, image):
         if not character.is_valid:
-            character_image = image.sub_image(character, remove_white_borders=True)
-            character_image.show(wait_key=500)
+            # character_image = image.sub_image(character, remove_white_borders=True)
+            # character_image.show(wait_key=500)
             return
         character_image = image.sub_image(character, remove_white_borders=True)
         if not character_image.is_empty:
