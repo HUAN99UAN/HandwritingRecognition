@@ -1,3 +1,5 @@
+import operator
+
 import numpy as np
 
 from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
@@ -31,12 +33,25 @@ class SegmentationImage(Image):
         return self._split_along(splitting_line)
 
     def select_splitting_line(self):
-        return self._segmentation_lines.line_closest_to(self.vertical_center)
-        # Criteria: Distance to the vertical_center
         # Number of black pixels underneath the segmentation_line
+        pixel_density_scores = [self.pixel_column_density_at(line.x - 1) for line in self._segmentation_lines]
+
+        # Distance to the vertical_center of the images
+        distance_to_center_scores = self._compute_distance_to_center_scores()
+
+        scores = [p + q for (p, q) in zip(pixel_density_scores, distance_to_center_scores)]
+        max_index, _ = max(enumerate(scores), key=operator.itemgetter(1))
+        return self._segmentation_lines.line_at_idx(max_index)
+
+    def _compute_distance_to_center_scores(self):
+        return [1 - (line.distance_to(self.vertical_center)/float(self.vertical_center))
+                for line in self._segmentation_lines]
 
     def _split_along(self, line):
         return self._image_splitter.split(self, line)
+
+    def pixel_column_density_at(self, x):
+        return 1 - sum(self[:, x]) / (float(self.height) * 255)
 
     @property
     def is_valid_character_image(self):

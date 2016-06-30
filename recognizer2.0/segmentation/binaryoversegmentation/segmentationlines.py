@@ -46,6 +46,9 @@ class SegmentationLines(object):
         idx = np.argmin(abs(self.coordinates - value))
         return self._lines[idx]
 
+    def line_at_idx(self, idx):
+        return self._lines[idx]
+
     @property
     def coordinates(self):
         return np.array([line.x for line in self._lines])
@@ -84,6 +87,9 @@ class SegmentationLine(CommonEqualityMixin):
 
     def shift_horizontally(self, distance_to_shift):
         return SegmentationLine(x=self._x + distance_to_shift)
+
+    def distance_to(self, other_x):
+        return abs(self._x - other_x)
 
     @property
     def x(self):
