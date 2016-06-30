@@ -5,6 +5,7 @@ _RangeTuple = namedtuple('Range', ['min_column_idx', 'max_column_idx'])
 _SizeTuple = namedtuple('Size', ['width', 'height'])
 _Pixel = namedtuple('Pixel', ['row', 'column'])
 Point = namedtuple('Point', ['x', 'y'])
+NormalDistribution = namedtuple('NormalDistribution', ['mean', 'sd'])
 BoundingBox = namedtuple('BoundingBox', ['top', 'bottom', 'left', 'right'])
 
 
