@@ -53,7 +53,7 @@ class Recognizer(object):
         characters = list()
         for character_image in character_images:
             characters.append(self._recognize_character(character_image))
-        return self._post_processor.process(characters)
+        return self._post_processor.process(''.join(characters))
 
     def _recognize_character(self, character_image):
         feature_vector = self._feature_extractor.extract(character_image)
@@ -74,21 +74,6 @@ def parse_command_line_arguments():
                         action=actions.OutputFileAction,
                         help='The path output file.')
     return vars(parser.parse_args())
-
-
-# def recognize(image, annotation, preprocessor, segmenter, feature_extractor, classifier, postprocessor):
-#     output_lines = list()
-#
-#     preprocessed_image = preprocessor.apply(image)
-#
-#     for line in lines:
-#         output_line = []
-#         for word in line:
-#             output_word = deepcopy(word)
-#             output_word.text = 'something'
-#             output_line.append(output_word)
-#         output_lines.append(output_line)
-#     return output_lines
 
 if __name__ == '__main__':
     cli_arguments = parse_command_line_arguments()

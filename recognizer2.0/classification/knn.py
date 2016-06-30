@@ -26,7 +26,8 @@ class KNN(interface.AbstractClassifier):
 
     def classify(self, feature_vector):
         feature_vector = feature_vector.reshape(1, -1)
-        return self._classifier.predict(feature_vector)
+        array = self._classifier.predict(feature_vector)
+        return array[0]
 
     @staticmethod
     def build_model(xml_files, image_directory, preprocessor, feature_extractor):
