@@ -5,7 +5,6 @@ import msgpack
 import msgpack_numpy as m
 import numpy as np
 
-import config
 import inputOutput.wordio as xmlReader
 import interface
 import utils.actions as actions
@@ -13,6 +12,7 @@ import utils.lists
 from featureExtraction.crossings import Crossings
 from preprocessing.pipe import Pipe
 from utils.image import Image
+import classification as config
 
 m.patch()
 
@@ -20,7 +20,7 @@ m.patch()
 class KNN(interface.AbstractClassifier):
     """Nearest Neighbour Classifier"""
 
-    def __init__(self, model_file, k):
+    def __init__(self, model_file, k=1, model=None):
         super(KNN, self).__init__()
         self.k = k
         self._model = _Model.read_from_file(model_file)
@@ -191,7 +191,7 @@ def parse_command_line_arguments():
                         help='The words files, should be at least one file. Each words file should be associated with '
                              'an image in the imageDirectory.')
     parser.add_argument('--outputFile', type=str,
-                        default=config.write_model_file,
+                        default=config.default_model_file_path,
                         action=actions.ExpandFilePathAction,
                         help='The path to the output file.')
     return vars(parser.parse_args())
