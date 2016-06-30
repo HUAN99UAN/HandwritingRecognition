@@ -1,9 +1,10 @@
+import numpy as np
+from cv2 import equalizeHist
+
 import interface
 import colorspaces
-from utils.things import Range, Size
+from utils.things import Size
 from utils.image import Image, ColorMode
-from cv2 import equalizeHist
-import numpy as np
 
 
 class LuminosityNormalization(interface.AbstractFilter):
@@ -82,8 +83,8 @@ class HistogramsEqualization(interface.AbstractFilter):
 
     def apply(self, image):
         image = self.verify_image(image)
-
-        return self._linear_scaling(image=image)
+        image_array = self._linear_scaling(image=image)
+        return Image(image_array, color_mode=image.color_mode)
 
     @classmethod
     def _linear_scaling(cls, image):

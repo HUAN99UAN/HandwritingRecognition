@@ -30,20 +30,16 @@ class Crossings(interface.AbstractFeatureExtractor):
             image, self._number_of_horizontal_features, axis=1
         )
         feature_vector_vertical= self._count_crossings(
-            image, self._number_of_horizontal_features, axis=0
+            image, self._number_of_vertical_features, axis=0
         )
         return np.asarray(np.hstack((feature_vector_horizontal, feature_vector_vertical)), dtype=np.float)
 
     @classmethod
-    def _scale_image(cls, image, new_height):
-        scaled_image = image.resize(height=new_height)
-        if not scaled_image.color_mode.is_binary:
-            scaled_image = ToBinary().apply(scaled_image)
-        return scaled_image
-
-    @classmethod
     def _count_crossings(self, image, number_of_features, axis):
-        scaled_image = self._scale_image(image, number_of_features)
+        if axis == 1:
+            scaled_image = ToBinary().apply(image.resize(height=number_of_features))
+        if axis == 0:
+            scaled_image = ToBinary().apply(image.resize(width=number_of_features))
         differences = np.diff(scaled_image, axis=axis)
         differences[differences != 0] = 1
         return np.sum(differences, axis=axis)

@@ -1,6 +1,6 @@
-import wordio
+import inputOutput.wordio
 import argparse
-import actions
+import inputOutput.actions
 from preprocessing import pipe
 from featureExtraction import crossings
 from os import path
@@ -10,15 +10,15 @@ def parse_command_line_arguments():
     parser = argparse.ArgumentParser(description='Read the input for the classification of handwritten text.')
 
     parser.add_argument('words_file', metavar='wordsFile', type=str,
-                        action=actions.ExpandFilePathAction,
+                        action=inputOutput.actions.ExpandFilePathAction,
                         help='The words file')
 
     parser.add_argument('image', metavar='image', type=str,
-                        action=actions.ExpandFilePathAction,
+                        action=inputOutput.actions.ExpandFilePathAction,
                         help='The image with the text that is to be read.')
 
     parser.add_argument('outputFilePath', metavar='outputWordsFile', type=str,
-                        action=actions.ExpandFilePathAction,
+                        action=inputOutput.actions.ExpandFilePathAction,
                         help='The path output file.')
     return vars(parser.parse_args())
 
@@ -43,7 +43,7 @@ class _ModelBuilder(object):
         :return:
         """
         # TODO read words file, gives words, characters, and image_name
-        words, characters, image_name = wordio.read(xmlfile)
+        words, characters, image_name = inputOutput.wordio.read(xmlfile)
 
         # TODO create the path with the name of the file PYTHON STUFF
         image_path = path.join(self._image_directory, image_name + '.jpg')

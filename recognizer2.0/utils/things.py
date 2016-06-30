@@ -70,6 +70,14 @@ class Range(_RangeTuple):
     def length(self):
         return self.max - self.min
 
+    @property
+    def min(self):
+        return self.min_column_idx
+
+    @property
+    def max(self):
+        return self.max_column_idx
+
 
 class Size(_SizeTuple):
     def __add__(self, other):

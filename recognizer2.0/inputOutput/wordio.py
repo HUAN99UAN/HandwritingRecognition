@@ -79,7 +79,7 @@ def read(xmlfile):
     """ Return lines (containing word objects) and image name from XML file """
     reader = WordLayoutReader()
     xml.sax.parse(xmlfile, reader)
-    return reader.get_lines(), reader.get_image_name(), reader.image_name
+    return reader.get_lines(), reader.image_name
 
 
 def save(word_lines, xml_file):

@@ -21,6 +21,7 @@ class ColorMode(Enum):
     def is_binary(self):
         return self == ColorMode.binary
 
+
 class InterpolationMethod(Enum):
     nearest_neighbour, bilinear, bicubic = range(3)
 
@@ -32,6 +33,7 @@ class InterpolationMethod(Enum):
             self.bicubic : cv2.INTER_CUBIC
         }
         return mapping.get(self)
+
 
 class WrongColorModeError(Exception):
     def __init__(self, value):
@@ -121,10 +123,17 @@ class Image(np.ndarray):
         wait_key=0 if you want the window shown until a key is pressed.
         :param window_name: The name of the window.
         """
+        if self.is_empty:
+            return
         cv2.namedWindow(window_name)
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
+
+    def to_file(self, output_file):
+        succesfull = cv2.imwrite(output_file, self)
+        if not succesfull:
+            raise Exception('Writing the image to the file {} failed'.format(output_file))
 
     def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.nearest_neighbour):
         """
@@ -167,6 +176,10 @@ class Image(np.ndarray):
         scaled_image = cv2.resize(src=self, dsize=correct_size, interpolation=interpolation_method.as_open_cv)
         return Image(scaled_image, self.color_mode)
 
+    @classmethod
+    def EmptyImage(cls, color_mode = ColorMode.binary):
+        return cls([], color_mode)
+
     @property
     def is_empty(self):
         return self.size == 0
@@ -201,7 +214,7 @@ class Image(np.ndarray):
     def luminosity_range(self):
         if self.color_mode in [ColorMode.gray, ColorMode.binary]:
             return Range(
-                min=np.min(self), max=np.max(self)
+                np.min(self), np.max(self)
             )
         else:
             raise NotImplementedError("Luminosity range is not supported for color images.")

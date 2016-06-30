@@ -1,0 +1,1 @@
+default_model_file_path = '../model.pkl'
