@@ -1,17 +1,17 @@
 import argparse
-from os import  path
+from os import path
 
 import msgpack
 import msgpack_numpy as m
 import numpy as np
 
+import config
+import inputOutput.wordio as xmlReader
 import interface
 import utils.actions as actions
-import config
-from preprocessing.pipe import Pipe
-from featureExtraction.crossings import Crossings
 import utils.lists
-import inputOutput.wordio as xmlReader
+from featureExtraction.crossings import Crossings
+from preprocessing.pipe import Pipe
 from utils.image import Image
 
 m.patch()
@@ -147,10 +147,7 @@ class _ModelBuilder(object):
 
     def _add_features_from_file(self, xml_file):
         image, lines = self._get_image_and_lines_from_file(xml_file)
-        image.show(wait_key=0)
-
         preprocessed_image = self._preprocessor.apply(image)
-        preprocessed_image.resize(height=1200).show(wait_key=0)
         for line in lines:
             self._add_features_from_line(line=line, image=preprocessed_image)
 
@@ -173,7 +170,6 @@ class _ModelBuilder(object):
 
     def _add_feature_from_character(self, character, image):
         character_image = image.sub_image(character, remove_white_borders=True)
-        character_image.resize(height=400).show(wait_key=0)
         self._add_feature_vector(
             label=character.text,
             feature_vector=self._feature_extractor.extract(character_image)
@@ -195,17 +191,17 @@ def parse_command_line_arguments():
                         help='The words files, should be at least one file. Each words file should be associated with '
                              'an image in the imageDirectory.')
     parser.add_argument('--outputFile', type=str,
-                        default=config.model_file,
+                        default=config.write_model_file,
                         action=actions.ExpandFilePathAction,
                         help='The path to the output file.')
     return vars(parser.parse_args())
 
 if __name__ == '__main__':
     cli_arguments = parse_command_line_arguments()
-    model = KNN.build_model(
+    write_model = KNN.build_model(
         xml_files=cli_arguments.get('wordsFiles'),
         image_directory=cli_arguments.get('imageDirectory'),
         preprocessor=Pipe(),
         feature_extractor=Crossings(),
     )
-    model.to_file(cli_arguments.get('outputFile'))
+    write_model.to_file(cli_arguments.get('outputFile'))
