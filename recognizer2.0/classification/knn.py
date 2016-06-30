@@ -1,4 +1,5 @@
 import argparse
+from os import  path
 
 import msgpack
 import msgpack_numpy as m
@@ -10,6 +11,8 @@ import config
 from preprocessing.pipe import Pipe
 from featureExtraction.crossings import Crossings
 import utils.lists
+import inputOutput.wordio as xmlReader
+from utils.image import Image
 
 m.patch()
 
@@ -25,9 +28,10 @@ class KNN(interface.AbstractClassifier):
     def classify(self, feature_vector):
         raise NotImplementedError()
 
-    def build_model(self, xml_files, image_folder, preprocessor, feature_extractor):
+    @staticmethod
+    def build_model(xml_files, image_directory, preprocessor, feature_extractor):
         return _Model.build(
-            xml_files=xml_files, image_folder=image_folder,
+            xml_files=xml_files, image_directory=image_directory,
             preprocessor=preprocessor, feature_extractor=feature_extractor
         )
 
@@ -90,8 +94,8 @@ class _Model(object):
         return _ModelReader(model_file).read()
 
     @staticmethod
-    def build(self, xml_files, image_folder, preprocessor, feature_extractor):
-        return _ModelBuilder(xml_files, image_folder, preprocessor, feature_extractor).build()
+    def build(xml_files, image_directory, preprocessor, feature_extractor):
+        return _ModelBuilder(xml_files, image_directory, preprocessor, feature_extractor).build()
 
     def to_file(self, output_file):
         _ModelWriter(self, output_file=output_file).write()
@@ -128,15 +132,31 @@ class _ModelWriter(object):
 
 class _ModelBuilder(object):
 
-    def __init__(self, xml_files, image_folder, preprocessor, feature_extractor):
+    def __init__(self, xml_files, image_directory, preprocessor, feature_extractor, image_extension='ppm'):
         self._xml_files = xml_files
-        self._image_folder = image_folder
+        self._image_directory = image_directory
         self._preprocessor = preprocessor
         self._feature_extractor = feature_extractor
+        self._image_extension = image_extension
+        self._model = dict()
 
     def build(self):
-        raise NotImplementedError()
+        for xml_file in self._xml_files:
+            self._add_features_from_file(xml_file)
 
+    def _add_features_from_file(self, xml_file):
+        image, lines = self._get_image_and_lines_from_file(xml_file)
+        image.show(wait_key=0)
+
+
+    def _get_image_and_lines_from_file(self, xml_file):
+        lines, image_name = xmlReader.read(xml_file)
+        image_path = self._build_image_file_path(image_name)
+        image = Image.from_file(image_path)
+        return image, lines
+
+    def _build_image_file_path(self, image_name):
+        return path.join(self._image_directory, image_name + '.' + self._image_extension)
 
 def parse_command_line_arguments():
     parser = argparse.ArgumentParser()
@@ -156,7 +176,7 @@ if __name__ == '__main__':
     cli_arguments = parse_command_line_arguments()
     model = KNN.build_model(
         xml_files=cli_arguments.get('wordsFiles'),
-        image_folder=cli_arguments.get('imageDirectory'),
+        image_directory=cli_arguments.get('imageDirectory'),
         preprocessor=Pipe(),
         feature_extractor=Crossings(),
     )
