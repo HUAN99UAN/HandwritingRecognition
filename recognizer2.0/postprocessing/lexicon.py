@@ -21,6 +21,10 @@ class Lexicon:
             l.frequency = l.number_of_occurences / float(total_words)
         return Lexicon(words=lexicon)
 
+    def entries(self):
+        for entry in self._words:
+            yield entry
+
     @property
     def longest_word(self):
         return max(self._words, key=lambda word: word.length)
