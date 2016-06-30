@@ -35,7 +35,7 @@ class SegmentationImage(Image):
 
     def select_splitting_line(self):
         # Number of black pixels underneath the segmentation_line
-        pixel_density_scores = [self.pixel_column_density_at(line.x) for line in self._segmentation_lines]
+        pixel_density_scores = [self.pixel_column_density_at(line.x - 1) for line in self._segmentation_lines]
 
         # Distance to the vertical_center of the images
         distance_to_center_scores = self._compute_distance_to_center_scores()
