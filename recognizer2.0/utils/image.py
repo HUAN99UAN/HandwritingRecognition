@@ -208,7 +208,7 @@ class Image(np.ndarray):
     def luminosity_range(self):
         if self.color_mode in [ColorMode.gray, ColorMode.binary]:
             return Range(
-                min=np.min(self), max=np.max(self)
+                np.min(self), np.max(self)
             )
         else:
             raise NotImplementedError("Luminosity range is not supported for color images.")
