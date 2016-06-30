@@ -1,5 +1,3 @@
-from scipy.stats import norm
-
 from utils.mixins import CommonEqualityMixin
 import segmentation.binaryoversegmentation as config
 
@@ -9,7 +7,10 @@ class _AbstractCharacterValidator(CommonEqualityMixin):
     def __init__(self):
         super(_AbstractCharacterValidator, self).__init__()
 
-    def probability(self, image):
+    def is_valid(self, image):
+        pass
+
+    def is_valid(self, image):
         pass
 
     def __repr__(self):
@@ -19,31 +20,27 @@ class _AbstractCharacterValidator(CommonEqualityMixin):
 class ValidateOnWidth(_AbstractCharacterValidator):
     def __init__(self):
         _AbstractCharacterValidator.__init__(self)
-        self._cdf = lambda x: norm.cdf(x,
-                                       loc=config.character_width_distribution.mean,
-                                       scale=config.character_width_distribution.sd)
+        self._minimum_character_width = config.default_minimum_character_size.width
+        self._maximum_character_width = config.default_maximum_character_size.width
 
-    def probability(self, image):
-        return 1 - self._cdf(image.width)
+    def is_valid(self, image):
+        return (image.width >= self._minimum_character_width) and (image.width <= self._maximum_character_width)
 
 
 class ValidateOnHeight(_AbstractCharacterValidator):
     def __init__(self):
         super(ValidateOnHeight, self).__init__()
-        self._cdf = lambda x: norm.cdf(x,
-                                       loc=config.character_height_distribution.mean,
-                                       scale=config.character_height_distribution.sd)
+        self._minimum_character_height = config.default_minimum_character_size.height
+        self._maximum_character_height = config.default_maximum_character_size.height
 
-    def probability(self, image):
-        return 1 - self._cdf(image.height)
+    def is_valid(self, image):
+        return (image.height >= self._minimum_character_height) and (image.height <= self._maximum_character_height)
 
 
 class ValidateOnForegroundPixels(_AbstractCharacterValidator):
     def __init__(self):
         _AbstractCharacterValidator.__init__(self)
-        self._cdf = lambda x: norm.cdf(x,
-                                       loc=config.pixel_distribution.mean,
-                                       scale=config.pixel_distribution.sd)
+        self._minimum_num_foreground_pixels = config.default_num_foreground_pixels.min
 
-    def probability(self, image):
-        return 1 - self._cdf(image.number_of_foreground_pixels)
+    def is_valid(self, image):
+        return image.number_of_foreground_pixels >= self._minimum_num_foreground_pixels
