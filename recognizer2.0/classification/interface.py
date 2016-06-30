@@ -12,7 +12,7 @@ class AbstractClassifier(object):
         """
         raise NotImplementedError()
 
-    def build_model(self, xml_files, image_folder, preprocessor, feature_extractor):
+    def build_model(xml_files, image_folder, preprocessor, feature_extractor):
         raise NotImplementedError()
 
     def __repr__(self):
