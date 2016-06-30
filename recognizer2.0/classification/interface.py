@@ -1,15 +1,8 @@
 class AbstractClassifier(object):
     """AbstractClassifier defines the interfaces for classifiers."""
 
-    def __init__(self, model_file, **parameters):
-        """
-        Constructor of a Classifier.
-        :param model_file: The file of the model to be used by the classifier.
-        :param parameters:
-        """
+    def __init__(self):
         super(AbstractClassifier, self).__init__()
-        self._model = self._model_file_to_model(model_file)
-        self._parameters = parameters
 
     def classify(self, feature_vector):
         """
