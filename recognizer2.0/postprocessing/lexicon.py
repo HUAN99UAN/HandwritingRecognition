@@ -1,5 +1,6 @@
 import postprocessing as config
 
+
 class Lexicon:
 
     def __init__(self, words):
@@ -13,11 +14,11 @@ class Lexicon:
             lines = f.readlines()
             for line in lines:
                 line = line[:-1].split(' ')
-                lexicon.append(LexiconWord(line[0], int(line[1])))
+                lexicon.append(_Entry(line[0], int(line[1])))
                 total_words += int(line[1])
 
         for l in lexicon:
-            l.frequency_in_text = (l.times_in_text*100.0)/total_words
+            l.frequency = l.number_of_occurences / float(total_words)
         return Lexicon(words=lexicon)
 
     @property
@@ -28,35 +29,31 @@ class Lexicon:
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 
-class LexiconWord():
+class _Entry:
     def __init__(self, word, times_in_text):
         self._word = word
-        self._times_in_text = times_in_text
-        self._frequency_in_text = 0
+        self._occurences = times_in_text
+        self._frequency = None
 
     @property
     def word(self):
         return self._word
 
     @property
-    def times_in_text(self):
-        return self._times_in_text
+    def number_of_occurences(self):
+        return self._occurences
 
     @property
-    def frequency_in_text(self):
-        return self._frequency_in_text
+    def frequency(self):
+        return self._frequency
+
+    @frequency.setter
+    def frequency(self, frequency):
+        self._frequency = frequency
 
     @property
     def length(self):
         return len(self._word)
 
-    @frequency_in_text.setter
-    def frequency_in_text(self, freq):
-        self._frequency_in_text = freq
-
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
-
-if __name__ == '__main__':
-    lexicon = Lexicon.from_file('lexicon.txt')
-    print(lexicon.longest_word)
