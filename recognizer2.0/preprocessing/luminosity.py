@@ -1,9 +1,11 @@
+import numpy as np
+from cv2 import equalizeHist
+
 import interface
 import colorspaces
-from utils.things import Range, Size
+from utils.things import Size
 from utils.image import Image, ColorMode
-from cv2 import equalizeHist
-import numpy as np
+
 
 
 class LuminosityNormalization(interface.AbstractFilter):
