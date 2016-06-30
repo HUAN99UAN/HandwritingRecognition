@@ -83,7 +83,6 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         return [
             continuesegmentationchecks.ContinueOnSSPCheck(),
             continuesegmentationchecks.ContinueOnWidthCheck(),
-            continuesegmentationchecks.ContinueOnHeightCheck(),
             continuesegmentationchecks.ContinueOnNumberOfForegroundPixels()
         ]
 
@@ -95,8 +94,6 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
     def _binary_segmentation(self, segmentation_image):
         def add_to_correct_list(image, done, segment_more):
-
-            print image.is_valid_character_image_probability
 
             if image.is_empty:
                 return
