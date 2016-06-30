@@ -1,5 +1,5 @@
-import interface
 import createLexicon
+from postprocessing import interface
 
 
 class HammingDistance(interface.AbstractPostProcessor):

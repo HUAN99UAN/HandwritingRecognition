@@ -1,5 +1,6 @@
-import interface
 import lexicon
+
+from postprocessing import interface
 
 
 class LevenshteinDistance(interface.AbstractPostProcessor):
