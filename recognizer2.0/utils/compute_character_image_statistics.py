@@ -21,7 +21,8 @@ class _StatisticsComputer(object):
 
         self._statistics = {
             'heights': [],
-            'widths': []
+            'widths': [],
+            'foreground_pixels': []
         }
 
     def build(self):
@@ -32,15 +33,22 @@ class _StatisticsComputer(object):
     def _compute_mean_and_sd(self):
         self._statistics['mean_height'], self._statistics['sd_height'] = self._mean_and_sd(self._statistics['heights'])
         self._statistics['mean_width'], self._statistics['sd_width'] = self._mean_and_sd(self._statistics['widths'])
+        self._statistics['mean_pixels'], self._statistics['sd_pixels'] = self._mean_and_sd(self._statistics['foreground_pixels'])
 
         self._statistics['min_height'], self._statistics['max_height'] = min(self._statistics['heights']), max(self._statistics['heights'])
         self._statistics['min_width'], self._statistics['max_width'] = min(self._statistics['widths']), max(self._statistics['widths'])
+        self._statistics['min_pixels'], self._statistics['max_num_pixels'] = min(self._statistics['foreground_pixels']), max(self._statistics['foreground_pixels'])
         return self._statistics
 
     def _mean_and_sd(self, lst):
-        mean = sum(lst) / float(len(lst))
-        sd = np.std(lst)
+        data = self._reject_outliers(lst)
+        mean = sum(data) / float(len(data))
+        sd = np.std(data)
         return mean, sd
+
+    def _reject_outliers(self, data_as_list, m=2):
+        data = np.array(data_as_list)
+        return data[abs(data - np.mean(data)) < m * np.std(data)]
 
     def _add_data_from_file(self, xml_file):
         image, lines = self._get_image_and_lines_from_file(xml_file)
@@ -72,6 +80,7 @@ class _StatisticsComputer(object):
         if not character_image.is_empty:
             self._statistics['widths'].append(character_image.width)
             self._statistics['heights'].append(character_image.height)
+            self._statistics['foreground_pixels'].append(character_image.number_of_foreground_pixels)
 
 
 def parse_command_line_arguments():
