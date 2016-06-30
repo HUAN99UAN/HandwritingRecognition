@@ -9,10 +9,7 @@ import characterValidators
 import continuesegmentationchecks
 from utils.image import Image
 from utils.shapes import Rectangle
-from utils.things import Point
-
-red = (0, 0, 255)
-blue = (255, 0, 0)
+from utils.things import Point, Size
 
 
 class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
@@ -25,9 +22,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def __init__(self, lexicon,
                  base_line_estimator=baseline.VerticalHistogram(),
                  stroke_width_estimator=strokewidth.RasterTechnique(),
-                 minimum_character_width=30,
-                 average_character_width=64,
-                 maximum_character_width=84):
+                 minimum_character_size=Size(width=30, height=63),
+                 average_character_size=Size(width=64, height=72),
+                 maximum_character_size=Size(width=84, height=92)):
 
         import warnings
         warnings.warn("The average character width uses some silly default, right now. Fix this to make sure that it uses the actual average character width.")
@@ -37,9 +34,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._max_segmentation = lexicon.longest_word.length
         self._base_line_estimator = base_line_estimator
         self._stroke_width_estimator = stroke_width_estimator
-        self._average_character_width = average_character_width
-        self._minimum_character_width = minimum_character_width
-        self._maximum_character_width = maximum_character_width
+        self._average_character_size= average_character_size
+        self._minimum_character_size = minimum_character_size
+        self._maximum_character_size = maximum_character_size
 
         # Depend on the input image, but are handy to store in the object.
         self._low_base_line = None
@@ -87,20 +84,20 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def _build_character_validators(self):
         return [
             characterValidators.ValidateOnWidth(
-                minimum_character_width=self._minimum_character_width,
-                maximum_character_width=self._maximum_character_width
+                minimum_character_width=self._minimum_character_size.width,
+                maximum_character_width=self._maximum_character_size.width
             ),
             characterValidators.ValidateOnForegroundPixels(
                 minimum_num_foreground_pixels=self._minimum_num_foreground_pixels
-            )
+            ),
         ]
 
     def _build_continue_segmentation_checks(self):
         return [
             continuesegmentationchecks.ContinueOnSSPCheck(),
             continuesegmentationchecks.ContinueOnWidthCheck(
-                average_character_width=self._average_character_width,
-                minimum_character_width=self._stroke_width
+                average_character_width=self._average_character_size.width,
+                minimum_character_width=self._minimum_character_size.width
             ),
             continuesegmentationchecks.ContinueOnNumberOfForegroundPixels(
                 minimum_number_of_foreground_pixels=self._minimum_num_foreground_pixels
