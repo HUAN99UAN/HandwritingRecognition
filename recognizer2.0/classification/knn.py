@@ -1,10 +1,17 @@
 import argparse
 
+import msgpack
+import msgpack_numpy as m
+import numpy as np
+
 import interface
 import utils.actions as actions
 import config
 from preprocessing.pipe import Pipe
 from featureExtraction.crossings import Crossings
+import utils.lists
+
+m.patch()
 
 
 class KNN(interface.AbstractClassifier):
@@ -30,18 +37,93 @@ class KNN(interface.AbstractClassifier):
 
 class _Model(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, keys=list(), values=list(), model=None):
+        if model:
+            self._model = model
+        else:
+            self._model = dict(zip(keys, values))
+
+    def __getattr__(self, key):
+        if key == '_model':
+            # http://stackoverflow.com/a/5165352
+            raise AttributeError()
+        return getattr(self._model, key)
+
+    @property
+    def patterns_and_labels(self):
+        labels = self._extract_label_vector()
+        patterns = self._extract_pattern_matrix()
+        return patterns, labels
+
+    @property
+    def number_of_feature_vectors(self):
+        return sum([len(feature_vectors) for feature_vectors in self._model.values()])
+
+    @property
+    def dimensionality(self):
+        random_feature_vector = self.get(self.keys()[0])[0]
+        dim = random_feature_vector.shape[0]
+        return dim
+
+    def _extract_label_vector(self):
+        labels = np.array(self._model.keys())
+        number_of_feature_vectors_per_label = [len(feature_vectors) for feature_vectors in self._model.values()]
+        return np.repeat(labels, number_of_feature_vectors_per_label, axis=0)
+
+    def _extract_pattern_matrix(self):
+        return np.array(
+            utils.lists.flatten_one_level(
+                [feature_vectors for feature_vectors in self.values()]
+            )
+        )
+
+    @property
+    def dictionary(self):
+        return self._model
+
+    @property
+    def number_of_classes(self):
+        return len(self._model.keys())
 
     @staticmethod
     def read_from_file(model_file):
-        raise NotImplementedError()
+        return _ModelReader(model_file).read()
 
+    @staticmethod
     def build(self, xml_files, image_folder, preprocessor, feature_extractor):
-        _ModelBuilder(xml_files, image_folder, preprocessor, feature_extractor).build()
+        return _ModelBuilder(xml_files, image_folder, preprocessor, feature_extractor).build()
 
     def to_file(self, output_file):
-        raise NotImplementedError()
+        _ModelWriter(self, output_file=output_file).write()
+
+
+class _ModelReader(object):
+
+    def __init__(self, input_file):
+        self._input_file = open(input_file, 'rb')
+
+    def read(self):
+        binary = self._input_file.read()
+        model_dict = msgpack.unpackb(binary)
+        self._input_file.close()
+        return _Model(model=model_dict)
+
+
+class _ModelWriter(object):
+
+    def __init__(self, model, output_file):
+        self._model = model
+        self._output_file_name = output_file
+        self._output_file = self.open_output_file()
+
+    def open_output_file(self):
+        return open(self._output_file_name, 'w+b')
+
+    def write(self):
+        binary = msgpack.packb(self._model.dictionary)
+        self._output_file.write(binary)
+        # pickle.dump(self._model, self._output_file)
+        self._output_file.close()
 
 
 class _ModelBuilder(object):
@@ -54,7 +136,6 @@ class _ModelBuilder(object):
 
     def build(self):
         raise NotImplementedError()
-        return None
 
 
 def parse_command_line_arguments():
