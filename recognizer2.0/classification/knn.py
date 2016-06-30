@@ -169,6 +169,10 @@ class _ModelBuilder(object):
             self._add_feature_from_character(character, image)
 
     def _add_feature_from_character(self, character, image):
+        if not character.is_valid:
+            character_image = image.sub_image(character, remove_white_borders=True)
+            character_image.show(wait_key=500)
+            return
         character_image = image.sub_image(character, remove_white_borders=True)
         if not character_image.is_empty:
             self._add_feature_vector(

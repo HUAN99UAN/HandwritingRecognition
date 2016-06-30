@@ -123,6 +123,8 @@ class Image(np.ndarray):
         wait_key=0 if you want the window shown until a key is pressed.
         :param window_name: The name of the window.
         """
+        if self.is_empty:
+            return
         cv2.namedWindow(window_name)
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)
