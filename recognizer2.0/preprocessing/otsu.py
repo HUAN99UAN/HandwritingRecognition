@@ -1,6 +1,6 @@
 import cv2
 
-from utils.image import Image, ColorMode
+import utils.image
 import interface
 import colorspaces
 
@@ -23,7 +23,7 @@ class OtsuMethod(interface.AbstractFilter):
         _, otsu_image = cv2.threshold(
             image, thresh=0, maxval=self._maximum_value, type=cv2.THRESH_OTSU+cv2.THRESH_BINARY
         )
-        return Image(otsu_image, color_mode=ColorMode.binary)
+        return utils.image.Image(otsu_image, color_mode=utils.image.ColorMode.binary)
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
