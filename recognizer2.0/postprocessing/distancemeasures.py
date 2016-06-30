@@ -1,4 +1,4 @@
-import scipy.spatial.distance as distances
+import leven
 
 
 def hamming_distance(word_1, word_2):
@@ -11,5 +11,6 @@ def hamming_distance(word_1, word_2):
     return (sum(differences) + length_difference) / float(max(len(word_1), len(word_2)))
 
 
-def edit_distance(a, b):
-    raise NotImplementedError()
+def edit_distance(word_1, word_2):
+    distance = leven.levenshtein(word_1, str(word_2))
+    return distance / float(max(len(word_1), len(word_2)))

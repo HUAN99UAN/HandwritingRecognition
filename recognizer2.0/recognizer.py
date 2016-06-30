@@ -78,7 +78,11 @@ if __name__ == '__main__':
     annotation, _ = inputOutput.read(cli_arguments['words_file'])
     image = Image.from_file(cli_arguments['image'])
 
-    r = Recognizer(postprocessor=postprocessing.NearestLexiconEntryWithPrior())
+    r = Recognizer(
+        postprocessor=postprocessing.NearestLexiconEntryWithPrior(
+            distance_measure=postprocessing.distances.edit_distance
+        )
+    )
     r.recognize(image=image, annotation=annotation)
 
     inputOutput.save(r.output_lines, cli_arguments['output_file'])

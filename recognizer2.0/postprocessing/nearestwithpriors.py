@@ -14,12 +14,12 @@ class NearestLexiconEntryWithPrior(interface.AbstractPostProcessor):
         self._distance_measure = distance_measure
 
     def process(self, text):
-        best_score = sys.maxint
+        best_score = 0
         best_match = None
 
         for entry in self._lexicon.entries():
             score = self._match_score(entry, text)
-            if score < best_score:
+            if score >= best_score:
                 best_match, best_score = entry.word, score
             if score == 1:
                 break
