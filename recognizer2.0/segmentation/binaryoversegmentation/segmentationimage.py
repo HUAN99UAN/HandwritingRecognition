@@ -2,6 +2,7 @@ import numpy as np
 
 from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
 from utils.image import Image, ColorMode
+from preprocessing.backgroundremoval import BackgroundBorderRemoval
 
 
 class SegmentationImage(Image):
@@ -66,7 +67,7 @@ class SegmentationImage(Image):
         image_with_ssp = self._segmentation_lines.paint_on(self, **kwargs)
         image_with_ssp.show(wait_key=wait_key, window_name=window_name)
 
-    def sub_image(self, bounding_box):
+    def sub_image(self, bounding_box, remove_white_borders=True):
         """
         Returns the sub_image, the borders of the bounding box are null-indexed and inclusive!
 
@@ -77,17 +78,17 @@ class SegmentationImage(Image):
         :param bounding_box: Object with a top, bottom, left and right property.
         :return: A new segmentation image.
         """
-        sub_image = super(SegmentationImage, self).sub_image(bounding_box)
+        sub_image = super(SegmentationImage, self).sub_image(bounding_box, remove_white_borders=False)
         sub_image_segmentation_lines = self._segmentation_lines.get_subset_in(bounding_box)
         shift_distance = -1 * bounding_box.left
         sub_image_segmentation_lines = sub_image_segmentation_lines.shift_horizontally(shift_distance)
-        return SegmentationImage(
+        new_image = SegmentationImage(
             image=sub_image,
             segmentation_lines=sub_image_segmentation_lines,
             character_validators=self._character_validators,
             continue_segmentation_checks=self._continue_segmentation_checks,
             image_splitter=self._image_splitter
         )
-
-    def dumps(self):
-        super(SegmentationImage, self).dumps()
+        if remove_white_borders:
+            new_image = BackgroundBorderRemoval().apply(new_image)
+        return new_image
