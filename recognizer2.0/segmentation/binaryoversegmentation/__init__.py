@@ -1,6 +1,6 @@
 import pickle
 
-from utils.things import Size, NormalDistribution
+from utils.things import Size, Range
 
 default_statistics_file_path = './segmentation/binaryoversegmentation/character_image_data.pkl'
 
@@ -22,12 +22,7 @@ with open(default_statistics_file_path) as input_file:
         sd=_character_statistics['sd_height'],
     )
 
-    character_width_distribution = NormalDistribution(
-        mean=_character_statistics['mean_width'],
-        sd=_character_statistics['sd_width'],
-    )
-
-    pixel_distribution = NormalDistribution(
-        mean=_character_statistics['mean_pixels'],
-        sd=_character_statistics['sd_pixels'],
+    default_num_foreground_pixels = Range(
+        _character_statistics['min_pixels'],
+        _character_statistics['min_pixels']
     )
