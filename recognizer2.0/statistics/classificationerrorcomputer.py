@@ -13,7 +13,6 @@ class ClassificationErrorComputer(object):
 
         for line in range(len(oracle_lines)):
             if all(word in oracle_lines[line] for word in self._words_of_interest):
-                print oracle_lines[line]
                 oracle_word = self._extract_word(oracle_lines[line])
                 result_word = self._extract_word(result_lines[line])
                 self._compare_words(oracle_word, result_word)
@@ -26,7 +25,7 @@ class ClassificationErrorComputer(object):
                 'correctness_ratio': self._calculate_percentage()}
 
     def _calculate_percentage(self):
-        return (self._total_matched_words * 100) / self._total_words_compared
+        return (self._total_matched_words * 100) / float(self._total_words_compared)
 
     def _compare_words(self, oracle_word, result_word):
         self._total_words_compared += 1
@@ -103,4 +102,4 @@ if __name__ == '__main__':
     e = ClassificationErrorComputer()
     oracle = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.words'
     actual = '/Users/laura/Desktop/hoi/output.words'
-    print e.compare(oracle=oracle, result=oracle) # KNMP-VIII_F_69______2C2O_0070.words
+    print e.compare(oracle=oracle, result=actual) # KNMP-VIII_F_69______2C2O_0070.words
