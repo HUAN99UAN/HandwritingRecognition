@@ -22,15 +22,15 @@ class SegmentationImage(Image):
         super(SegmentationImage, self).__array_finalize__(obj)
         self._segmentation_lines = getattr(obj, '_segmentation_lines', list())
         self._character_validators = getattr(obj, '_character_validators', list())
-        self._continue_segmentation_checks = getattr(obj, '__continue_segmentation_checks', list())
+        self._continue_segmentation_checks = getattr(obj, '_continue_segmentation_checks', list())
         self._image_splitter = getattr(obj, '_image_splitter', ForegroundPixelContourTracing())
 
     def segment(self):
         splitting_line = self.select_splitting_line()
 
-        image = self._segmentation_lines.paint_on(self, color=(0, 255, 0))
-        image = splitting_line.paint_on(image, color=(255, 0, 0))
-        image.show(wait_key=0, window_name='Segementation Image')
+        # image = self._segmentation_lines.paint_on(self, color=(0, 255, 0))
+        # image = splitting_line.paint_on(image, color=(255, 0, 0))
+        # image.show(wait_key=0, window_name='Segementation Image')
         return self._split_along(splitting_line)
 
     def select_splitting_line(self):
@@ -60,7 +60,7 @@ class SegmentationImage(Image):
 
     @property
     def has_segmentation_lines(self):
-        return bool(self._segmentation_lines)
+        return not self._segmentation_lines.is_empty
 
     @property
     def width_over_height_ratio(self):
@@ -75,12 +75,15 @@ class SegmentationImage(Image):
 
     @property
     def segment_further(self):
-        return all([validator.is_valid(self) for validator in self._continue_segmentation_checks])
+        return all([validator.continue_segmentation(self) for validator in self._continue_segmentation_checks])
 
     def show(self, wait_key=None, window_name=None, **kwargs):
         if not wait_key and not wait_key == 0:
             wait_key = super(SegmentationImage, self)._default_wait_key
         image_with_ssp = self._segmentation_lines.paint_on(self, **kwargs)
+        if type(image_with_ssp) is SegmentationImage:
+            # Brrrr
+            image_with_ssp = Image(image_with_ssp, image_with_ssp.color_mode)
         image_with_ssp.show(wait_key=wait_key, window_name=window_name)
 
     def sub_image(self, bounding_box, remove_white_borders=True):

@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 import interface
-from utils.image import Image, ColorMode, WrongColorModeError
+import utils.image
 
 
 class _MorphologicalFilter(interface.AbstractFilter):
@@ -14,13 +14,13 @@ class _MorphologicalFilter(interface.AbstractFilter):
 
     @classmethod
     def gray_scale_or_binary_check(cls, image):
-        if image.color_mode not in [ColorMode.gray, ColorMode.binary]:
-            raise WrongColorModeError("This operation can only be performed on binary or gray scale images.")
+        if image.color_mode not in [utils.image.ColorMode.gray, utils.image.ColorMode.binary]:
+            raise utils.image.WrongColorModeError("This operation can only be performed on binary or gray scale images.")
 
     @classmethod
     def binary_check(cls, image):
-        if image.color_mode is not ColorMode.binary:
-            raise WrongColorModeError("This operation can only be performed on binary images.")
+        if image.color_mode is not utils.image.ColorMode.binary:
+            raise utils.image.WrongColorModeError("This operation can only be performed on binary images.")
 
 
 class Erosion(_MorphologicalFilter):
@@ -33,7 +33,7 @@ class Erosion(_MorphologicalFilter):
 
     def apply(self, image):
         self.gray_scale_or_binary_check(image)
-        return Image(cv2.erode(image, self._structuring_element, iterations=self._iterations), color_mode=image.color_mode)
+        return utils.image.Image(cv2.erode(image, self._structuring_element, iterations=self._iterations), color_mode=image.color_mode)
 
 
 class Dilation(_MorphologicalFilter):
@@ -46,7 +46,7 @@ class Dilation(_MorphologicalFilter):
 
     def apply(self, image):
         self.gray_scale_or_binary_check(image)
-        return Image(cv2.dilate(image, self._structuring_element, iterations=self._iterations), color_mode=image.color_mode)
+        return utils.image.Image(cv2.dilate(image, self._structuring_element, iterations=self._iterations), color_mode=image.color_mode)
 
 
 class Opening(_MorphologicalFilter):
@@ -59,7 +59,7 @@ class Opening(_MorphologicalFilter):
 
     def apply(self, image):
         self.gray_scale_or_binary_check(image)
-        return Image(
+        return utils.image.Image(
             cv2.morphologyEx(image, cv2.MORPH_OPEN, self._structuring_element, iterations=self._iterations),
             color_mode=image.color_mode
         )
@@ -75,7 +75,7 @@ class Closing(_MorphologicalFilter):
 
     def apply(self, image):
         self.gray_scale_or_binary_check(image)
-        return Image(
+        return utils.image.Image(
             cv2.morphologyEx(image, cv2.MORPH_CLOSE, self._structuring_element, iterations=self._iterations),
             color_mode=image.color_mode
         )
@@ -100,9 +100,9 @@ class GeodesicDilation(_MorphologicalFilter):
 
     def _apply_once(self, marker_image):
         dilation = self._dilation.apply(marker_image)
-        return Image(
+        return utils.image.Image(
             np.asarray(np.logical_and(dilation, self._mask_image), dtype=np.float64),
-            color_mode=ColorMode.binary
+            color_mode=utils.image.ColorMode.binary
         )
 
 
@@ -125,9 +125,9 @@ class GeodesicErosion(_MorphologicalFilter):
 
     def _apply_once(self, marker_image):
         erosion = self._erosion.apply(marker_image)
-        return Image(
+        return utils.image.Image(
             np.asarray(np.logical_or(erosion, self._mask_image), dtype=np.float64),
-            color_mode=ColorMode.binary
+            color_mode=utils.image.ColorMode.binary
         )
 
 

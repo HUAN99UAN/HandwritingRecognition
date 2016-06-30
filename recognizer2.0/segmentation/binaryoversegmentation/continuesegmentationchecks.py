@@ -23,7 +23,7 @@ class ContinueOnWidthCheck(_AbstractContinueSegmentationCheck):
         self._minimum_image_width = minimum_character_width
 
     def continue_segmentation(self, image):
-        return (image.width > 2 * self._minimum_image_width)
+        return image.width >= 2 * self._minimum_image_width
 
 
 class ContinueOnSSPCheck(_AbstractContinueSegmentationCheck):

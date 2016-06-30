@@ -19,10 +19,11 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     recognition." Pattern Recognition 45.4 (2012): 1306-1317.
     """
 
-    def __init__(self, lexicon,
+    def __init__(self,
                  base_line_estimator=baseline.VerticalHistogram(),
                  stroke_width_estimator=strokewidth.RasterTechnique(),
-                 minimum_character_size=Size(width=30, height=63),
+                 longest_word_length=13,
+                 minimum_character_size=Size(width=20, height=50),
                  average_character_size=Size(width=64, height=72),
                  maximum_character_size=Size(width=84, height=92)):
 
@@ -30,8 +31,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         warnings.warn("The average character width uses some silly default, right now. Fix this to make sure that it uses the actual average character width.")
 
         super(BinaryOverSegmentation, self).__init__()
-        self._lexicon = lexicon
-        self._max_segmentation = lexicon.longest_word.length
+        self._max_segmentation = longest_word_length
         self._base_line_estimator = base_line_estimator
         self._stroke_width_estimator = stroke_width_estimator
         self._average_character_size= average_character_size
@@ -116,16 +116,17 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                 return
             elif image.is_valid_character_image:
                 done.append(image)
-                image.show(wait_key=1000, window_name='Character')
+                # image.show(wait_key=1000, window_name='Character')
             elif image.segment_further:
                 segment_more.append(image)
-                image.show(wait_key=1000, window_name='Segment More')
+                # image.show(wait_key=1000, window_name='Segment More')
             else:
-                image.show(wait_key=0, window_name='Discarded')
-                raise NotImplementedError(
-                    "No way to handle images that are neither a valid character image or "
-                    "should be segmented further."
-                )
+                pass
+                # image.show(wait_key=0, window_name='Discarded')
+                # raise NotImplementedError(
+                #     "No way to handle images that are neither a valid character image or "
+                #     "should be segmented further."
+                # )
 
         def select_next_image(images):
             images.sort(key=lambda image: image.width_over_height_ratio)
