@@ -17,11 +17,10 @@ class AbstractClassifier(object):
         :rtype: string with the text of the word image.
         :param features: 1D array-like object.
         """
-        pass
+        raise NotImplementedError()
 
-    @classmethod
-    def _model_file_to_model(cls, model_file):
-        pass
+    def build_model(self, xml_files, image_folder):
+        raise NotImplementedError()
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
