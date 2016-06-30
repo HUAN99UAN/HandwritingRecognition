@@ -1,8 +1,4 @@
-class Error():
-    """
-    The name sucks we will change it later
-    """
-
+class ClassificationErrorComputer(object):
     def __init__(self):
         self._words_of_interest = ['Word', 'text=']
         self._length_of_text = 6
@@ -11,7 +7,7 @@ class Error():
         self._mismatched_length = 0
         self._words = []
 
-    def _compare(self, oracle, result):
+    def compare(self, oracle, result):
 
         oracle_lines, result_lines = self._read_files(oracle=oracle, result=result)
 
@@ -48,7 +44,7 @@ class Error():
     def _read_files(oracle, result):
         return open(oracle, 'r').readlines(), open(result, 'r').readlines()
 
-    def _compare_multiple_files(self, oracle_files, result_files):
+    def compare_multiple_files(self, oracle_files, result_files):
         results = {'total_words': [],
                    'correct_words': [],
                    'wrong_words': [],
@@ -58,12 +54,12 @@ class Error():
         for oracle_file in range(len(oracle_files)):
             for result_file in range(len(result_files)):
                 if oracle_file == result_file:
-                    tmp_results = self._compare(oracle_file, result_file)
+                    tmp_results = self.compare(oracle_file, result_file)
                     for k in results:
                         results[k].append(tmp_results[k])
 
 
-class Word():
+class Word(object):
     def __init__(self, oracle_word, result_word):
         self._oracle_word = oracle_word
         self._result_word = result_word
@@ -104,5 +100,7 @@ class Word():
 
 
 if __name__ == '__main__':
-    e = Error()
-    print e._compare('KNMP-VIII_F_69______2C2O_0004.words', 'KNMP-VIII_F_69______2C2O_0004(2).words') # KNMP-VIII_F_69______2C2O_0070.words
+    e = ClassificationErrorComputer()
+    oracle = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.words'
+    actual = '/Users/laura/Desktop/hoi/output.words'
+    print e.compare(oracle=oracle, result=oracle) # KNMP-VIII_F_69______2C2O_0070.words
