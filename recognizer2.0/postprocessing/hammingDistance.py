@@ -1,6 +1,7 @@
 import interface
 import createLexicon
 
+
 class HammingDistance(interface.AbstractPostProcessor):
 
     def __init__(self):
