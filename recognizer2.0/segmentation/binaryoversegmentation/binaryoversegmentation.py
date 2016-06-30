@@ -23,7 +23,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                  base_line_estimator=baseline.VerticalHistogram(),
                  stroke_width_estimator=strokewidth.RasterTechnique(),
                  longest_word_length=13,
-                 minimum_character_size=Size(width=30, height=63),
+                 minimum_character_size=Size(width=20, height=50),
                  average_character_size=Size(width=64, height=72),
                  maximum_character_size=Size(width=84, height=92)):
 
