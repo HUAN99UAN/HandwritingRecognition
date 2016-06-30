@@ -28,19 +28,23 @@ class SegmentationImage(Image):
     def segment(self):
         splitting_line = self.select_splitting_line()
 
-        # image = self._segmentation_lines.paint_on(self, color=(0, 255, 0))
-        # image = splitting_line.paint_on(image, color=(255, 0, 0))
-        # image.show(wait_key=0, window_name='Segementation Image')
+        image = self._segmentation_lines.paint_on(self, color=(0, 255, 0))
+        image = splitting_line.paint_on(image, color=(255, 0, 0))
+        image.show(wait_key=0, window_name='Segementation Image')
         return self._split_along(splitting_line)
 
     def select_splitting_line(self):
         # Number of black pixels underneath the segmentation_line
-        pixel_density_scores = [self.pixel_column_density_at(line.x - 1) for line in self._segmentation_lines]
+        pixel_density_scores = [self.pixel_column_density_at(line.x) for line in self._segmentation_lines]
 
         # Distance to the vertical_center of the images
         distance_to_center_scores = self._compute_distance_to_center_scores()
 
-        scores = [p + (3 * q) for (p, q) in zip(pixel_density_scores, distance_to_center_scores)]
+        scores = [
+            (1 - pixel_score) + distance_score
+            for (pixel_score, distance_score)
+            in zip(pixel_density_scores, distance_to_center_scores)
+        ]
         max_index, _ = max(enumerate(scores), key=operator.itemgetter(1))
         return self._segmentation_lines.line_at_idx(max_index)
 
@@ -55,8 +59,14 @@ class SegmentationImage(Image):
         return 1 - sum(self[:, x]) / (float(self.height) * 255)
 
     @property
-    def is_valid_character_image(self):
-        return all([validator.is_valid(self) for validator in self._character_validators])
+    def is_valid_character_image_probability(self):
+        probabilities = [validator.probability(self) for validator in self._character_validators]
+        return reduce(lambda x, y: x * y, probabilities)
+
+    @property
+    def is_valid_segmentation_image_probability(self):
+        probabilities = [validator.probability(self) for validator in self._continue_segmentation_checks]
+        return reduce(lambda x, y: x * y, probabilities)
 
     @property
     def has_segmentation_lines(self):
@@ -72,10 +82,6 @@ class SegmentationImage(Image):
             raise NotImplementedError("Number of foreground pixel is only supported for binary images.")
         else:
             return np.sum(np.array(self))
-
-    @property
-    def segment_further(self):
-        return all([validator.continue_segmentation(self) for validator in self._continue_segmentation_checks])
 
     def show(self, wait_key=None, window_name=None, **kwargs):
         if not wait_key and not wait_key == 0:
