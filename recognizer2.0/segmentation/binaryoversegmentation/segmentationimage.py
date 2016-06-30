@@ -1,7 +1,10 @@
+import operator
+
 import numpy as np
 
 from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
 from utils.image import Image, ColorMode
+from preprocessing.backgroundremoval import BackgroundBorderRemoval
 
 
 class SegmentationImage(Image):
@@ -23,14 +26,32 @@ class SegmentationImage(Image):
         self._image_splitter = getattr(obj, '_image_splitter', ForegroundPixelContourTracing())
 
     def segment(self):
-        splitting_line = self._segmentation_lines.line_closest_to(self.vertical_center)
+        splitting_line = self.select_splitting_line()
 
         image = splitting_line.paint_on(self, color=(255, 0, 0))
         image.show(wait_key=1000, window_name='Segementation Image')
         return self._split_along(splitting_line)
 
+    def select_splitting_line(self):
+        # Number of black pixels underneath the segmentation_line
+        pixel_density_scores = [self.pixel_column_density_at(line.x - 1) for line in self._segmentation_lines]
+
+        # Distance to the vertical_center of the images
+        distance_to_center_scores = self._compute_distance_to_center_scores()
+
+        scores = [p + q for (p, q) in zip(pixel_density_scores, distance_to_center_scores)]
+        max_index, _ = max(enumerate(scores), key=operator.itemgetter(1))
+        return self._segmentation_lines.line_at_idx(max_index)
+
+    def _compute_distance_to_center_scores(self):
+        return [1 - (line.distance_to(self.vertical_center)/float(self.vertical_center))
+                for line in self._segmentation_lines]
+
     def _split_along(self, line):
         return self._image_splitter.split(self, line)
+
+    def pixel_column_density_at(self, x):
+        return 1 - sum(self[:, x]) / (float(self.height) * 255)
 
     @property
     def is_valid_character_image(self):
@@ -61,7 +82,7 @@ class SegmentationImage(Image):
         image_with_ssp = self._segmentation_lines.paint_on(self, **kwargs)
         image_with_ssp.show(wait_key=wait_key, window_name=window_name)
 
-    def sub_image(self, bounding_box):
+    def sub_image(self, bounding_box, remove_white_borders=True):
         """
         Returns the sub_image, the borders of the bounding box are null-indexed and inclusive!
 
@@ -72,17 +93,17 @@ class SegmentationImage(Image):
         :param bounding_box: Object with a top, bottom, left and right property.
         :return: A new segmentation image.
         """
-        sub_image = super(SegmentationImage, self).sub_image(bounding_box)
+        sub_image = super(SegmentationImage, self).sub_image(bounding_box, remove_white_borders=False)
         sub_image_segmentation_lines = self._segmentation_lines.get_subset_in(bounding_box)
         shift_distance = -1 * bounding_box.left
         sub_image_segmentation_lines = sub_image_segmentation_lines.shift_horizontally(shift_distance)
-        return SegmentationImage(
+        new_image = SegmentationImage(
             image=sub_image,
             segmentation_lines=sub_image_segmentation_lines,
             character_validators=self._character_validators,
             continue_segmentation_checks=self._continue_segmentation_checks,
             image_splitter=self._image_splitter
         )
-
-    def dumps(self):
-        super(SegmentationImage, self).dumps()
+        if remove_white_borders:
+            new_image = BackgroundBorderRemoval().apply(new_image)
+        return new_image
