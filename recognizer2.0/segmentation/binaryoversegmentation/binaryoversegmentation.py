@@ -70,16 +70,17 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
             bottom_right=Point(x=image.width - 1, y=self._low_base_line.y)
         )
 
-    @classmethod
-    def _build_character_validators(cls):
+    @property
+    def _minimum_num_foreground_pixels(self):
+        return (self._high_base_line.y - self._low_base_line.y) * self._stroke_width
+
+    def _build_character_validators(self):
         return [
             characterValidators.ValidateOnWidth(),
             characterValidators.ValidateOnForegroundPixels(),
-            characterValidators.ValidateOnHeight()
         ]
 
-    @classmethod
-    def _build_continue_segmentation_checks(cls):
+    def _build_continue_segmentation_checks(self):
         return [
             continuesegmentationchecks.ContinueOnSSPCheck(),
             continuesegmentationchecks.ContinueOnWidthCheck(),
@@ -94,15 +95,21 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
     def _binary_segmentation(self, segmentation_image):
         def add_to_correct_list(image, done, segment_more):
-
             if image.is_empty:
                 return
-            if image.is_valid_character_image_probability > image.is_valid_segmentation_image_probability:
+            elif image.is_valid_character_image:
                 done.append(image)
-                image.show(wait_key=1000, window_name='Segment More')
-            else:
+                # image.show(wait_key=1000, window_name='Character')
+            elif image.segment_further:
                 segment_more.append(image)
-                image.show(wait_key=1000, window_name='Segment More')
+                # image.show(wait_key=1000, window_name='Segment More')
+            else:
+                if image.width > config.character_width_distribution.mean and image.has_segmentation_lines:
+                    segment_more.append(image)
+                elif image.width < (config.character_width_distribution.mean - 2 * config.character_width_distribution.sd):
+                    return
+                else:
+                    done.append(image)
 
         def select_next_image(images):
             images.sort(key=lambda image: image.width_over_height_ratio)
