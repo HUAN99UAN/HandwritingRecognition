@@ -1,0 +1,1 @@
+default_lexicon_file = 'lexicon.txt'
