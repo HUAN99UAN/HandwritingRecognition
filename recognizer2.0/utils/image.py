@@ -21,6 +21,7 @@ class ColorMode(Enum):
     def is_binary(self):
         return self == ColorMode.binary
 
+
 class InterpolationMethod(Enum):
     nearest_neighbour, bilinear, bicubic = range(3)
 
@@ -32,6 +33,7 @@ class InterpolationMethod(Enum):
             self.bicubic : cv2.INTER_CUBIC
         }
         return mapping.get(self)
+
 
 class WrongColorModeError(Exception):
     def __init__(self, value):
@@ -125,6 +127,11 @@ class Image(np.ndarray):
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)
         cv2.destroyAllWindows()
+
+    def to_file(self, output_file):
+        succesfull = cv2.imwrite(output_file, self)
+        if not succesfull:
+            raise Exception('Writing the image to the file {} failed'.format(output_file))
 
     def resize(self, width=None, height=None, keepaspect_ratio=True, interpolation_method=InterpolationMethod.nearest_neighbour):
         """
