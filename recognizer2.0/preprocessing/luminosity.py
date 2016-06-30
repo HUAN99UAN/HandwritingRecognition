@@ -7,7 +7,6 @@ from utils.things import Size
 from utils.image import Image, ColorMode
 
 
-
 class LuminosityNormalization(interface.AbstractFilter):
     """Luminosity Normalization."""
 
