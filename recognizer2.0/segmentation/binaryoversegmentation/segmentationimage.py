@@ -63,6 +63,10 @@ class SegmentationImage(Image):
         return all([validator.is_valid(self) for validator in self._character_validators])
 
     @property
+    def segmentation_lines(self):
+        return self._segmentation_lines
+
+    @property
     def has_segmentation_lines(self):
         return not self._segmentation_lines.is_empty
 
