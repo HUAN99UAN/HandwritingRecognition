@@ -6,6 +6,7 @@ import numpy as np
 from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
 from utils.image import Image, ColorMode
 from preprocessing.backgroundremoval import BackgroundBorderRemoval
+from segmentation.binaryoversegmentation.segmentationlines import SegmentationLines
 
 
 class SegmentationImage(Image):
@@ -62,6 +63,9 @@ class SegmentationImage(Image):
     @property
     def is_valid_character_image(self):
         return all([validator.is_valid(self) for validator in self._character_validators])
+
+    def clear_segmentation_lines(self):
+        self._segmentation_lines = SegmentationLines(list())
 
     @property
     def segmentation_lines(self):

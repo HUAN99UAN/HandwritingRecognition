@@ -8,7 +8,8 @@ from utils.things import Pixel, PixelPath, BoundingBox
 from utils.image import Image, ColorMode
 from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine
 from utils.mixins import CommonEqualityMixin
-
+from utils.shapes import Rectangle
+from utils.things import Point
 
 def default_distance_function(origin, destination,
                               is_fully_accessible, is_accessible_with_intersecting,
@@ -92,6 +93,20 @@ class _AbstractImageSplitter(CommonEqualityMixin):
     @property
     def path(self):
         return self._pixel_path
+
+
+class StraightLineSplitter(_AbstractImageSplitter):
+    def __init__(self, background_color=255, foreground_color=0):
+        super(StraightLineSplitter, self).__init__(background_color, foreground_color)
+
+    def _split(self):
+        left_bounding_box = Rectangle(corner=Point(x=0, y=0), opposite_corner=Point(x=self._segmentation_line.x, y=self._image.height - 1))
+        left_sub_image = self._image.sub_image(left_bounding_box, remove_white_borders=False)
+
+        right_bounding_box = Rectangle(corner=Point(x=self._segmentation_line.x, y=0), opposite_corner=Point(x=self._image.width -1, y=self._image.height -1))
+        right_sub_image = self._image.sub_image(right_bounding_box, remove_white_borders=False)
+
+        return left_sub_image, right_sub_image
 
 
 class ForegroundPixelContourTracing(_AbstractImageSplitter):

@@ -43,8 +43,8 @@ class Line(Shape):
         return self._p2.y
 
     def paint_on(self, image, color=(0, 0, 0), width=10, **kwargs):
-        if not image.color_mode.is_color:
-            image = preprocessing.colorspaces.ToColor().apply(image)
+        # if not image.color_mode.is_color:
+        #     image = preprocessing.colorspaces.ToColor().apply(image)
         cv2.line(image, self.p1, self.p2, color=color, thickness=width)
         return image
 

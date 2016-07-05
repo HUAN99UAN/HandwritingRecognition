@@ -7,7 +7,10 @@ from preprocessing.invert import Invert
 from utils.image import Image, ColorMode
 from utils.mixins import CommonEqualityMixin
 import segmentation.binaryoversegmentation as config
-
+from utils.shapes import Rectangle
+from segmentation.binaryoversegmentation.imagesplitters import StraightLineSplitter
+from utils.things import Point, BoundingBox
+from segmentation.binaryoversegmentation.segmentationlines import SegmentationLine
 
 class _AbstractSegmentationLineFilter(CommonEqualityMixin):
     """Abstract class to define the interface of segmentation line filters, for use with the build-in filter()."""
@@ -70,15 +73,39 @@ class HoleFilter(_AbstractSegmentationLineFilter):
         return not self._hole_bits[segmentation_line.x]
 
 
-class MinimumWidtFilter(object):
+class MinimumWidthFilter(object):
     def __init__(self,
                  minimumwidth=config.default_minimum_character_size.width,
                  maximum_width=config.default_maximum_character_size.width):
-        super(MinimumWidtFilter, self).__init__()
+        super(MinimumWidthFilter, self).__init__()
         self._maximum_width = maximum_width
         self._minimum_width = minimumwidth
+        self._splitter = StraightLineSplitter()
 
-    def apply(self, segmentation_image):
-        # todo do stuff
+    def apply(self, image):
+        if image.width < self._minimum_width:
+            image.clear_segmentation_lines()
+            return image
 
-        return segmentation_image
+        for (left_line, right_line) in image.segmentation_lines.pairs:
+            if left_line.distance_to(right_line) < self._minimum_width:
+                new_segmentation_line = self._compute_new_line(left_line, right_line)
+                image.segmentation_lines.remove(left_line)
+                image.segmentation_lines.remove(right_line)
+                image.segmentation_lines.add(new_segmentation_line)
+                (left_image, right_image) = self._splitter.split(image, new_segmentation_line)
+                # left_image.show(window_name='Left')
+                # right_image.show(window_name='Right')
+                return self.apply(left_image).concat_with(
+                    self.apply(
+                        right_image
+                    ).sub_image(
+                        BoundingBox(left=1, right=right_image.width-1, top=0, bottom=right_image.height - 1),
+                        remove_white_borders=False
+                    )
+                )
+        return image
+
+    @classmethod
+    def _compute_new_line(cls, left, right):
+        return SegmentationLine(x=int(round((left.x + right.x)/2.0)))
