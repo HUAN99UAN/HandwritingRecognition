@@ -1,9 +1,6 @@
 from copy import deepcopy
 import argparse
 
-import cv2
-import numpy as np
-
 import inputOutput
 from inputOutput import actions
 import classification, featureExtraction, postprocessing, segmentation, preprocessing
