@@ -65,10 +65,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         return suspicious_regions
 
     def _extract_body_bounding_box(self, image):
-        return Rectangle(
-            top_left=Point(x=0, y=self._high_base_line.y),
-            bottom_right=Point(x=image.width - 1, y=self._low_base_line.y)
-        )
+        return Rectangle(corner=Point(x=0, y=self._high_base_line.y),
+                         opposite_corner=Point(x=image.width - 1, y=self._low_base_line.y))
 
     @property
     def _minimum_num_foreground_pixels(self):
