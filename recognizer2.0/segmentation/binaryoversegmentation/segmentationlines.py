@@ -20,7 +20,7 @@ class SegmentationLines(object):
         for line in self._lines:
             yield line
 
-    def paint_on(self, image, color=(0, 0, 0), width=1):
+    def paint_on(self, image, color=(0, 0, 0), width=1, **kwargs):
         for line in self._lines:
             image = line.paint_on(image, color=color, width=width)
         return image
@@ -99,12 +99,12 @@ class SegmentationLine(CommonEqualityMixin):
     def x(self):
         return self._x
 
-    def paint_on(self, image, color=(0,0,0), width=1, top=None, bottom=None):
+    def paint_on(self, image, color=(0,0,0), width=1, top=None, bottom=None, **kwargs):
         top = top or 0
         bottom = bottom or image.height
         return VerticalLine(
             x=self.x, y1=top, y2=bottom
-        ).paint_on(image, color=color, width=width)
+        ).paint_on(image, color=color, width=width, **kwargs)
 
     def __repr__(self):
         return "SegmentationLine x: {x}>".format(x=self.x)
