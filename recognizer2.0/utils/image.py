@@ -250,6 +250,17 @@ class Image(np.ndarray):
         image = Image(np_array, color_mode=ColorMode.bgr)
         return image
 
+    def concat_with(self, right):
+        new_width = self.width + right.width
+        if not self.height == right.height:
+            raise Exception("The heights should be equal")
+        if not self.color_mode == right.color_mode:
+            raise Exception("The color modes should be equal")
+        new_image_pixels = np.zeros((self.height, new_width))
+        new_image_pixels[0:self.height, 0:self.width] = self
+        new_image_pixels[0:self.height, self.width:new_width] = right
+        return Image(new_image_pixels, color_mode=self.color_mode)
+
 
 if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
