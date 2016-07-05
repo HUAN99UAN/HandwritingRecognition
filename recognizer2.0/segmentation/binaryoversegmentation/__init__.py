@@ -7,14 +7,24 @@ default_statistics_file_path = './segmentation/binaryoversegmentation/character_
 with open(default_statistics_file_path) as input_file:
     _character_statistics = pickle.load(input_file)
 
+    # default_minimum_character_size = Size(
+    #     width=_character_statistics['min_width'],
+    #     height=_character_statistics['min_height'],
+    # )
+
     default_minimum_character_size = Size(
-        width=_character_statistics['min_width'],
-        height=_character_statistics['min_height'],
+        width=16,
+        height=30,
     )
 
+    # default_maximum_character_size = Size(
+    #     width=_character_statistics['max_width'],
+    #     height=_character_statistics['max_height'],
+    # )
+
     default_maximum_character_size = Size(
-        width=_character_statistics['max_width'],
-        height=_character_statistics['max_height'],
+        width=70,
+        height=100,
     )
 
     character_width_distribution = NormalDistribution(
