@@ -47,6 +47,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
             return list()
         self._compute_parameters(image)
         segmentation_lines = self._compute_segmentation_lines(image)
+        if not segmentation_lines:
+            return list()
         segmentation_image = SegmentationImage(
             image=image, segmentation_lines=segmentation_lines,
             character_validators=self._character_validators,
@@ -61,6 +63,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def _compute_segmentation_lines(self, image):
         suspicious_regions = self._compute_suspicious_regions(image)
         segmentation_lines = suspicious_regions.to_segmentation_lines(stroke_width=self._stroke_width)
+        if not segmentation_lines:
+            return list()
         return self._filter_segmentation_lines(image=image, segmentation_lines=segmentation_lines)
 
     def _compute_suspicious_regions(self, image):

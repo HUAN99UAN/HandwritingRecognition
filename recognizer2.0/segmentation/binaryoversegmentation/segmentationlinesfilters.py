@@ -32,22 +32,32 @@ class HoleFilter(object):
         self._hole_bits = self._find_holes()
 
     def _find_holes(self):
-        contour_image = self._compute_contour_image()
-        return np.sum(contour_image, axis=0) < contour_image.height
+        try:
+            contour_image = self._compute_contour_image()
+            return np.sum(contour_image, axis=0) < contour_image.height
+        except TypeError:
+            # cv2.findContours returns None, no holes, we assume, return a list of falses.
+            return np.zeros(self.image.shape[1], dtype=np.bool)
 
     def _compute_contour_image(self):
-        image = Invert().apply(copy.deepcopy(self.image))
-        contours, hierarchy = cv2.findContours(image=image, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_SIMPLE)
-        inner_contours = self._find_inner_contours(hierarchy)
-        contour_image = self._add_contours_to_image(contours, inner_contours)
-        return contour_image
+        try:
+            image = Invert().apply(copy.deepcopy(self.image))
+            contours, hierarchy = cv2.findContours(image=image, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_SIMPLE)
+            inner_contours = self._find_inner_contours(hierarchy)
+            contour_image = self._add_contours_to_image(contours, inner_contours)
+            return contour_image
+        except TypeError:
+            raise
 
     def _find_inner_contours(self, hierarchy):
         inner_contours = list()
-        for contour, idx in zip(hierarchy[0], range(len(hierarchy[0]))):
-            if contour[3] != -1:
-                inner_contours.append(idx)
-        return inner_contours
+        try:
+            for contour, idx in zip(hierarchy[0], range(len(hierarchy[0]))):
+                if contour[3] != -1:
+                    inner_contours.append(idx)
+            return inner_contours
+        except TypeError:
+            raise
 
     def _add_contours_to_image(self, contours, contour_idx, contour_image=None):
         if not contour_image:
