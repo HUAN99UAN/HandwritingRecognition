@@ -74,9 +74,9 @@ class SuspiciousRegions(CommonEqualityMixin):
             lines.extend(region.to_segmentation_lines(stroke_width))
         return SegmentationLines(lines)
 
-    def paint_on(self, image, color=(0,0,0), width=10, filled=False):
+    def paint_on(self, image, color=(0,0,0), width=10, filled=False, **kwargs):
         for region in self._regions:
-            image = region.paint_on(image, color=color, width=width, filled=filled)
+            image = region.paint_on(image, color=color, width=width, filled=filled, **kwargs)
         return image
 
 
@@ -105,7 +105,7 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
         segmentation_lines.append(SegmentationLine(x=int(self.right)))
         return segmentation_lines
 
-    def paint_on(self, image, color=(0, 0, 0), width=10, as_rectangle=True, bottom=None, top=None, filled=True):
+    def paint_on(self, image, color=(0, 0, 0), width=10, as_rectangle=True, bottom=None, top=None, filled=True, **kwargs):
         if as_rectangle:
             top = top or 0
             bottom = bottom or image.height
@@ -113,7 +113,7 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
                 top_left=Point(x=self.left, y=top),
                 bottom_right=Point(x=self.right, y=bottom)
             ).paint_on(
-                image=image, color=color, width=width, filled=filled
+                image=image, color=color, width=width, filled=filled, **kwargs
             )
         else:
-            return super(SuspiciousRegion, self).paint_on(image, color, width)
+            return super(SuspiciousRegion, self).paint_on(image, color, width, **kwargs)

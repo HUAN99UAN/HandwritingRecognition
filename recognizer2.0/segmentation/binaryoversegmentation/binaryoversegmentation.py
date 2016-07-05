@@ -87,6 +87,14 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
             continuesegmentationchecks.ContinueOnNumberOfForegroundPixels()
         ]
 
+    def _continue_segmentation(self, done, to_do, idx):
+        return all([
+            len(done) < self._max_segmentation,
+            bool(to_do),
+            idx < self._max_segmentation
+        ])
+
+
     @classmethod
     def _filter_segmentation_lines(cls, image, segmentation_lines):
         hole_filter = filters.HoleFilter(image=image)
@@ -94,39 +102,47 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         return segmentation_lines
 
     def _binary_segmentation(self, segmentation_image):
-        def add_to_correct_list(image, done, segment_more):
+        def add_to_correct_list(image, position, done, segment_more):
             if image.is_empty:
                 return
             elif image.is_valid_character_image:
-                done.append(image)
+                done.append((image, position))
                 # image.show(wait_key=1000, window_name='Character')
             elif image.segment_further:
-                segment_more.append(image)
+                segment_more.append((image, position))
                 # image.show(wait_key=1000, window_name='Segment More')
             else:
                 if image.width > config.character_width_distribution.mean and image.has_segmentation_lines:
-                    segment_more.append(image)
+                    segment_more.append((image, position))
                 elif image.width < (config.character_width_distribution.mean - 2 * config.character_width_distribution.sd):
                     return
                 else:
-                    done.append(image)
+                    done.append((image, position))
 
         def select_next_image(images):
-            images.sort(key=lambda image: image.width_over_height_ratio)
+            images.sort(key=lambda (image, _): image.width_over_height_ratio)
             return images.pop()
 
+        initial_position = 4611686018427387904  # 2^63
         character_images = list()
-        images_for_further_segmentation = [segmentation_image]
+        images_for_further_segmentation = [(segmentation_image, initial_position)]
 
-        while len(character_images) < self._max_segmentation and images_for_further_segmentation:
-            segmentation_image = select_next_image(images_for_further_segmentation)
+        idx = 0
+
+        while self._continue_segmentation(character_images, images_for_further_segmentation, idx):
+            segmentation_image, position = select_next_image(images_for_further_segmentation)
 
             (left, right) = segmentation_image.segment()
 
-            add_to_correct_list(left, character_images, images_for_further_segmentation)
-            add_to_correct_list(right, character_images, images_for_further_segmentation)
+            add_to_correct_list(left, position=(position / 2.0),
+                                done=character_images, segment_more=images_for_further_segmentation)
+            add_to_correct_list(right, position=position,
+                                done=character_images, segment_more=images_for_further_segmentation)
+            idx += 1
 
-        return character_images
+        character_images.extend(images_for_further_segmentation)
+        character_images.sort(key=lambda (_, position): position)
+        return [image for (image, _) in character_images]
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
@@ -139,4 +155,9 @@ if __name__ == '__main__':
     image = Image.from_file(image_file)
     image = ToBinary().apply(image)
 
-    BinaryOverSegmentation().segment(image)
+    characters = BinaryOverSegmentation().segment(image)
+
+    # image.show(window_name='Word Image')
+
+    # for (idx, character) in enumerate(characters):
+    #     character.show(close_window=False, window_name="Character {}".format(idx))

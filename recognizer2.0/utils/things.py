@@ -60,7 +60,7 @@ class Pixel(_Pixel):
     def is_on(self, line):
         return self.x == line.x
 
-    def paint_on(self, image, color=(0, 0, 0)):
+    def paint_on(self, image, color=(0, 0, 0), **kwargs):
         image_copy = copy.deepcopy(image)
         image_copy.set_pixel(self, color)
         return image_copy
@@ -148,9 +148,9 @@ class PixelPath(object):
         self._pixels = pixels
         self._idx = 0
 
-    def paint_on(self, image, color=(0, 0, 0)):
+    def paint_on(self, image, color=(0, 0, 0), **kwargs):
         for pixel in self._pixels:
-            image = pixel.paint_on(image, color)
+            image = pixel.paint_on(image, color, **kwargs)
         return image
 
     def __iter__(self):

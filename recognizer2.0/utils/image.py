@@ -116,7 +116,7 @@ class Image(np.ndarray):
             sub_image = BackgroundBorderRemoval().apply(sub_image)
         return sub_image
 
-    def show(self, wait_key=_default_wait_key, window_name=None):
+    def show(self, wait_key=_default_wait_key, window_name=None, close_window=True, **kwargs):
         """
         Show this image.
         :param wait_key: How long to wait for a key, before closing the image and continuing program execution. Choose
@@ -128,7 +128,8 @@ class Image(np.ndarray):
         cv2.namedWindow(window_name)
         cv2.imshow(window_name, self)
         cv2.waitKey(wait_key)
-        cv2.destroyAllWindows()
+        if(close_window):
+            cv2.destroyAllWindows()
 
     def to_file(self, output_file):
         succesfull = cv2.imwrite(output_file, self)
