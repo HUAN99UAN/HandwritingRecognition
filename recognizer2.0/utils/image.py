@@ -182,6 +182,12 @@ class Image(np.ndarray):
         return cls([], color_mode)
 
     @property
+    def is_one_dimensional(self):
+        if len(self.shape) == 2:
+            return self.shape[0] == 1 or self.shape[1] == 1
+        return len(self.shape) == 1
+
+    @property
     def is_empty(self):
         return self.size == 0
 
