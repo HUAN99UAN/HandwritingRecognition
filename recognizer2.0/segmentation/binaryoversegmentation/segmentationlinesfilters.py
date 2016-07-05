@@ -6,6 +6,7 @@ import numpy as np
 from preprocessing.invert import Invert
 from utils.image import Image, ColorMode
 from utils.mixins import CommonEqualityMixin
+import segmentation.binaryoversegmentation as config
 
 
 class _AbstractSegmentationLineFilter(CommonEqualityMixin):
@@ -22,12 +23,11 @@ class _AbstractSegmentationLineFilter(CommonEqualityMixin):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
 
-class HoleFilter(object):
+class HoleFilter(_AbstractSegmentationLineFilter):
     """Return false for the segmentation lines that lie in a hole."""
 
     def __init__(self, image):
-        super(HoleFilter, self).__init__()
-        self.image = image
+        super(HoleFilter, self).__init__(image)
         # Has true at the columns where the image has a hole
         self._hole_bits = self._find_holes()
 
@@ -69,6 +69,16 @@ class HoleFilter(object):
     def keep(self, segmentation_line):
         return not self._hole_bits[segmentation_line.x]
 
-    def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
 
+class MinimumWidtFilter(object):
+    def __init__(self,
+                 minimumwidth=config.default_minimum_character_size.width,
+                 maximum_width=config.default_maximum_character_size.width):
+        super(MinimumWidtFilter, self).__init__()
+        self._maximum_width = maximum_width
+        self._minimum_width = minimumwidth
+
+    def apply(self, segmentation_image):
+        # todo do stuff
+
+        return segmentation_image

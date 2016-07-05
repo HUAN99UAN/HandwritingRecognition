@@ -33,6 +33,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._stroke_width_estimator = stroke_width_estimator
         self._minimum_character_size = minimum_character_size
         self._maximum_character_size = maximum_character_size
+        self._segmentation_line_mover = filters.MinimumWidtFilter()
 
         # Depend on the input image, but are handy to store in the object.
         self._low_base_line = None
@@ -54,6 +55,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
             character_validators=self._character_validators,
             continue_segmentation_checks=self._continue_segmentation_checks
         )
+        self._segmentation_line_mover.apply(segmentation_image)
+
+
         return self._binary_segmentation(segmentation_image)
 
     def _compute_parameters(self, image):
