@@ -55,7 +55,7 @@ def handle_words_file(words_file, recognizer, data_directory, output_directory):
 
 
 if __name__ == '__main__':
-    data_directory = '/Users/laura/Downloads/subsettest2'
+    data_directory = '/Users/laura/Downloads/subsettest'
     output_directory = '/Users/laura/Desktop/output'
 
     words_files = get_words_files(data_directory)
