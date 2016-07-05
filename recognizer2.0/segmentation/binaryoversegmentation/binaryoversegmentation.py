@@ -55,8 +55,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
             character_validators=self._character_validators,
             continue_segmentation_checks=self._continue_segmentation_checks
         )
-        self._segmentation_line_mover.apply(segmentation_image)
-
+        segmentation_image = self._segmentation_line_mover.apply(segmentation_image)
 
         return self._binary_segmentation(segmentation_image)
 
@@ -117,7 +116,6 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                 return
             elif image.is_valid_character_image:
                 done.append((image, position))
-                # image.show(wait_key=1000, window_name='Character')
             elif image.segment_further:
                 segment_more.append((image, position))
                 # image.show(wait_key=1000, window_name='Segment More')
