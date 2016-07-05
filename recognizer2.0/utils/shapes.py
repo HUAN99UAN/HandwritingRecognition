@@ -6,7 +6,7 @@ from utils.things import Point
 
 
 class Shape(object):
-    def paint_on(self, image):
+    def paint_on(self, image, **kwargs):
         pass
 
     def __repr__(self):
@@ -42,7 +42,7 @@ class Line(Shape):
     def y2(self):
         return self._p2.y
 
-    def paint_on(self, image, color=(0, 0, 0), width=10):
+    def paint_on(self, image, color=(0, 0, 0), width=10, **kwargs):
         if not image.color_mode.is_color:
             image = preprocessing.colorspaces.ToColor().apply(image)
         cv2.line(image, self.p1, self.p2, color=color, thickness=width)
@@ -126,7 +126,7 @@ class Rectangle(Shape):
     def height(self):
         return abs(self.bottom - self.top)
 
-    def paint_on(self, image, color=(0, 0, 0), width=10, filled=False):
+    def paint_on(self, image, color=(0, 0, 0), width=10, filled=False, **kwargs):
         if not image.color_mode.is_color:
             image = preprocessing.colorspaces.ToColor().apply(image)
         if filled:
