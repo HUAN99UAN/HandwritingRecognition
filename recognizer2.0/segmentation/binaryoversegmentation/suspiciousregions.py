@@ -109,6 +109,7 @@ class SuspiciousRegion(HorizontalLine, CommonEqualityMixin):
         if as_rectangle:
             top = top or 0
             bottom = bottom or image.height
+
             return Rectangle(
                 top_left=Point(x=self.left, y=top),
                 bottom_right=Point(x=self.right, y=bottom)

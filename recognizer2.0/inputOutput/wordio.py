@@ -120,4 +120,4 @@ def save(word_lines, xml_file):
             file.write('    </TextLine>\n')
     file.write('</Image>\n')
     file.close()
-    print "File %s saved." % xml_file
+    # print "File %s saved." % xml_file
