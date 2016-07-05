@@ -1,11 +1,10 @@
-import numpy as np
 import cv2
+import numpy as np
 from enum import Enum
 
-
-from utils.things import Range, Size
 from preprocessing.backgroundremoval import BackgroundBorderRemoval
-import hwrexceptions
+from utils import hwrexceptions
+from utils.things import Range, Size
 
 
 class ColorMode(Enum):

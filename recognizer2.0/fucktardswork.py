@@ -4,9 +4,10 @@ import os
 import progressbar
 
 import inputOutput
-import postprocessing, recognizer
+import postprocessing
+import recognizer
+from utils import hwrexceptions
 from utils.image import Image
-import hwrexceptions
 
 
 def get_words_files(data_directory):
