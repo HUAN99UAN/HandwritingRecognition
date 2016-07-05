@@ -73,13 +73,16 @@ def parse_command_line_arguments():
 if __name__ == '__main__':
     cli_arguments = parse_command_line_arguments()
     annotation, _ = inputOutput.read(cli_arguments['words_file'])
-    image = Image.from_file(cli_arguments['image'])
-
     r = Recognizer(
         postprocessor=postprocessing.NearestLexiconEntryWithPrior(
             distance_measure=postprocessing.distances.edit_distance
         )
     )
-    r.recognize(image=image, annotation=annotation)
 
-    inputOutput.save(r.output_lines, cli_arguments['output_file'])
+    try:
+        image = Image.from_file(cli_arguments['image'])
+        r.recognize(image=image, annotation=annotation)
+        output_lines = r.output_lines
+    except:
+        output_lines = annotation
+    inputOutput.save(output_lines, cli_arguments['output_file'])
