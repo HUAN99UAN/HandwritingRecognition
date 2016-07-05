@@ -135,6 +135,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
 
         idx = 0
 
+        if not segmentation_image.has_segmentation_lines:
+            return [segmentation_image]
+
         while self._continue_segmentation(character_images, images_for_further_segmentation, idx):
             segmentation_image, position = select_next_image(images_for_further_segmentation)
 
