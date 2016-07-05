@@ -83,8 +83,14 @@ class HorizontalLine(Line):
 
 class Rectangle(Shape):
     def __init__(self, top_left, bottom_right):
-        self._top_left = top_left
-        self._bottom_right = bottom_right
+        _top = min(top_left.y, bottom_right.y)
+        _bottom = max(top_left.y, bottom_right.y)
+
+        _left = min(top_left.x, bottom_right.x)
+        _right = max(top_left.x, bottom_right.x)
+
+        self._top_left = Point(x=_left, y=_top)
+        self._bottom_right = Point(x=_right, y=_bottom)
 
     @property
     def left(self):
