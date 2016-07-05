@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Image name="KNMP-VIII_F_69______2C2O_0004">
+    <TextLine bottom="208" left="281" no="1" right="740" shear="0" top="140">
+        <Word bottom="199" left="281" no="1" right="352" shear="0" text="%sitv" top="140">
+            <Character bottom="197" left="283" no="1" right="309" shear="0" text="s" top="144" />
+            <Character bottom="192" left="297" no="2" right="315" shear="0" text="i" top="157" />
+            <Character bottom="193" left="313" no="3" right="329" shear="0" text="t" top="159" />
+            <Character bottom="193" left="326" no="4" right="350" shear="0" text="v" top="161" />
+            <Character bottom="161" left="328" no="5" right="351" shear="0" text="^" top="143" />
+        </Word>
+    </TextLine>
+</Image>
