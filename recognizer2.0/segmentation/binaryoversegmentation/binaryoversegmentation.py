@@ -6,6 +6,7 @@ import segmentation.interface
 from segmentation.binaryoversegmentation.segmentationimage import SegmentationImage
 from segmentation.binaryoversegmentation.suspiciousregions import SuspiciousRegionsComputer
 import characterValidators
+import preprocessing.backgroundremoval
 import continuesegmentationchecks
 from utils.image import Image
 from utils.shapes import Rectangle
@@ -41,6 +42,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._continue_segmentation_checks = self._build_continue_segmentation_checks()
 
     def segment(self, image):
+        image = preprocessing.backgroundremoval.BackgroundBorderRemoval().apply(image)
+        if image.is_one_dimensional or image.is_empty:
+            return list()
         self._compute_parameters(image)
         segmentation_lines = self._compute_segmentation_lines(image)
         segmentation_image = SegmentationImage(
