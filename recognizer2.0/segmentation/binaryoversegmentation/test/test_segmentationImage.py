@@ -73,9 +73,9 @@ class TestSegmentationImage(TestCase):
         image = Image(image_array, ColorMode.binary)
         segmentation_lines = SegmentationLines.from_x_coordinates([1])
         expected_image = SegmentationImage(image, segmentation_lines,
-                                       self.character_validators,
-                                       self.continue_segmentation_checks,
-                                       self.image_splitter)
+                                           self.character_validators,
+                                           self.continue_segmentation_checks,
+                                           self.image_splitter)
         np.testing.assert_array_equal(actual_image, expected_image)
         self.assertEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
         self.assertItemsEqual(actual_image._character_validators, expected_image._character_validators)
@@ -95,9 +95,9 @@ class TestSegmentationImage(TestCase):
         image = Image(image_array, ColorMode.binary)
         segmentation_lines = SegmentationLines.from_x_coordinates([2])
         expected_image = SegmentationImage(image, segmentation_lines,
-                                       self.character_validators,
-                                       self.continue_segmentation_checks,
-                                       self.image_splitter)
+                                           self.character_validators,
+                                           self.continue_segmentation_checks,
+                                           self.image_splitter)
         np.testing.assert_array_equal(actual_image, expected_image)
         self.assertEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
         self.assertItemsEqual(actual_image._character_validators, expected_image._character_validators)
@@ -116,9 +116,9 @@ class TestSegmentationImage(TestCase):
         image = Image(image_array, ColorMode.binary)
         segmentation_lines = SegmentationLines.from_x_coordinates([1, 4])
         expected_image = SegmentationImage(image, segmentation_lines,
-                                       self.character_validators,
-                                       self.continue_segmentation_checks,
-                                       self.image_splitter)
+                                           self.character_validators,
+                                           self.continue_segmentation_checks,
+                                           self.image_splitter)
         np.testing.assert_array_equal(actual_image, expected_image)
         self.assertEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
         self.assertItemsEqual(actual_image._character_validators, expected_image._character_validators)
@@ -137,9 +137,45 @@ class TestSegmentationImage(TestCase):
         image = Image(image_array, ColorMode.binary)
         segmentation_lines = SegmentationLines.from_x_coordinates([1, 4])
         expected_image = SegmentationImage(image, segmentation_lines,
+                                           self.character_validators,
+                                           self.continue_segmentation_checks,
+                                           self.image_splitter)
+        np.testing.assert_array_equal(actual_image, expected_image)
+        self.assertEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
+        self.assertItemsEqual(actual_image._character_validators, expected_image._character_validators)
+        self.assertItemsEqual(actual_image._continue_segmentation_checks, expected_image._continue_segmentation_checks)
+        self.assertItemsEqual(actual_image._image_splitter, expected_image._image_splitter)
+
+    def test_concat_with(self):
+        left_lines = SegmentationLines.from_x_coordinates([0, 1])
+        left_pixels = np.zeros((3, 2))
+        left_pixels[0, 1] = left_pixels[1, 1] = left_pixels[2, 0] = left_pixels[2, 1] = 1
+        left_image = Image(left_pixels, color_mode=ColorMode.binary)
+        left_image = SegmentationImage(left_image, left_lines,
+                                           self.character_validators,
+                                           self.continue_segmentation_checks,
+                                           self.image_splitter)
+
+        right_lines = SegmentationLines.from_x_coordinates([0, 1])
+        right_pixels = np.zeros((3, 2))
+        right_pixels[0, 1] = right_pixels[1, 0] = right_pixels[1, 1] = 1
+        right_image = Image(right_pixels, color_mode=ColorMode.binary)
+        right_image = SegmentationImage(right_image, right_lines,
                                        self.character_validators,
                                        self.continue_segmentation_checks,
                                        self.image_splitter)
+
+        expected_pixels = np.zeros((3, 4))
+        expected_lines = SegmentationLines.from_x_coordinates([0, 1, 2, 3])
+        expected_pixels[0, 1] = expected_pixels[1, 1] = expected_pixels[2, 0] = expected_pixels[2, 1] = 1
+        expected_pixels[0, 3] = expected_pixels[1, 2] = expected_pixels[1, 3] = 1
+        expected = Image(expected_pixels, color_mode=ColorMode.binary)
+        expected_image = SegmentationImage(expected, expected_lines,
+                                       self.character_validators,
+                                       self.continue_segmentation_checks,
+                                       self.image_splitter)
+
+        actual_image = left_image.concat_with(right_image)
         np.testing.assert_array_equal(actual_image, expected_image)
         self.assertEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
         self.assertItemsEqual(actual_image._character_validators, expected_image._character_validators)

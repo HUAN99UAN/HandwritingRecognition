@@ -12,6 +12,9 @@ class SegmentationLines(object):
         self._lines = lines
         self._idx = 0
 
+    def extend(self, other):
+        self._lines.extend(other)
+
     @property
     def is_empty(self):
         return not bool(self._lines)

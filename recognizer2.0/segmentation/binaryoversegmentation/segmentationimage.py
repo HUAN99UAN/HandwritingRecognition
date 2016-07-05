@@ -1,4 +1,5 @@
 import operator
+import copy
 
 import numpy as np
 
@@ -117,3 +118,16 @@ class SegmentationImage(Image):
         if remove_white_borders:
             new_image = BackgroundBorderRemoval().apply(new_image)
         return new_image
+
+    def concat_with(self, right):
+        new_segmentation_lines = copy.copy(self.segmentation_lines)
+        new_segmentation_lines.extend(right.segmentation_lines.shift_horizontally(self.width))
+        image = super(SegmentationImage, self).concat_with(right)
+        return SegmentationImage(
+            image=image,
+            segmentation_lines=new_segmentation_lines,
+            character_validators=self._character_validators,
+            continue_segmentation_checks=self._continue_segmentation_checks,
+            image_splitter=self._image_splitter
+        )
+
