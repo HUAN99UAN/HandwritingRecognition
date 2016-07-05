@@ -6,6 +6,7 @@ import progressbar
 import inputOutput
 import postprocessing, recognizer
 from utils.image import Image
+import hwrexceptions
 
 
 def get_words_files(data_directory):
@@ -36,8 +37,25 @@ def build_output_file(output_directory, words_file):
     return os.path.join(output_directory, output_file)
 
 
+def handle_words_file(words_file, recognizer, data_directory, output_directory):
+    ppm_file = get_ppm_path(data_directory, words_file)
+    annotation, _ = inputOutput.read(words_file)
+
+    try:
+        image = Image.from_file(ppm_file)
+        recognizer.recognize(image=image, annotation=annotation)
+        output_lines = recognizer.output_lines
+    except hwrexceptions.InvalidImageException:
+        output_lines = annotation
+    except Exception:
+        print "Could not handle {}".format(words_file)
+        output_lines = annotation
+
+    inputOutput.save(output_lines, build_output_file(output_directory, words_file))
+
+
 if __name__ == '__main__':
-    data_directory = '/Users/laura/Downloads/subsettest2'
+    data_directory = '/Users/laura/Downloads/subsettest'
     output_directory = '/Users/laura/Desktop/output'
 
     words_files = get_words_files(data_directory)
@@ -51,16 +69,5 @@ if __name__ == '__main__':
     bar = progressbar.ProgressBar()
 
     for words_file in bar(words_files):
+        handle_words_file(words_file, r, data_directory, output_directory)
 
-        ppm_file = get_ppm_path(data_directory, words_file)
-
-        annotation, _ = inputOutput.read(words_file)
-        image = Image.from_file(ppm_file)
-
-        try:
-            r.recognize(image=image, annotation=annotation)
-        except Exception:
-            print "Could not handle {}".format(words_file)
-            continue
-
-        inputOutput.save(r.output_lines, build_output_file(output_directory, words_file))

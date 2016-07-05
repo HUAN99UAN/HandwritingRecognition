@@ -6,6 +6,7 @@ import segmentation.interface
 from segmentation.binaryoversegmentation.segmentationimage import SegmentationImage
 from segmentation.binaryoversegmentation.suspiciousregions import SuspiciousRegionsComputer
 import characterValidators
+import preprocessing.backgroundremoval
 import continuesegmentationchecks
 from utils.image import Image
 from utils.shapes import Rectangle
@@ -41,8 +42,13 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._continue_segmentation_checks = self._build_continue_segmentation_checks()
 
     def segment(self, image):
+        image = preprocessing.backgroundremoval.BackgroundBorderRemoval().apply(image)
+        if image.is_one_dimensional or image.is_empty:
+            return list()
         self._compute_parameters(image)
         segmentation_lines = self._compute_segmentation_lines(image)
+        if not segmentation_lines:
+            return list()
         segmentation_image = SegmentationImage(
             image=image, segmentation_lines=segmentation_lines,
             character_validators=self._character_validators,
@@ -57,6 +63,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
     def _compute_segmentation_lines(self, image):
         suspicious_regions = self._compute_suspicious_regions(image)
         segmentation_lines = suspicious_regions.to_segmentation_lines(stroke_width=self._stroke_width)
+        if not segmentation_lines:
+            return list()
         return self._filter_segmentation_lines(image=image, segmentation_lines=segmentation_lines)
 
     def _compute_suspicious_regions(self, image):
@@ -126,6 +134,9 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         images_for_further_segmentation = [(segmentation_image, initial_position)]
 
         idx = 0
+
+        if not segmentation_image.has_segmentation_lines:
+            return [segmentation_image]
 
         while self._continue_segmentation(character_images, images_for_further_segmentation, idx):
             segmentation_image, position = select_next_image(images_for_further_segmentation)

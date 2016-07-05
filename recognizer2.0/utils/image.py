@@ -2,8 +2,10 @@ import numpy as np
 import cv2
 from enum import Enum
 
+
 from utils.things import Range, Size
 from preprocessing.backgroundremoval import BackgroundBorderRemoval
+import hwrexceptions
 
 
 class ColorMode(Enum):
@@ -182,6 +184,12 @@ class Image(np.ndarray):
         return cls([], color_mode)
 
     @property
+    def is_one_dimensional(self):
+        if len(self.shape) == 2:
+            return self.shape[0] == 1 or self.shape[1] == 1
+        return len(self.shape) == 1
+
+    @property
     def is_empty(self):
         return self.size == 0
 
@@ -238,6 +246,8 @@ class Image(np.ndarray):
     @staticmethod
     def from_file(input_file):
         np_array = cv2.imread(input_file, cv2.IMREAD_COLOR)
+        if np_array is None:
+            raise hwrexceptions.InvalidImageException(input_file)
         image = Image(np_array, color_mode=ColorMode.bgr)
         return image
 
