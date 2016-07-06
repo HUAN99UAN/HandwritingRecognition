@@ -20,14 +20,14 @@ post_processor = postprocessing.NearestLexiconEntryWithPrior(
 
 
 image_directory = None
-output_directory = "/Users/laura/Repositories/HandwritingRecognition/data/results/binary/"
+output_directory = "/Users/laura/Repositories/HandwritingRecognition/data/results/binarysegmentation"
 
 
 def k_fold_cross_validation(word_files, k=10):
     bar = ProgressBar()
     results = list()
-    for train_files, test_files in bar(folds(word_files)):
-        fold_result = run_fold(train_files, test_files, k)
+    for train_files, test_files in bar(folds(word_files, k)):
+        fold_result = run_fold(train_files, test_files)
         results.append(fold_result)
     return results
 
@@ -59,7 +59,9 @@ def run_fold(train_files, test_files):
 
     errors = []
     for test_file in test_files:
-        errors.append(classify_file(r, test_file))
+        error = classify_file(r, test_file)
+        if error:
+            errors.append(error)
 
     return {
         'train_data': train_files,
@@ -72,7 +74,8 @@ def build_file_path(directory, base_name, extension):
     return "".join([os.path.join(directory, base_name), extension])
 
 
-def build_intermediate_output_file_path(base_name):
+def build_intermediate_output_file_path(annotation_file_path):
+    _, base_name = os.path.split(annotation_file_path)
     return build_file_path(output_directory, base_name, '')
 
 
@@ -90,11 +93,14 @@ def classify_file(the_recognizer, words_file):
     read_text = the_recognizer.output_lines
     output_file = build_intermediate_output_file_path(words_file)
     wordio.save(read_text, output_file)
-    result = 1 - statistics.ClassificationErrorComputer().compare(
-        oracle=words_file,
-        result=output_file
-    )['correctness_ratio']
-    return result
+    try:
+        performance_statistics = statistics.ClassificationErrorComputer().compare(
+            oracle=words_file,
+            result=output_file
+        )
+        return 1 - performance_statistics['correctness_ratio']
+    except ZeroDivisionError:
+        return None
 
 
 def write_results(result, path):
@@ -104,7 +110,7 @@ def write_results(result, path):
 
 if __name__ == '__main__':
     (image_directory, word_files, final_results_file_path) = cli_interface.parse_imagedir_wordsfiles_optionaloutputFile(
-        default_output_file='Users/laura//Users/laura/Repositories/HandwritingRecognition/data/results/binary/final.pkl'
+        default_output_file='/Users/laura/Repositories/HandwritingRecognition/data/results/binarysegmentation/final.pkl'
     )
     results = k_fold_cross_validation(word_files, 2)
     write_results(results, final_results_file_path)

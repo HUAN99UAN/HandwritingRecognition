@@ -1,4 +1,3 @@
-import postprocessing.distancemeasures as distances
 import inputOutput.wordio as wordio
 
 
