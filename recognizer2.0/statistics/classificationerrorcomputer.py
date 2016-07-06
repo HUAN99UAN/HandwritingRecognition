@@ -1,105 +1,54 @@
+import postprocessing.distancemeasures as distances
+import inputOutput.wordio as wordio
+
+
+def are_list_lengths_equal(a, b):
+    if not (len(a) == len(b)):
+        raise Exception("The lists shoud have the same number of elements.")
+
+
 class ClassificationErrorComputer(object):
-    def __init__(self):
-        self._words_of_interest = ['Word', 'text=']
-        self._length_of_text = 6
-        self._total_words_compared = 0
-        self._total_matched_words = 0
-        self._mismatched_length = 0
-        self._words = []
 
-    def compare(self, oracle, result):
+    def __init__(self, oracle=None, result=None, oracle_file=None, result_file=None):
+        self._oracle = oracle or self._read_file(oracle_file)
+        self._result = result or self._read_file(result_file)
 
-        oracle_lines, result_lines = self._read_files(oracle=oracle, result=result)
+        if not (self._oracle and self._result):
+            raise Exception("We need an oracle (file) and a result (file) to compute the error.")
+        are_list_lengths_equal(self._oracle, self._result)
+        self._number_correct_words, self._total_number_of_words = self._compute_error()
 
-        for line in range(len(oracle_lines)):
-            if all(word in oracle_lines[line] for word in self._words_of_interest):
-                oracle_word = self._extract_word(oracle_lines[line])
-                result_word = self._extract_word(result_lines[line])
-                self._compare_words(oracle_word, result_word)
-                self._words.append(Word(oracle_word, result_word))
+    @classmethod
+    def _read_file(cls, words_file):
+        lines, _ = wordio.read(words_file)
+        return lines
 
-        return {'total_words': self._total_words_compared,
-                'correct_words': self._total_matched_words,
-                'wrong_words': self._total_words_compared - self._total_matched_words,
-                'unequal_length': self._mismatched_length,
-                'correctness_ratio': self._calculate_percentage()}
+    def _compute_error(self):
+        number_of_correctly_read_words = 0
+        total_number_of_words = 0
+        for line_pair in zip(self._oracle, self._result):
+            total_number_of_words += len(line_pair[0])
+            number_of_correctly_read_words += self._compute_line_error(*line_pair)
+        return number_of_correctly_read_words, total_number_of_words
 
-    def _calculate_percentage(self):
-        return (self._total_matched_words * 100) / float(self._total_words_compared)
-
-    def _compare_words(self, oracle_word, result_word):
-        self._total_words_compared += 1
-        if len(oracle_word) != len(result_word):
-            self._mismatched_length += 1
-        elif oracle_word == result_word:
-            self._total_matched_words += 1
-
-    def _extract_word(self, line):
-        start_pos = line.index(self._words_of_interest[1])
-        end_pos = line.index('"', start_pos + self._length_of_text)
-        return line[start_pos + self._length_of_text:end_pos]
-
-    @staticmethod
-    def _read_files(oracle, result):
-        return open(oracle, 'r').readlines(), open(result, 'r').readlines()
-
-    def compare_multiple_files(self, oracle_files, result_files):
-        results = {'total_words': [],
-                   'correct_words': [],
-                   'wrong_words': [],
-                   'unequal_length': [],
-                   'correctness_ratio': []}
-
-        for oracle_file in range(len(oracle_files)):
-            for result_file in range(len(result_files)):
-                if oracle_file == result_file:
-                    tmp_results = self.compare(oracle_file, result_file)
-                    for k in results:
-                        results[k].append(tmp_results[k])
-
-
-class Word(object):
-    def __init__(self, oracle_word, result_word):
-        self._oracle_word = oracle_word
-        self._result_word = result_word
-        self._level_of_difference = 0
-        self._unequal = False
-        self._calculate_diff()
+    def _compute_line_error(self, oracle, result):
+        number_of_corectly_read_words = 0
+        are_list_lengths_equal(oracle, result)
+        for (oracle_word, result_word) in zip(oracle, result):
+            number_of_corectly_read_words += int(oracle_word.text == result_word.text)
+        return number_of_corectly_read_words
 
     @property
-    def oracle_word(self):
-        return self._oracle_word
+    def error(self):
+        return 1 - self.recognition_rate
 
     @property
-    def result_word(self):
-        return self._result_word
-
-    @property
-    def level_of_difference(self):
-        return self._level_of_difference
-
-    @property
-    def are_of_eq_length(self):
-        return self._unequal
-
-    def _calculate_diff(self):
-        if len(self._oracle_word) != len(self._result_word):
-            self._unequal = True
-            self._level_of_difference = abs(len(self._oracle_word) - len(self._result_word))
-            return
-
-        for idx in range(len(self._oracle_word)):
-            if self._oracle_word[idx] == self._result_word[idx]:
-                continue
-            else:
-                self._level_of_difference += 1
-
-    def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
+    def recognition_rate(self):
+        return self._number_correct_words / float(self._total_number_of_words)
 
 
 if __name__ == '__main__':
-    e = ClassificationErrorComputer()
     oracle = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.words'
     actual = '/Users/laura/Desktop/output.words'
-    print e.compare(oracle=oracle, result=actual)
+    e = ClassificationErrorComputer(oracle_file=oracle, result_file=actual)
+    print e.error
