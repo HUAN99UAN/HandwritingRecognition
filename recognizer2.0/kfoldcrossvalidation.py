@@ -24,7 +24,7 @@ output_directory = "/Users/laura/Repositories/HandwritingRecognition/data/result
 
 
 def k_fold_cross_validation(word_files, k=10):
-    bar = ProgressBar()
+    bar = ProgressBar(max_value=k)
     results = list()
     for train_files, test_files in bar(folds(word_files, k)):
         fold_result = run_fold(train_files, test_files)
@@ -86,11 +86,10 @@ def build_image_path(base_name):
 def classify_file(the_recognizer, words_file):
     annotation, image_name = wordio.read(words_file)
     image = Image.from_file(build_image_path(image_name))
-    the_recognizer.recognize(
+    read_text = the_recognizer.recognize(
         annotation=annotation,
         image=image
     )
-    read_text = the_recognizer.output_lines
     output_file = build_intermediate_output_file_path(words_file)
     wordio.save(read_text, output_file)
     try:
@@ -99,6 +98,8 @@ def classify_file(the_recognizer, words_file):
             result=read_text
         ).error
     except ZeroDivisionError:
+        return None
+    except TypeError:
         return None
 
 
