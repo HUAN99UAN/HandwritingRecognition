@@ -1,6 +1,6 @@
-import time
 import datetime
 import os
+import time
 
 import cv2
 import numpy as np
@@ -302,5 +302,5 @@ class Image(np.ndarray):
 if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
     image = Image.from_file(image_file)
-    image.resize(width=400).show(wait_key=0)
+    image.show(wait_key=0)
 
