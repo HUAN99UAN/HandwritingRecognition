@@ -118,7 +118,6 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                 done.append((image, position))
             elif image.segment_further:
                 segment_more.append((image, position))
-                # image.show(wait_key=1000, window_name='Segment More')
             else:
                 if image.width > config.character_width_distribution.mean and image.has_segmentation_lines:
                     segment_more.append((image, position))
@@ -136,6 +135,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         images_for_further_segmentation = [(segmentation_image, initial_position)]
 
         idx = 0
+
 
         if not segmentation_image.has_segmentation_lines:
             return [segmentation_image]
