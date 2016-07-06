@@ -1,3 +1,5 @@
+valid_characters = [chr(x) for x in range(48, 58) + range(65, 91) + range(97, 123)]
+
 class Character:
     top = None
     left = None
@@ -11,7 +13,7 @@ class Character:
         return all([
             (self.right - self.left) > 5,
             (self.bottom - self.top) > 20,
-            self.text != "^"
+            self.text in valid_characters
         ])
 
     def __repr__(self):
