@@ -94,11 +94,10 @@ def classify_file(the_recognizer, words_file):
     output_file = build_intermediate_output_file_path(words_file)
     wordio.save(read_text, output_file)
     try:
-        performance_statistics = statistics.ClassificationErrorComputer().compare(
-            oracle=words_file,
-            result=output_file
-        )
-        return 1 - performance_statistics['correctness_ratio']
+        return statistics.ClassificationErrorComputer(
+            oracle=annotation,
+            result=read_text
+        ).error
     except ZeroDivisionError:
         return None
 
