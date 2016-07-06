@@ -21,17 +21,13 @@ class Recognizer(object):
         self._classifier = classifier
         self._post_processor = postprocessor
 
-        self._output_lines = list()
-
-    @property
-    def output_lines(self):
-        return self._output_lines
-
     def recognize(self, image, annotation):
         pre_processed_image = self._pre_processor.apply(image)
+        output_lines = list()
         for line in annotation:
             output_line = self._recognize_line(line, pre_processed_image)
-            self._output_lines.append(output_line)
+            output_lines.append(output_line)
+        return output_lines
 
     def _recognize_line(self, line, image):
         output_line = list()
@@ -81,8 +77,7 @@ if __name__ == '__main__':
 
     try:
         image = Image.from_file(cli_arguments['image'])
-        r.recognize(image=image, annotation=annotation)
-        output_lines = r.output_lines
+        output_lines = r.recognize(image=image, annotation=annotation)
     except:
         output_lines = annotation
     inputOutput.save(output_lines, cli_arguments['output_file'])

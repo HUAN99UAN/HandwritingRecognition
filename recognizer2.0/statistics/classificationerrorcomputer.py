@@ -3,7 +3,7 @@ import inputOutput.wordio as wordio
 
 def are_list_lengths_equal(a, b):
     if not (len(a) == len(b)):
-        raise Exception("The lists shoud have the same number of elements.")
+        raise Exception("The lists should have the same number of elements.")
 
 
 class ClassificationErrorComputer(object):
