@@ -3,6 +3,7 @@ import argparse
 import pickle
 
 import numpy as np
+import progressbar
 
 import utils.actions as actions
 from inputOutput import wordio as xmlReader
@@ -26,7 +27,8 @@ class _StatisticsComputer(object):
         }
 
     def build(self):
-        for xml_file in self._xml_files:
+        bar = progressbar.ProgressBar()
+        for xml_file in bar(self._xml_files):
             self._add_data_from_file(xml_file)
         self._reject_outliers()
         return self._extract_statistics()
