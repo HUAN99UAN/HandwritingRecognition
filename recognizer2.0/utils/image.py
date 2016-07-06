@@ -1,3 +1,7 @@
+import time
+import datetime
+import os
+
 import cv2
 import numpy as np
 from enum import Enum
@@ -6,6 +10,8 @@ from preprocessing.backgroundremoval import BackgroundBorderRemoval
 from utils import hwrexceptions
 from utils.things import Range, Size
 
+_default_output_extension = 'png'
+_default_output_folder = '~/Desktop'
 
 class ColorMode(Enum):
     gray, bgr, binary = range(3)
@@ -29,9 +35,9 @@ class InterpolationMethod(Enum):
     @property
     def as_open_cv(self):
         mapping = {
-            self.nearest_neighbour : cv2.INTER_NEAREST,
-            self.bilinear : cv2.INTER_LINEAR,
-            self.bicubic : cv2.INTER_CUBIC
+            self.nearest_neighbour: cv2.INTER_NEAREST,
+            self.bilinear: cv2.INTER_LINEAR,
+            self.bicubic: cv2.INTER_CUBIC
         }
         return mapping.get(self)
 
@@ -117,6 +123,18 @@ class Image(np.ndarray):
             sub_image = BackgroundBorderRemoval().apply(sub_image)
         return sub_image
 
+    def _handle_key_press(self, key):
+
+        mapping = {
+            's': Image.to_file,
+            'q': Image.close,
+        }
+        mapping.get(chr(key))(self)
+
+    @classmethod
+    def close(cls):
+        cv2.destroyAllWindows()
+
     def show(self, wait_key=_default_wait_key, window_name=None, close_window=True, **kwargs):
         """
         Show this image.
@@ -128,12 +146,31 @@ class Image(np.ndarray):
             return
         cv2.namedWindow(window_name)
         cv2.imshow(window_name, self)
-        cv2.waitKey(wait_key)
-        if(close_window):
-            cv2.destroyAllWindows()
+        key = cv2.waitKey(wait_key)
+        try:
+            self._handle_key_press(key)
+        except ValueError as exception:
+            if key == -1:
+                if close_window:
+                    self.close()
+                    return
+            raise exception
 
-    def to_file(self, output_file):
-        succesfull = cv2.imwrite(output_file, self)
+    def to_file(self, output_file=None):
+        def generate_file_name():
+            base_name = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d-%H-%M-%S')
+            file_name = '.'.join([base_name, _default_output_extension])
+            file_path = os.path.join(_default_output_folder, file_name)
+            return file_path
+
+        def expand_file_path(file_path):
+            return os.path.abspath(
+                os.path.expanduser(file_path)
+            )
+
+        if not output_file:
+            output_file = generate_file_name()
+        succesfull = cv2.imwrite(expand_file_path(output_file), self)
         if not succesfull:
             raise Exception('Writing the image to the file {} failed'.format(output_file))
 
@@ -265,7 +302,5 @@ class Image(np.ndarray):
 if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
     image = Image.from_file(image_file)
-    import preprocessing.colorspaces
-    gray_scale = preprocessing.colorspaces.ToGrayScale().apply(image)
-    image.show()
+    image.resize(width=400).show(wait_key=0)
 
