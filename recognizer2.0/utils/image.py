@@ -129,7 +129,7 @@ class Image(np.ndarray):
             's': Image.to_file,
             'q': Image.close,
         }
-        mapping.get(chr(key))(self)
+        mapping.get(chr(key), lambda x: None)(self)
 
     @classmethod
     def close(cls):
@@ -150,11 +150,10 @@ class Image(np.ndarray):
         try:
             self._handle_key_press(key)
         except ValueError as exception:
-            if key == -1:
+            #No key was pressed, or a non-character key.
                 if close_window:
                     self.close()
                     return
-            raise exception
 
     def to_file(self, output_file=None):
         def generate_file_name():
