@@ -57,7 +57,7 @@ class Image(np.ndarray):
         # ndarray input arguments.  This will call the standard
         # ndarray constructor, but return an object of our type.
         # It also triggers a call to InfoArray.__array_finalize__
-        obj = np.asarray(input_array).view(cls)
+        obj = np.asarray(input_array.astype(np.uint8)).view(cls)
         # set the new 'info' attribute to the value passed
         obj._color_mode = color_mode
         # Finally, we must return the newly created object:
