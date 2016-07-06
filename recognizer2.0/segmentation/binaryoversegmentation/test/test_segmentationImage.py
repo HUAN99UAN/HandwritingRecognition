@@ -71,7 +71,6 @@ class TestSegmentationImage(TestCase):
         image_array = np.array([
             [0, 0, 1],
             [1, 0, 0],
-            [1, 1, 1],
         ], dtype=np.uint8) * 255
         image = Image(image_array, ColorMode.binary)
         segmentation_lines = SegmentationLines.from_x_coordinates([1])
@@ -128,28 +127,6 @@ class TestSegmentationImage(TestCase):
         self.assertItemsEqual(actual_image._continue_segmentation_checks, expected_image._continue_segmentation_checks)
         self.assertItemsEqual(actual_image._image_splitter, expected_image._image_splitter)
 
-    def test_sub_image_9(self):
-        # Take the bottom half of the image
-        bounding_box = BoundingBox(top=1, bottom=2, left=0, right=5)
-        actual_image = self.image.sub_image(bounding_box)
-
-        image_array = np.array([
-            [1, 0, 0, 1, 0, 0],
-            [1, 1, 1, 0, 1, 1],
-        ], dtype=np.uint8) * 255
-        image = Image(image_array, ColorMode.binary)
-        segmentation_lines = SegmentationLines.from_x_coordinates([1, 4])
-        expected_image = SegmentationImage(image, segmentation_lines,
-                                           self.character_validators,
-                                           self.continue_segmentation_checks,
-                                           self.image_splitter)
-
-        np.testing.assert_array_equal(actual_image, expected_image)
-        self.assertEqual(actual_image._segmentation_lines, expected_image._segmentation_lines)
-        self.assertItemsEqual(actual_image._character_validators, expected_image._character_validators)
-        self.assertItemsEqual(actual_image._continue_segmentation_checks, expected_image._continue_segmentation_checks)
-        self.assertItemsEqual(actual_image._image_splitter, expected_image._image_splitter)
-
     def test_concat_with(self):
         left_lines = SegmentationLines.from_x_coordinates([0, 1])
         left_pixels = np.zeros((3, 2))
@@ -187,7 +164,12 @@ class TestSegmentationImage(TestCase):
         self.assertItemsEqual(actual_image._image_splitter, expected_image._image_splitter)
 
     def test_show(self):
-        expected = copy.deepcopy(self.image)
+        expected = SegmentationImage(
+            Image(np.copy(self.image), self.image.color_mode),
+            self.image.segmentation_lines,
+            self.character_validators,
+            self.continue_segmentation_checks,
+            self.image_splitter)
         self.image.show(color=(0, 0, 0), window_name='Actual', wait_key=1)
         np.testing.assert_array_equal(self.image, expected)
 
