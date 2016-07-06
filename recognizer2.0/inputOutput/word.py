@@ -8,7 +8,11 @@ class Character:
 
     @property
     def is_valid(self):
-        return (self.right - self.left) > 5 and (self.bottom - self.top) > 20
+        return all([
+            (self.right - self.left) > 5,
+            (self.bottom - self.top) > 20,
+            self.text != "^"
+        ])
 
     def __repr__(self):
         return 'Character(top=%d, left=%d, bottom=%d, right=%d, shear=%d, text=%r)' % \
