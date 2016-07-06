@@ -28,4 +28,17 @@ class ValidationSegmentation(segmentation.interface.AbstractSegmenter):
                 remove_white_borders=True,
             )
 
+if __name__ == '__main__':
+    annotation_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.words'
+    image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
+    annotation, _ = inputOutput.read(annotation_file)
+    r = Recognizer(
+        postprocessor=postprocessing.NearestLexiconEntryWithPrior(
+            distance_measure=postprocessing.distances.edit_distance
+        ),
+        segmenter=segmentation.ValidationSegmentation(annotation=annotation)
+    )
 
+    image = Image.from_file(image_file)
+    r.recognize(image=image, annotation=annotation)
+    output_lines = r.output_lines
