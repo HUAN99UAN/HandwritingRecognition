@@ -1,11 +1,10 @@
-import numpy as np
 import cv2
+import numpy as np
 from enum import Enum
 
-
-from utils.things import Range, Size
 from preprocessing.backgroundremoval import BackgroundBorderRemoval
-import hwrexceptions
+from utils import hwrexceptions
+from utils.things import Range, Size
 
 
 class ColorMode(Enum):
@@ -58,7 +57,7 @@ class Image(np.ndarray):
         # ndarray input arguments.  This will call the standard
         # ndarray constructor, but return an object of our type.
         # It also triggers a call to InfoArray.__array_finalize__
-        obj = np.asarray(input_array).view(cls)
+        obj = np.asarray(input_array.astype(np.uint8)).view(cls)
         # set the new 'info' attribute to the value passed
         obj._color_mode = color_mode
         # Finally, we must return the newly created object:
@@ -250,6 +249,17 @@ class Image(np.ndarray):
             raise hwrexceptions.InvalidImageException(input_file)
         image = Image(np_array, color_mode=ColorMode.bgr)
         return image
+
+    def concat_with(self, right):
+        new_width = self.width + right.width
+        if not self.height == right.height:
+            raise Exception("The heights should be equal")
+        if not self.color_mode == right.color_mode:
+            raise Exception("The color modes should be equal")
+        new_image_pixels = np.zeros((self.height, new_width))
+        new_image_pixels[0:self.height, 0:self.width] = self
+        new_image_pixels[0:self.height, self.width:new_width] = right
+        return Image(new_image_pixels, color_mode=self.color_mode)
 
 
 if __name__ == '__main__':

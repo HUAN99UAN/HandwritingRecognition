@@ -1,10 +1,12 @@
 import operator
+import copy
 
 import numpy as np
 
 from segmentation.binaryoversegmentation.imagesplitters import ForegroundPixelContourTracing
 from utils.image import Image, ColorMode
 from preprocessing.backgroundremoval import BackgroundBorderRemoval
+from segmentation.binaryoversegmentation.segmentationlines import SegmentationLines
 
 
 class SegmentationImage(Image):
@@ -62,6 +64,13 @@ class SegmentationImage(Image):
     def is_valid_character_image(self):
         return all([validator.is_valid(self) for validator in self._character_validators])
 
+    def clear_segmentation_lines(self):
+        self._segmentation_lines = SegmentationLines(list())
+
+    @property
+    def segmentation_lines(self):
+        return self._segmentation_lines
+
     @property
     def has_segmentation_lines(self):
         return not self._segmentation_lines.is_empty
@@ -81,11 +90,22 @@ class SegmentationImage(Image):
     def segment_further(self):
         return all([validator.continue_segmentation(self) for validator in self._continue_segmentation_checks])
 
+    def copy(self):
+        return SegmentationImage(
+            Image(np.copy(self), self.color_mode),
+            segmentation_lines=self.segmentation_lines,
+            character_validators=self._character_validators,
+            continue_segmentation_checks=self._continue_segmentation_checks,
+            image_splitter=self._image_splitter
+        )
+
+    def to_image(self, make_copy=False):
+        pixels = np.copy(self) if make_copy else self
+        return Image(pixels, self.color_mode)
+
     def show(self, **kwargs):
-        image_with_ssp = self._segmentation_lines.paint_on(self, **kwargs)
-        if type(image_with_ssp) is SegmentationImage:
-            # Brrrr
-            image_with_ssp = Image(image_with_ssp, image_with_ssp.color_mode)
+        image_with_ssp = self.to_image(make_copy=True)
+        image_with_ssp = self.segmentation_lines.paint_on(image_with_ssp, **kwargs)
         image_with_ssp.show(**kwargs)
 
     def sub_image(self, bounding_box, remove_white_borders=True):
@@ -113,3 +133,16 @@ class SegmentationImage(Image):
         if remove_white_borders:
             new_image = BackgroundBorderRemoval().apply(new_image)
         return new_image
+
+    def concat_with(self, right):
+        new_segmentation_lines = copy.copy(self.segmentation_lines)
+        new_segmentation_lines.extend(right.segmentation_lines.shift_horizontally(self.width))
+        image = super(SegmentationImage, self).concat_with(right)
+        return SegmentationImage(
+            image=image,
+            segmentation_lines=new_segmentation_lines,
+            character_validators=self._character_validators,
+            continue_segmentation_checks=self._continue_segmentation_checks,
+            image_splitter=self._image_splitter
+        )
+

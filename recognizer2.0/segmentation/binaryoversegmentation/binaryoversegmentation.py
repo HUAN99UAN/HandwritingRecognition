@@ -33,6 +33,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         self._stroke_width_estimator = stroke_width_estimator
         self._minimum_character_size = minimum_character_size
         self._maximum_character_size = maximum_character_size
+        self._segmentation_line_mover = filters.MinimumWidthFilter()
 
         # Depend on the input image, but are handy to store in the object.
         self._low_base_line = None
@@ -54,6 +55,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
             character_validators=self._character_validators,
             continue_segmentation_checks=self._continue_segmentation_checks
         )
+        segmentation_image = self._segmentation_line_mover.apply(segmentation_image)
+
         return self._binary_segmentation(segmentation_image)
 
     def _compute_parameters(self, image):
@@ -113,10 +116,8 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
                 return
             elif image.is_valid_character_image:
                 done.append((image, position))
-                # image.show(wait_key=1000, window_name='Character')
             elif image.segment_further:
                 segment_more.append((image, position))
-                # image.show(wait_key=1000, window_name='Segment More')
             else:
                 if image.width > config.character_width_distribution.mean and image.has_segmentation_lines:
                     segment_more.append((image, position))
@@ -134,6 +135,7 @@ class BinaryOverSegmentation(segmentation.interface.AbstractSegmenter):
         images_for_further_segmentation = [(segmentation_image, initial_position)]
 
         idx = 0
+
 
         if not segmentation_image.has_segmentation_lines:
             return [segmentation_image]

@@ -102,4 +102,4 @@ if __name__ == '__main__':
     e = ClassificationErrorComputer()
     oracle = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.words'
     actual = '/Users/laura/Desktop/output.words'
-    print e.compare(oracle=oracle, result=actual) # KNMP-VIII_F_69______2C2O_0070.words
+    print e.compare(oracle=oracle, result=actual)

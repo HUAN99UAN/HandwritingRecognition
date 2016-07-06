@@ -12,6 +12,20 @@ class SegmentationLines(object):
         self._lines = lines
         self._idx = 0
 
+    def extend(self, other):
+        self._lines.extend(other)
+
+    def remove(self, line):
+        self._lines.remove(line)
+
+    def add(self, line):
+        self._lines.append(line)
+        self._lines.sort(key=lambda line: line.x)
+
+    @property
+    def pairs(self):
+        return zip(self._lines, self._lines[1:])
+
     @property
     def is_empty(self):
         return not bool(self._lines)
@@ -92,8 +106,11 @@ class SegmentationLine(CommonEqualityMixin):
     def shift_horizontally(self, distance_to_shift):
         return SegmentationLine(x=self._x + distance_to_shift)
 
-    def distance_to(self, other_x):
-        return abs(self._x - other_x)
+    def distance_to(self, other):
+        try:
+            return abs(self._x - other._x)
+        except AttributeError:
+            return abs(self._x - other)
 
     @property
     def x(self):
