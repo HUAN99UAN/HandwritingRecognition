@@ -28,9 +28,10 @@ class _StatisticsComputer(object):
     def build(self):
         for xml_file in self._xml_files:
             self._add_data_from_file(xml_file)
-        return self._compute_mean_and_sd()
+        self._reject_outliers()
+        return self._extract_statistics()
 
-    def _compute_mean_and_sd(self):
+    def _extract_statistics(self):
         self._statistics['mean_height'], self._statistics['sd_height'] = self._mean_and_sd(self._statistics['heights'])
         self._statistics['mean_width'], self._statistics['sd_width'] = self._mean_and_sd(self._statistics['widths'])
         self._statistics['mean_pixels'], self._statistics['sd_pixels'] = self._mean_and_sd(self._statistics['foreground_pixels'])
@@ -40,14 +41,17 @@ class _StatisticsComputer(object):
         self._statistics['min_pixels'], self._statistics['max_num_pixels'] = min(self._statistics['foreground_pixels']), max(self._statistics['foreground_pixels'])
         return self._statistics
 
-    def _mean_and_sd(self, lst):
-        data = self._reject_outliers(lst)
+    def _mean_and_sd(self, data):
         mean = sum(data) / float(len(data))
         sd = np.std(data)
         return mean, sd
 
-    def _reject_outliers(self, data_as_list, m=2):
-        data = np.array(data_as_list)
+    def _reject_outliers(self):
+        for key in self._statistics:
+            self._statistics[key] = self._reject_outliers_from_list(self._statistics[key])
+
+    def _reject_outliers_from_list(self, list, m=2):
+        data = np.array(list)
         return data[abs(data - np.mean(data)) < m * np.std(data)]
 
     def _add_data_from_file(self, xml_file):
@@ -112,4 +116,3 @@ if __name__ == '__main__':
 
     with open(cli_arguments['outputFile'], 'w') as output_file:
         pickle.dump(statistics, output_file)
-
