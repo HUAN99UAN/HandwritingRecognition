@@ -112,5 +112,5 @@ if __name__ == '__main__':
     (image_directory, word_files, final_results_file_path) = cli_interface.parse_imagedir_wordsfiles_optionaloutputFile(
         default_output_file='/Users/laura/Repositories/HandwritingRecognition/data/results/binarysegmentation/final.pkl'
     )
-    results = k_fold_cross_validation(word_files, 2)
+    results = k_fold_cross_validation(word_files, len(word_files))
     write_results(results, final_results_file_path)
