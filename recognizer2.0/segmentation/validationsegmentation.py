@@ -52,10 +52,8 @@ class ValidationSegmentation(segmentation.interface.AbstractSegmenter):
     @classmethod
     def _segment_word_image(cls, image, word):
         character_images = list()
-        image.show(window_name='Word Image')
-        for character_bounding_box in word:
+        for idx, character_bounding_box in enumerate(word):
             character_image = image.sub_image(character_bounding_box, remove_white_borders=True)
-            character_image.show(window_name='Character Image')
             character_images.append(character_image)
         return character_images
 
