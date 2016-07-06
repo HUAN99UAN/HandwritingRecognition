@@ -3,6 +3,7 @@ from inputOutput import wordio as inputOutput
 from recognizer import Recognizer
 import postprocessing, segmentation
 from utils.image import Image
+from utils.things import BoundingBox
 
 
 class ValidationSegmentation(segmentation.interface.AbstractSegmenter):
@@ -15,18 +16,49 @@ class ValidationSegmentation(segmentation.interface.AbstractSegmenter):
 
     def __init__(self, annotation):
         super(ValidationSegmentation, self).__init__()
-        self._bounding_boxes = self._prepare_bounding_boxes(annotation)
+        self._words = self._prepare_words(annotation)
+        self._idx = 0
+
+    def _prepare_words(self, annotation):
+        bounding_boxes = list()
+        for line in annotation:
+            for word in line:
+                bounding_boxes.append(self._shift_character_bounding_boxes(word))
+        return bounding_boxes
+
+    def _shift_character_bounding_boxes(self, word):
+        character_bounding_boxes = list()
+        for character in word.characters:
+            shifted_bb = self._shifted_character_bounding_box(word, character)
+            character_bounding_boxes.append(shifted_bb)
+        return character_bounding_boxes
 
     @classmethod
-    def _prepare_bounding_boxes(cls, annotation):
-        raise NotImplementedError()
+    def _shifted_character_bounding_box(cls, word, character):
+        horizontal_shift = word.left
+        vertical_shift = word.top
+        return BoundingBox(
+            left=character.left - horizontal_shift,
+            right=character.right - horizontal_shift,
+            top=character.top - vertical_shift,
+            bottom=character.bottom - vertical_shift
+        )
 
     def segment(self, image):
-        for bounding_box in self._bounding_boxes:
-            yield image.sub_image(
-                bounding_box=bounding_box,
-                remove_white_borders=True,
-            )
+        word = self._words[self._idx]
+        self._idx += 1
+        return self._segment_word_image(image, word)
+
+    @classmethod
+    def _segment_word_image(cls, image, word):
+        character_images = list()
+        image.show(window_name='Word Image')
+        for character_bounding_box in word:
+            character_image = image.sub_image(character_bounding_box, remove_white_borders=True)
+            character_image.show(window_name='Character Image')
+            character_images.append(character_image)
+        return character_images
+
 
 if __name__ == '__main__':
     annotation_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.words'
