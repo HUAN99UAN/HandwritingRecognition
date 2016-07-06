@@ -1,1 +1,2 @@
 from binaryoversegmentation.binaryoversegmentation import BinaryOverSegmentation
+from validationsegmentation import ValidationSegmentation
