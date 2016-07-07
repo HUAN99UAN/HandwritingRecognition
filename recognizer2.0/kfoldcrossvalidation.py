@@ -52,7 +52,7 @@ def k_fold_cross_validation(word_files, k=10):
 
 def folds(word_files, n_folds):
     number_of_word_files = len(word_files)
-    the_folds = KFold(number_of_word_files, n_folds=min(n_folds, number_of_word_files), shuffle=True)
+    the_folds = KFold(number_of_word_files, n_folds=min(n_folds, number_of_word_files))
     for train_idx, test_idx in the_folds:
         train_files = [word_files[idx] for idx in train_idx]
         test_files = [word_files[idx] for idx in test_idx]
