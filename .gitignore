@@ -512,3 +512,13 @@ report/individual/*
 report2/hwr_report.sublime-workspace
 
 
+
+data/testdata/segmentation_image.pkl
+
+data/labels2/KNMP-VIII_F_69______2C2O_0004.words
+
+data/labels2/KNMP-VIII_F_69______2C2O_0006.words
+
+data/labels2/KNMP-VIII_F_69______2C2O_0008.words
+
+data/labels2/KNMP-VIII_F_69______2C2O_0002.words
