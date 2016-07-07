@@ -356,8 +356,6 @@ target/
 cropper/.idea/inspectionProfiles/profiles_settings.xml
 cropper/.idea/inspectionProfiles/Project_Default.xml
 
-*.pkl
-
 ###LaTeX###
 
 *.acn
