@@ -217,7 +217,7 @@ class Image(np.ndarray):
         return Image(scaled_image, self.color_mode)
 
     @classmethod
-    def EmptyImage(cls, color_mode = ColorMode.binary):
+    def EmptyImage(cls, color_mode=ColorMode.binary):
         return cls([], color_mode)
 
     @property
