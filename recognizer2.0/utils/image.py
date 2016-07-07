@@ -17,9 +17,6 @@ _default_output_extension = 'png'
 _default_output_folder = '~/Desktop'
 
 
-
-
-
 class ColorMode(Enum):
     gray, bgr, binary = range(3)
 
@@ -193,7 +190,10 @@ class Image(np.ndarray):
         :return: A new image of size new_size.
         """
         def compute_ratio(base_value, other_value):
-            return base_value / float(other_value)
+            try:
+                return base_value / float(other_value)
+            except ZeroDivisionError:
+                return 1
 
         def compute_new_size(image, width, height, keep_aspect_ratio):
             if width and not height:
