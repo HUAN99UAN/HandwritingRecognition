@@ -60,6 +60,16 @@ class TestImage(TestCase):
         with self.assertRaises(TypeError):
             self.image.resize()
 
+    def test_constructor_1(self):
+        actual = Image([], color_mode=ColorMode.gray)
+        expected = actual.EmptyImage(actual.color_mode)
+        np.testing.assert_array_equal(actual, expected)
+
+    def test_constructor_2(self):
+        actual = Image(None, color_mode=ColorMode.gray)
+        expected = actual.EmptyImage(actual.color_mode)
+        np.testing.assert_array_equal(actual, expected)
+
 
 class TestSubImage(TestCase):
     def test_no_white_space(self):

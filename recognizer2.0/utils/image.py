@@ -1,10 +1,13 @@
 import datetime
 import os
 import time
+import warnings
 
+
+from enum import Enum
 import cv2
 import numpy as np
-from enum import Enum
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 from preprocessing.backgroundremoval import BackgroundBorderRemoval
 from utils import hwrexceptions
@@ -12,6 +15,10 @@ from utils.things import Range, Size
 
 _default_output_extension = 'png'
 _default_output_folder = '~/Desktop'
+
+
+
+
 
 class ColorMode(Enum):
     gray, bgr, binary = range(3)
@@ -63,12 +70,12 @@ class Image(np.ndarray):
         # ndarray input arguments.  This will call the standard
         # ndarray constructor, but return an object of our type.
         # It also triggers a call to InfoArray.__array_finalize__
-        if input_array is None:
-            input_array = []
-        obj = np.asarray(input_array.astype(np.uint8)).view(cls)
-        # set the new 'info' attribute to the value passed
+        if input_array in [None, []]:
+            a = np.array([])
+        else:
+            a = input_array
+        obj = np.asarray(a.astype(np.uint8)).view(cls)
         obj._color_mode = color_mode
-        # Finally, we must return the newly created object:
         return obj
 
     def __array_finalize__(self, obj):
