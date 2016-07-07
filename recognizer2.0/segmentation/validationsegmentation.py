@@ -4,6 +4,13 @@ from recognizer import Recognizer
 import postprocessing, segmentation
 from utils.image import Image
 from utils.things import BoundingBox
+import inputOutput.wordio as wordio
+
+
+def _read_file(words_file):
+    if words_file:
+        lines, _ = wordio.read(words_file)
+        return lines
 
 
 class ValidationSegmentation(segmentation.interface.AbstractSegmenter):
@@ -14,8 +21,9 @@ class ValidationSegmentation(segmentation.interface.AbstractSegmenter):
     Note that this segmenter ONLY works if the recognizer is called with ONE image!!
     """
 
-    def __init__(self, annotation):
+    def __init__(self, annotation=None, annotation_file=None):
         super(ValidationSegmentation, self).__init__()
+        annotation = annotation if annotation else _read_file(annotation_file)
         self._words = self._prepare_words(annotation)
         self._idx = 0
 

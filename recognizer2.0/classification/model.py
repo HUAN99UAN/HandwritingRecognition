@@ -2,7 +2,6 @@ from os import path
 
 import msgpack
 import numpy as np
-import progressbar
 
 import utils.lists
 from inputOutput import wordio as xmlReader
@@ -112,7 +111,7 @@ class _ModelBuilder(object):
 
     def build(self):
 
-        for xml_file in progressbar.ProgressBar(self._xml_files):
+        for xml_file in self._xml_files:
             self._add_features_from_file(xml_file)
         return GeneralModel(model=self._model)
 

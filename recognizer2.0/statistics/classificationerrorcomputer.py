@@ -1,27 +1,27 @@
-import postprocessing.distancemeasures as distances
 import inputOutput.wordio as wordio
 
 
 def are_list_lengths_equal(a, b):
     if not (len(a) == len(b)):
-        raise Exception("The lists shoud have the same number of elements.")
+        raise Exception("The lists should have the same number of elements.")
 
 
 class ClassificationErrorComputer(object):
 
     def __init__(self, oracle=None, result=None, oracle_file=None, result_file=None):
-        self._oracle = oracle or self._read_file(oracle_file)
-        self._result = result or self._read_file(result_file)
+        self._oracle = oracle if oracle else self._read_file(oracle_file)
+        self._result = result if result else self._read_file(result_file)
 
-        if not (self._oracle and self._result):
-            raise Exception("We need an oracle (file) and a result (file) to compute the error.")
+        if not (bool(self._oracle) and bool(self._result)):
+            raise TypeError("We need an oracle (file) and a result (file) to compute the error.")
         are_list_lengths_equal(self._oracle, self._result)
         self._number_correct_words, self._total_number_of_words = self._compute_error()
 
     @classmethod
     def _read_file(cls, words_file):
-        lines, _ = wordio.read(words_file)
-        return lines
+        if words_file:
+            lines, _ = wordio.read(words_file)
+            return lines
 
     def _compute_error(self):
         number_of_correctly_read_words = 0
