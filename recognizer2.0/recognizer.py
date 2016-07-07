@@ -43,7 +43,8 @@ class Recognizer(object):
         character_images = self._segmenter.segment(word_image)
         characters = list()
         for character_image in character_images:
-            characters.append(self._recognize_character(character_image))
+            if not character_image.is_empty:
+                characters.append(self._recognize_character(character_image))
         return self._post_processor.process(''.join(characters))
 
     def _recognize_character(self, character_image):
