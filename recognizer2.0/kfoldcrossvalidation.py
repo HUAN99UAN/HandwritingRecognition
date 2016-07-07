@@ -1,10 +1,13 @@
 import os
 import pickle
+import argparse
 
 from sklearn.cross_validation import KFold
 from progressbar import ProgressBar
 
-from inputOutput import cli_interface, wordio
+
+import utils.actions as actions
+from inputOutput import  wordio
 import preprocessing, segmentation, featureExtraction, classification, postprocessing, recognizer, statistics
 from utils.image import Image
 
@@ -41,19 +44,19 @@ segmenters = {
 image_directory = None
 
 
-def k_fold_cross_validation(word_files, k=10):
+def k_fold_cross_validation(word_files, k=10, folds_to_skip=0):
     bar = ProgressBar(max_value=k)
     results = list()
-    for train_files, test_files in bar(folds(word_files, k)):
+    for train_files, test_files in bar(folds(word_files, k, folds_to_skip)):
         fold_result = run_fold(train_files, test_files)
         results.append(fold_result)
     return results
 
 
-def folds(word_files, n_folds):
+def folds(word_files, n_folds, folds_to_skip):
     number_of_word_files = len(word_files)
     the_folds = KFold(number_of_word_files, n_folds=min(n_folds, number_of_word_files))
-    for train_idx, test_idx in the_folds:
+    for train_idx, test_idx in list(the_folds)[folds_to_skip:]:
         train_files = [word_files[idx] for idx in train_idx]
         test_files = [word_files[idx] for idx in test_idx]
         yield train_files, test_files
@@ -125,9 +128,28 @@ def write_results(result, path):
         pickle.dump(result, output_file)
 
 
+def parse_cli(default_output_file):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('imageDirectory', type=str,
+                        action=actions.ExpandDirectoryPathAction,
+                        help='The path to the directory with images')
+    parser.add_argument('wordsFiles', nargs='+', type=str, action=actions.ExpandFilePathsAction,
+                        help='The words files, should be at least one file. Each words file should be associated with '
+                             'an image in the imageDirectory.')
+    parser.add_argument('--outputFile', type=str,
+                        default=default_output_file,
+                        action=actions.ExpandFilePathAction,
+                        help='The path to the output file.')
+    parser.add_argument('--skipFolds', type=str,
+                        default=0,
+                        help='The number of folds to skip.')
+    arguments = vars(parser.parse_args())
+    return arguments['imageDirectory'], arguments['wordsFiles'], arguments['outputFile'], int(arguments['skipFolds'])
+
+
 if __name__ == '__main__':
-    (image_directory, word_files, final_results_file_path) = cli_interface.parse_imagedir_wordsfiles_optionaloutputFile(
+    (image_directory, word_files, final_results_file_path, folds_to_skip) = parse_cli(
         default_output_file='/Users/laura/Repositories/HandwritingRecognition/data/results/all/final.pkl'
     )
-    results = k_fold_cross_validation(word_files, len(word_files))
+    results = k_fold_cross_validation(word_files, len(word_files), folds_to_skip)
     write_results(results, final_results_file_path)
