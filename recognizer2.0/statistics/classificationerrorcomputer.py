@@ -36,9 +36,14 @@ class ClassificationErrorComputer(object):
         number_of_corectly_read_words = 0
         are_list_lengths_equal(oracle, result)
         for (oracle_word, result_word) in zip(oracle, result):
-            if self._skip_non_segmented_oracle and oracle_word.characters:
+            if self._skip_non_segmented_oracle and self.pair_is_valid(oracle_word, result_word):
+                number_of_corectly_read_words += int(oracle_word.text == result_word.text)
+            elif not self._skip_non_segmented_oracle:
                 number_of_corectly_read_words += int(oracle_word.text == result_word.text)
         return number_of_corectly_read_words
+
+    def pair_is_valid(self, oracle_word, result_word):
+        return len(oracle_word.characters) == len(oracle_word.text)
 
     @property
     def error(self):

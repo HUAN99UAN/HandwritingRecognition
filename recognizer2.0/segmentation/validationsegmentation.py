@@ -37,8 +37,9 @@ class ValidationSegmentation(segmentation.interface.AbstractSegmenter):
     def _shift_character_bounding_boxes(self, word):
         character_bounding_boxes = list()
         for character in word.characters:
-            shifted_bb = self._shifted_character_bounding_box(word, character)
-            character_bounding_boxes.append(shifted_bb)
+            if character.is_valid:
+                shifted_bb = self._shifted_character_bounding_box(word, character)
+                character_bounding_boxes.append(shifted_bb)
         return character_bounding_boxes
 
     @classmethod
