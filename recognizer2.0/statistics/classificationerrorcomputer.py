@@ -8,9 +8,10 @@ def are_list_lengths_equal(a, b):
 
 class ClassificationErrorComputer(object):
 
-    def __init__(self, oracle=None, result=None, oracle_file=None, result_file=None):
+    def __init__(self, oracle=None, result=None, oracle_file=None, result_file=None, skip_non_segmented=False):
         self._oracle = oracle if oracle else self._read_file(oracle_file)
         self._result = result if result else self._read_file(result_file)
+        self._skip_non_segmented_oracle = skip_non_segmented
 
         if not (bool(self._oracle) and bool(self._result)):
             raise TypeError("We need an oracle (file) and a result (file) to compute the error.")
@@ -35,7 +36,8 @@ class ClassificationErrorComputer(object):
         number_of_corectly_read_words = 0
         are_list_lengths_equal(oracle, result)
         for (oracle_word, result_word) in zip(oracle, result):
-            number_of_corectly_read_words += int(oracle_word.text == result_word.text)
+            if self._skip_non_segmented_oracle and oracle_word.characters:
+                number_of_corectly_read_words += int(oracle_word.text == result_word.text)
         return number_of_corectly_read_words
 
     @property

@@ -57,13 +57,26 @@ class ValidationSegmentation(segmentation.interface.AbstractSegmenter):
         self._idx += 1
         return self._segment_word_image(image, word)
 
-    @classmethod
-    def _segment_word_image(cls, image, word):
+    def _segment_word_image(self, image, word):
         character_images = list()
         for idx, character_bounding_box in enumerate(word):
-            character_image = image.sub_image(character_bounding_box, remove_white_borders=True)
+            new_bounding_box = self._fix_bounding_box(character_bounding_box, image)
+            character_image = image.sub_image(new_bounding_box, remove_white_borders=True)
             character_images.append(character_image)
         return character_images
+
+    def _fix_bounding_box(self, bounding_box, image):
+        left, right = bounding_box.left, bounding_box.right - 1
+        top, bottom = bounding_box.top, bounding_box.bottom - 1
+        if bounding_box.left < 0:
+            left = 0
+        if bounding_box.top < 0:
+            top = 0
+        if bounding_box.right > image.width:
+            right = image.width - 1
+        if bounding_box.bottom > image.height:
+            bottom = image.height - 1
+        return BoundingBox(left=left, right=right, top=top, bottom=bottom)
 
 
 if __name__ == '__main__':

@@ -10,7 +10,6 @@ from utils.image import Image
 
 
 pre_processor = preprocessing.Pipe()
-segmentor = segmentation.BinaryOverSegmentation()
 feature_extractor = featureExtraction.Crossings()
 classifier = classification.KNN
 model_builder = classification.KNN
@@ -19,8 +18,27 @@ post_processor = postprocessing.NearestLexiconEntryWithPrior(
 )
 
 
+keys = ['binary', 'validation']
+error_computers = {
+    'validation': lambda oracle, actual: statistics.ClassificationErrorComputer(
+        oracle=oracle, result=actual, skip_non_segmented=True
+    ),
+    'binary': lambda oracle, actual: statistics.ClassificationErrorComputer(
+        oracle=oracle, result=actual, skip_non_segmented=False
+    )
+}
+
+intermediate_output_directories = {
+    'validation': "/Users/laura/Repositories/HandwritingRecognition/data/results/all/validationsegmentation",
+    'binary': "/Users/laura/Repositories/HandwritingRecognition/data/results/all/binarysegmentation",
+}
+
+segmenters = {
+    'validation': lambda annotation: segmentation.ValidationSegmentation(annotation_file=annotation),
+    'binary': lambda annotation: segmentation.BinaryOverSegmentation()
+}
+
 image_directory = None
-output_directory = "/Users/laura/Repositories/HandwritingRecognition/data/results/binarysegmentation"
 
 
 def k_fold_cross_validation(word_files, k=10):
@@ -49,54 +67,53 @@ def run_fold(train_files, test_files):
         feature_extractor=feature_extractor
     )
     the_classifier = classifier(model=model)
-    r = recognizer.Recognizer(
-        preprocessor=pre_processor,
-        segmenter=segmentor,
-        feature_extractor=feature_extractor,
-        classifier=the_classifier,
-        postprocessor=post_processor
-    )
 
-    errors = []
-    for test_file in test_files:
-        error = classify_file(r, test_file)
-        if error:
-            errors.append(error)
-
-    return {
+    result = {
         'train_data': train_files,
         'test_data': test_files,
-        'errors': errors
     }
+
+    for key in keys:
+        errors = []
+        for test_file in test_files:
+            r = recognizer.Recognizer(
+                preprocessor=pre_processor,
+                segmenter=segmenters.get(key)(test_file),
+                feature_extractor=feature_extractor,
+                classifier=the_classifier,
+                postprocessor=post_processor
+            )
+            error = classify_file(r, test_file, key)
+            if error:
+                errors.append(error)
+        result[key] = errors
+    return result
 
 
 def build_file_path(directory, base_name, extension):
     return "".join([os.path.join(directory, base_name), extension])
 
 
-def build_intermediate_output_file_path(annotation_file_path):
+def build_intermediate_output_file_path(directory, annotation_file_path):
     _, base_name = os.path.split(annotation_file_path)
-    return build_file_path(output_directory, base_name, '')
+    return build_file_path(directory, base_name, '')
 
 
 def build_image_path(base_name):
     return build_file_path(image_directory, base_name, '.ppm')
 
 
-def classify_file(the_recognizer, words_file):
+def classify_file(the_recognizer, words_file, key):
     annotation, image_name = wordio.read(words_file)
     image = Image.from_file(build_image_path(image_name))
     read_text = the_recognizer.recognize(
         annotation=annotation,
         image=image
     )
-    output_file = build_intermediate_output_file_path(words_file)
+    output_file = build_intermediate_output_file_path(intermediate_output_directories[key], words_file)
     wordio.save(read_text, output_file)
     try:
-        return statistics.ClassificationErrorComputer(
-            oracle=annotation,
-            result=read_text
-        ).error
+        return error_computers.get(key)(annotation, read_text).error
     except ZeroDivisionError:
         return None
     except TypeError:
@@ -110,7 +127,7 @@ def write_results(result, path):
 
 if __name__ == '__main__':
     (image_directory, word_files, final_results_file_path) = cli_interface.parse_imagedir_wordsfiles_optionaloutputFile(
-        default_output_file='/Users/laura/Repositories/HandwritingRecognition/data/results/binarysegmentation/final.pkl'
+        default_output_file='/Users/laura/Repositories/HandwritingRecognition/data/results/all/final.pkl'
     )
     results = k_fold_cross_validation(word_files, len(word_files))
     write_results(results, final_results_file_path)
