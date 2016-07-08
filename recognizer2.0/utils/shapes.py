@@ -132,10 +132,11 @@ class Rectangle(Shape):
     def height(self):
         return abs(self.bottom - self.top)
 
-    def paint_on(self, image, color=(0, 0, 0), width=10, filled=False, **kwargs):
+    def paint_on(self, image, color=(0, 0, 0), width=10, filled=False, alpha=1, **kwargs):
+        copy_for_painting = image.copy()
         if not image.color_mode.is_color:
-            image = preprocessing.colorspaces.ToColor().apply(image)
+            copy_for_painting = preprocessing.colorspaces.ToColor().apply(copy_for_painting)
         if filled:
             width = -1
-        cv2.rectangle(image, self.top_left, self.bottom_right, color=color, thickness=width)
-        return image
+        cv2.rectangle(copy_for_painting, self.top_left, self.bottom_right, color=color, thickness=width)
+        return copy_for_painting
