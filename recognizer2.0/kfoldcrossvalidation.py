@@ -138,12 +138,12 @@ def parse_cli():
     parser.add_argument('imageDirectory', type=str,
                         action=actions.ExpandDirectoryPathAction,
                         help='The path to the directory with images')
-    parser.add_argument('wordsFiles', nargs='+', type=str, action=actions.ExpandFilePathsAction,
-                        help='The words files, should be at least one file. Each words file should be associated with '
-                             'an image in the imageDirectory.')
     parser.add_argument('outputDirectory', type=str,
                         action=actions.ExpandDirectoryPathAction,
                         help='The path to the output file.')
+    parser.add_argument('wordsFiles', nargs='+', type=str, action=actions.ExpandFilePathsAction,
+                        help='The words files, should be at least one file. Each words file should be associated with '
+                             'an image in the imageDirectory.')
     parser.add_argument('--skipFolds', type=str,
                         default=0,
                         help='The number of folds to skip.')
