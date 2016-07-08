@@ -55,6 +55,7 @@ if __name__ == '__main__':
         '/Users/laura/Repositories/HandwritingRecognition/data/images/jpg/KNMP-VIII_F_69______2C2O_0004.jpg',
         '/Users/laura/Repositories/HandwritingRecognition/data/images/jpg/Stanford-CCCC_0072.jpg'
     ]
+
     annotation_files = [
         '/Users/laura/Repositories/HandwritingRecognition/data/labels/KNMP-VIII_F_69______2C2O_0004.words',
         '/Users/laura/Repositories/HandwritingRecognition/data/labels/Stanford-CCCC_0072.words'
@@ -79,7 +80,8 @@ if __name__ == '__main__':
     external_settings = {
         'color': colors.dark_blue,
         'width': 8,
-        'filled': False
+        'filled': True,
+        'alpha': 0.5
     }
 
     painter = BoundingBoxPainter(
