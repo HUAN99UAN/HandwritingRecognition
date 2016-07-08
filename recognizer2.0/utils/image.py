@@ -305,6 +305,10 @@ class Image(np.ndarray):
         new_image_pixels[0:self.height, self.width:new_width] = right
         return Image(new_image_pixels, color_mode=self.color_mode)
 
+    def __copy__(self, order=None):
+        pixels = super(Image, self).__copy__(order)
+        return Image(pixels, color_mode=self.color_mode)
+
 
 if __name__ == '__main__':
     image_file = '/Users/laura/Repositories/HandwritingRecognition/data/testdata/input.ppm'
