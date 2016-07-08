@@ -27,7 +27,7 @@ class BoundingBoxPainter:
 
     def _paint_word_bounding_boxes(self, image, word):
         image = self._paint_external_bounding_box(image, word)
-        image = self._paint_internal_bounding_box(image, word)
+        image = self._paint_internal_bounding_boxes(image, word)
         return image
 
     def _paint_external_bounding_box(self, image, word):
@@ -39,7 +39,8 @@ class BoundingBoxPainter:
 
     def _paint_internal_bounding_boxes(self, image, word):
         for character in word.characters:
-            self._paint_internal_bounding_box(image, character)
+            image = self._paint_internal_bounding_box(image, character)
+        return image
 
     def _paint_internal_bounding_box(self, image, character):
         bounding_box = Rectangle(
