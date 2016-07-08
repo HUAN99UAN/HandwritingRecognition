@@ -40,12 +40,12 @@ The part of the image between the low and high base line is the body region. Usi
 	\begin{figure}
 		\centering
 		\subfloat[]{
-			\includegraphics[width=0.45\columnwidth]{shared/img/method/base_line_succes.png}%
+			\includegraphics[height=7em]{shared/img/method/base_line_succes.png}%
 			\label{fig:method:segmentation:baseline:succes}%
 		}
-		\hspace{0.03\columnwidth}
+		\hspace{0.05\columnwidth}
 		\subfloat[]{
-			\includegraphics[width=0.45\columnwidth]{shared/img/method/base_line_fail.png}%
+			\includegraphics[height=7em]{shared/img/method/base_line_fail.png}%
 			\label{fig:method:segmentation:baseline:failure}%
 		}
 		\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect baselines found with the described method. The found baselines are shown in red. If the found baselines were incorrect, the correct baselines are shown in blue.}
@@ -54,8 +54,7 @@ The part of the image between the low and high base line is the body region. Usi
 
 \subsubsection{Stroke Width}
 \label{sss:method:segmentaton:strokwidth}
-\todo[inline]{What is the strokewidth}
-\todo[inline]{How do we compute it}
+The stroke width refers to how thick the stroke of a pen is. We compute the stroke width as the mode of the number of sequential foreground pixels in one row or column of pixels in the horizontal and the vertical direction respectively. The stroke width is computed per image instead of per page or data set word to be able to handle text written by different authors or with different pens on the same page.
 
 \subsubsection{Segmentation Points}
 \label{sss:method:segmentaton:segmentationpoints}
