@@ -110,7 +110,7 @@
         </Word>
     </TextLine>
     <TextLine no="9" top="1239" bottom="1322" left="1514" right="1553" shear="0">
-        <Word no="1" top="1239" bottom="1322" left="1514" right="1553" shear="0" text="B">
+        <Word no="1" top="1239" bottom="1322" left="1514" right="1553" shear="0" text="P">
             <Character no="1" top="1239" bottom="1322" left="1519" right="1549" shear="0" text="B"/>
         </Word>
     </TextLine>
@@ -123,13 +123,13 @@
         </Word>
     </TextLine>
     <TextLine no="11" top="1418" bottom="1490" left="404" right="531" shear="0">
-        <Word no="1" top="1418" bottom="1490" left="404" right="531" shear="0" text="d">
+        <Word no="1" top="1418" bottom="1490" left="404" right="531" shear="0" text="o">
             <Character no="1" top="1418" bottom="1490" left="409" right="437" shear="0" text="d"/>
             <Character no="2" top="1418" bottom="1490" left="437" right="467" shear="0" text="u"/>
             <Character no="3" top="1418" bottom="1490" left="467" right="489" shear="0" text="c"/>
             <Character no="4" top="1418" bottom="1490" left="489" right="525" shear="0" text="e"/>
         </Word>
-        <Word no="2" top="1418" bottom="1490" left="404" right="525" shear="0" text="d">
+        <Word no="2" top="1418" bottom="1490" left="404" right="525" shear="0" text="o">
             <Character no="1" top="1418" bottom="1490" left="405" right="437" shear="0" text="d"/>
             <Character no="2" top="1418" bottom="1490" left="437" right="466" shear="0" text="u"/>
             <Character no="3" top="1418" bottom="1490" left="466" right="490" shear="0" text="c"/>
@@ -137,12 +137,12 @@
         </Word>
     </TextLine>
     <TextLine no="12" top="1518" bottom="1573" left="474" right="592" shear="0">
-        <Word no="1" top="1518" bottom="1573" left="474" right="584" shear="0" text="d">
+        <Word no="1" top="1518" bottom="1573" left="474" right="584" shear="0" text="o">
             <Character no="1" top="1518" bottom="1573" left="479" right="511" shear="0" text="d"/>
             <Character no="2" top="1518" bottom="1573" left="511" right="544" shear="0" text="u"/>
             <Character no="3" top="1518" bottom="1573" left="544" right="579" shear="0" text="x"/>
         </Word>
-        <Word no="2" top="1518" bottom="1573" left="474" right="592" shear="0" text="d">
+        <Word no="2" top="1518" bottom="1573" left="474" right="592" shear="0" text="o">
             <Character no="1" top="1518" bottom="1573" left="479" right="509" shear="0" text="d"/>
             <Character no="2" top="1518" bottom="1573" left="509" right="545" shear="0" text="u"/>
             <Character no="3" top="1518" bottom="1573" left="545" right="581" shear="0" text="x"/>
@@ -187,7 +187,7 @@
             <Character no="3" top="1902" bottom="1973" left="1478" right="1506" shear="0" text="n"/>
             <Character no="4" top="1902" bottom="1973" left="1506" right="1535" shear="0" text="o"/>
         </Word>
-        <Word no="3" top="1909" bottom="1985" left="682" right="817" shear="0" text="A">
+        <Word no="3" top="1909" bottom="1985" left="682" right="817" shear="0" text="d">
             <Character no="1" top="1909" bottom="1985" left="685" right="723" shear="0" text="A"/>
             <Character no="2" top="1909" bottom="1985" left="723" right="756" shear="0" text="n"/>
             <Character no="3" top="1909" bottom="1985" left="756" right="788" shear="0" text="n"/>
@@ -229,7 +229,7 @@
         </Word>
     </TextLine>
     <TextLine no="19" top="2152" bottom="2225" left="725" right="876" shear="0">
-        <Word no="1" top="2161" bottom="2225" left="725" right="834" shear="0" text="d">
+        <Word no="1" top="2161" bottom="2225" left="725" right="834" shear="0" text="a">
             <Character no="1" top="2161" bottom="2225" left="729" right="764" shear="0" text="d"/>
             <Character no="2" top="2161" bottom="2225" left="764" right="798" shear="0" text="u"/>
             <Character no="3" top="2161" bottom="2225" left="798" right="830" shear="0" text="x"/>

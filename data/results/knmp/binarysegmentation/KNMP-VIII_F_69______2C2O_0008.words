@@ -100,7 +100,7 @@
             <Character no="4" top="1116" bottom="1180" left="831" right="848" shear="0" text="f"/>
             <Character no="5" top="1116" bottom="1180" left="848" right="888" shear="0" text="a"/>
         </Word>
-        <Word no="2" top="1111" bottom="1173" left="359" right="564" shear="0" text="a">
+        <Word no="2" top="1111" bottom="1173" left="359" right="564" shear="0" text="o">
             <Character no="1" top="1111" bottom="1173" left="359" right="401" shear="0" text="d"/>
             <Character no="2" top="1111" bottom="1173" left="401" right="432" shear="0" text="u"/>
             <Character no="3" top="1111" bottom="1173" left="432" right="458" shear="0" text="c"/>
@@ -110,7 +110,7 @@
             <Character no="7" top="1111" bottom="1173" left="529" right="551" shear="0" text="t"/>
             <Character no="8" top="1111" bottom="1173" left="551" right="565" shear="0" text="."/>
         </Word>
-        <Word no="3" top="1111" bottom="1173" left="359" right="565" shear="0" text="a">
+        <Word no="3" top="1111" bottom="1173" left="359" right="565" shear="0" text="o">
             <Character no="1" top="1111" bottom="1173" left="359" right="399" shear="0" text="d"/>
             <Character no="2" top="1111" bottom="1173" left="399" right="432" shear="0" text="u"/>
             <Character no="3" top="1111" bottom="1173" left="432" right="457" shear="0" text="c"/>

@@ -10,7 +10,7 @@
         <Word no="3" top="155" bottom="199" left="1086" right="1136" shear="0" text="N">
             <Character no="1" top="155" bottom="199" left="1093" right="1125" shear="0" text="x"/>
         </Word>
-        <Word no="4" top="163" bottom="203" left="745" right="847" shear="0" text="m">
+        <Word no="4" top="163" bottom="203" left="745" right="847" shear="0" text="s">
             <Character no="1" top="163" bottom="203" left="752" right="773" shear="0" text="t"/>
             <Character no="2" top="163" bottom="203" left="773" right="802" shear="0" text="a"/>
             <Character no="3" top="163" bottom="203" left="802" right="846" shear="0" text="m"/>
@@ -258,7 +258,7 @@
         </Word>
     </TextLine>
     <TextLine no="19" top="1797" bottom="1859" left="1340" right="1380" shear="0">
-        <Word no="1" top="1797" bottom="1859" left="1340" right="1380" shear="0" text="S">
+        <Word no="1" top="1797" bottom="1859" left="1340" right="1380" shear="0" text="B">
             <Character no="1" top="1797" bottom="1859" left="1345" right="1377" shear="0" text="g"/>
         </Word>
     </TextLine>

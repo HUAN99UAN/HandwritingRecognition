@@ -398,7 +398,7 @@
             <Character no="1" top="2090" bottom="2133" left="665" right="703" shear="0" text="u"/>
             <Character no="2" top="2090" bottom="2133" left="703" right="736" shear="0" text="t"/>
         </Word>
-        <Word no="2" top="2041" bottom="2133" left="1195" right="1237" shear="0" text="B">
+        <Word no="2" top="2041" bottom="2133" left="1195" right="1237" shear="0" text="v">
             <Character no="1" top="2041" bottom="2133" left="1195" right="1238" shear="0" text="P"/>
         </Word>
     </TextLine>
