@@ -137,8 +137,7 @@ class Image(np.ndarray):
         }
         mapping.get(chr(key), lambda x: None)(self)
 
-    @classmethod
-    def close(cls):
+    def close(self):
         cv2.destroyAllWindows()
 
     def show(self, wait_key=_default_wait_key, window_name=None, close_window=True, **kwargs):
