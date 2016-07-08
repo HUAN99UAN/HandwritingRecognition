@@ -33,9 +33,24 @@ The different functions referenced in \cref{alg:method:segmentation:algorithm} a
 
 \subsubsection{Body Region}
 \label{sss:method:segmentaton:bodyregion}
-\todo[inline]{Why do we compute the body region}
-\todo[inline]{How do we compute the body region}
-\todo[inline]{Image of wrong body region, image of correct body region.}
+The body region is the part of the image that is between the lower and the upper base line. To compute the low base line for each column in the image the lowest row with a foreground pixel is computed. The low base line is the mode of the these rows. The high baseline is computed in the same way, but uses the highest row of each column with a foreground pixel. 
+
+The part of the image between the low and high base line is the body region. Using this region for the computation of the segmentation points reduces the influence of extensive ligatures. \Cref{fig:method:segmentation:baseline} illustrates examples of the determination of the baselines. \Cref{fig:method:segmentation:baseline:succes} reflects the intended outcome, the second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high because of the extra curve on the last letter.
+
+	\begin{figure}
+		\centering
+		\subfloat[]{
+			\includegraphics[width=0.45\columnwidth]{shared/img/method/base_line_succes.png}%
+			\label{fig:method:segmentation:baseline:succes}%
+		}
+		\hspace{0.03\columnwidth}
+		\subfloat[]{
+			\includegraphics[width=0.45\columnwidth]{shared/img/method/base_line_fail.png}%
+			\label{fig:method:segmentation:baseline:failure}%
+		}
+		\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect baselines found with the described method. The found baselines are shown in red. If the found baselines were incorrect, the correct baselines are shown in blue.}
+		\label{fig:method:segmentation:baseline}
+	\end{figure}
 
 \subsubsection{Stroke Width}
 \label{sss:method:segmentaton:strokwidth}
