@@ -1,17 +1,17 @@
 %!TEX root = ../main.tex
 \MakeRobust{\Call}
 
-\newcommand{\body}{\ensuremath{\mathit{body}}\xspace}
-\newcommand{\strokewidth}{\ensuremath{\mathit{stroke\_w}}\xspace}
-\newcommand{\segmentationpoints}{\ensuremath{\mathit{sps}}\xspace}
-\newcommand{\segmentationpoint}{\ensuremath{\mathit{sp}}\xspace}
-\newcommand{\image}{\ensuremath{\mathit{image}}\xspace}
-\newcommand{\subimage}{\ensuremath{\mathit{sub\_image}}\xspace}
-\newcommand{\leftsubimage}{\ensuremath{\mathit{left}}\xspace}
-\newcommand{\rightsubimage}{\ensuremath{\mathit{right}}\xspace}
-\newcommand{\segmentfurther}{\ensuremath{\mathit{todo}}\xspace}
-\newcommand{\characters}{\ensuremath{\mathit{done}}\xspace}
-\newcommand{\parameters}{\ensuremath{\mathit{parameters}}\xspace}
+\newcommand{\body}{\ensuremath{\t{body}}\xspace}
+\newcommand{\strokewidth}{\ensuremath{\t{stroke\_w}}\xspace}
+\newcommand{\segmentationpoints}{\ensuremath{\t{sps}}\xspace}
+\newcommand{\segmentationpoint}{\ensuremath{\t{sp}}\xspace}
+\newcommand{\image}{\ensuremath{\t{image}}\xspace}
+\newcommand{\subimage}{\ensuremath{\t{sub\_image}}\xspace}
+\newcommand{\leftsubimage}{\ensuremath{\t{left}}\xspace}
+\newcommand{\rightsubimage}{\ensuremath{\t{right}}\xspace}
+\newcommand{\segmentfurther}{\ensuremath{\t{todo}}\xspace}
+\newcommand{\characters}{\ensuremath{\t{done}}\xspace}
+\newcommand{\parameters}{\ensuremath{\t{parameters}}\xspace}
 
 \begin{algorithmic}[1]
 \Function{segment}{$\image,\, \parameters$}
@@ -30,7 +30,7 @@
       \State \Call{add}{\leftsubimage, \characters}
    \Else
 		\State \Call{add}{\leftsubimage, \segmentfurther}
-   \EndIf \Comment{Repeat for \rightsubimage.}
+   \EndIf \Comment{Repeat the \textbf{if}-\textbf{else} for the sub image \rightsubimage.}
 \EndWhile
 \State \textbf{return} \Call{merge}{\segmentfurther, \characters}
 \EndFunction
