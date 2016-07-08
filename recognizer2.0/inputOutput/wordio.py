@@ -81,6 +81,9 @@ def read(xmlfile):
     xml.sax.parse(xmlfile, reader)
     return reader.get_lines(), reader.image_name
 
+def read_only_annotation(xmlfile):
+    lines, _ = read(xmlfile)
+    return lines
 
 def save(word_lines, xml_file):
     """ Save lines (containing words) to XML file """
