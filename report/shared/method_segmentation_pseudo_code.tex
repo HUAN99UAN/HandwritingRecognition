@@ -1,37 +1,25 @@
 %!TEX root = ../main.tex
 \MakeRobust{\Call}
 
-\newcommand{\body}{\ensuremath{\t{body}}\xspace}
-\newcommand{\strokewidth}{\ensuremath{\t{stroke\_w}}\xspace}
-\newcommand{\segmentationpoints}{\ensuremath{\t{sps}}\xspace}
-\newcommand{\segmentationpoint}{\ensuremath{\t{sp}}\xspace}
-\newcommand{\image}{\ensuremath{\t{image}}\xspace}
-\newcommand{\subimage}{\ensuremath{\t{sub\_image}}\xspace}
-\newcommand{\leftsubimage}{\ensuremath{\t{left}}\xspace}
-\newcommand{\rightsubimage}{\ensuremath{\t{right}}\xspace}
-\newcommand{\segmentfurther}{\ensuremath{\t{todo}}\xspace}
-\newcommand{\characters}{\ensuremath{\t{done}}\xspace}
-\newcommand{\parameters}{\ensuremath{\t{parameters}}\xspace}
-
 \begin{algorithmic}[1]
 \Function{segment}{$\image,\, \parameters$}
-\State \body $\gets$ \Call{body\_region}{\image}
-\State \strokewidth $\gets$ \Call{stroke\_width}{\image} 
+\label{alg:line:bodyregion} \State \body $\gets$ \Call{body\_region}{\image}
+\label{alg:line:strokewidth} \State \strokewidth $\gets$ \Call{stroke\_width}{\image} 
 \item[]
-\State \segmentationpoints $\gets$ \Call{segmentation\_points}{\body, \strokewidth} 
-\State \segmentfurther \characters $\gets$ [\image], []
+\label{alg:line:segmentationpoints} \State \segmentationpoints $\gets$ \Call{segmentation\_points}{\body, \strokewidth} 
+\State \segmentfurther, \characters $\gets$ [\image], []
 \item[]
-\While{\Call{continue}{~}}
-	\State $\subimage \gets$ \Call{select\_sub\_image}{\segmentfurther} 
-	\State $\segmentationpoint \gets$ \Call{select\_sp}{\segmentationpoints} 
-	\State \leftsubimage, \rightsubimage $\gets$ \Call{split}{\subimage, \segmentationpoint}
+\label{alg:line:whileCondition} \While{\Call{continue}{~}}
+	\label{alg:line:selectSubImage}\State $\subimage \gets$ \Call{select\_sub\_image}{\segmentfurther} 
+	\label{alg:line:selectSegmentationPoint}\State $\segmentationpoint \gets$ \Call{select\_sp}{\segmentationpoints} 
+	\label{alg:line:split}\State \leftsubimage, \rightsubimage $\gets$ \Call{split}{\subimage, \segmentationpoint}
 	%
-   \If {\Call{is\_character}{\leftsubimage}}
-      \State \Call{add}{\leftsubimage, \characters}
+   \label{alg:line:assigntolist}\If {\Call{is\_character}{\leftsubimage}}
+      \State \characters.add(\leftsubimage)
    \Else
-		\State \Call{add}{\leftsubimage, \segmentfurther}
-   \EndIf \Comment{Repeat the \textbf{if}-\textbf{else} for the sub image \rightsubimage.}
+		\State \segmentfurther.add(\leftsubimage)
+   \EndIf \Comment{Repeat the \textbf{if}-\textbf{else} for \rightsubimage.}
 \EndWhile
-\State \textbf{return} \Call{merge}{\segmentfurther, \characters}
+\label{alg:line:merge}\State \textbf{return} \Call{merge}{\segmentfurther, \characters}
 \EndFunction
 \end{algorithmic}
