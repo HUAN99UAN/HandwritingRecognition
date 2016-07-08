@@ -132,7 +132,7 @@ class Rectangle(Shape):
     def height(self):
         return abs(self.bottom - self.top)
 
-    def paint_on(self, image, color=(0, 0, 0), width=10, filled=False, alpha=1, **kwargs):
+    def paint_on(self, image, color=(0, 0, 0), width=10, filled=False, alpha=1.0, **kwargs):
         paint_image = image.copy()
         if not image.color_mode.is_color:
             paint_image = preprocessing.colorspaces.ToColor().apply(paint_image)
@@ -142,7 +142,7 @@ class Rectangle(Shape):
         if 0 <= alpha < 1:
             paint_image = cv2.addWeighted(
                 src1=paint_image, alpha=alpha,
-                src2=image, beta=1.0,
+                src2=image, beta=(1 - alpha),
                 gamma=0, dst=paint_image, dtype=-1
             )
         return paint_image
@@ -155,6 +155,6 @@ if __name__ == '__main__':
     image_pixels = np.random.rand(50, 200, 3) * 255
     rectangle = Rectangle(corner=Point(10, 10), opposite_corner=Point(190, 40))
     image = Image(image_pixels, ColorMode.bgr)
-    new_image = rectangle.paint_on(image, color=colors.black, filled=True, alpha=0.5)
+    new_image = rectangle.paint_on(image, color=colors.black, filled=True, alpha=1.0)
     new_image.show(wait_key=0, window_name='New image')
     image.show(wait_key=0, window_name='Old image')
