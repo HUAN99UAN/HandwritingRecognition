@@ -1,0 +1,37 @@
+%!TEX root = ../main.tex
+\MakeRobust{\Call}
+
+\newcommand{\body}{\ensuremath{\mathit{body}}\xspace}
+\newcommand{\strokewidth}{\ensuremath{\mathit{stroke\_w}}\xspace}
+\newcommand{\segmentationpoints}{\ensuremath{\mathit{sps}}\xspace}
+\newcommand{\segmentationpoint}{\ensuremath{\mathit{sp}}\xspace}
+\newcommand{\image}{\ensuremath{\mathit{image}}\xspace}
+\newcommand{\subimage}{\ensuremath{\mathit{sub\_image}}\xspace}
+\newcommand{\leftsubimage}{\ensuremath{\mathit{left}}\xspace}
+\newcommand{\rightsubimage}{\ensuremath{\mathit{right}}\xspace}
+\newcommand{\segmentfurther}{\ensuremath{\mathit{todo}}\xspace}
+\newcommand{\characters}{\ensuremath{\mathit{done}}\xspace}
+\newcommand{\parameters}{\ensuremath{\mathit{parameters}}\xspace}
+
+\begin{algorithmic}[1]
+\Function{segment}{$\image,\, \parameters$}
+\State \body $\gets$ \Call{body\_region}{\image}
+\State \strokewidth $\gets$ \Call{stroke\_width}{\image} 
+\item[]
+\State \segmentationpoints $\gets$ \Call{segmentation\_points}{\body, \strokewidth} 
+\State \segmentfurther \characters $\gets$ [\image], []
+\item[]
+\While{\Call{continue}{~}}
+	\State $\subimage \gets$ \Call{select\_sub\_image}{\segmentfurther} 
+	\State $\segmentationpoint \gets$ \Call{select\_sp}{\segmentationpoints} 
+	\State \leftsubimage, \rightsubimage $\gets$ \Call{split}{\subimage, \segmentationpoint}
+	%
+   \If {\Call{is\_character}{\leftsubimage}}
+      \State \Call{add}{\leftsubimage, \characters}
+   \Else
+		\State \Call{add}{\leftsubimage, \segmentfurther}
+   \EndIf \Comment{Repeat for \rightsubimage.}
+\EndWhile
+\State \textbf{return} \Call{merge}{\segmentfurther, \characters}
+\EndFunction
+\end{algorithmic}
