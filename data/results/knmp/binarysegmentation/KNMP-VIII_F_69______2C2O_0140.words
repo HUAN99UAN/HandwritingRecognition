@@ -103,7 +103,7 @@
         </Word>
     </TextLine>
     <TextLine no="9" top="805" bottom="852" left="805" right="842" shear="0">
-        <Word no="1" top="805" bottom="852" left="805" right="842" shear="0" text="s">
+        <Word no="1" top="805" bottom="852" left="805" right="842" shear="0" text="S">
             <Character no="1" top="805" bottom="852" left="805" right="843" shear="0" text="d"/>
         </Word>
     </TextLine>
@@ -167,7 +167,7 @@
         </Word>
     </TextLine>
     <TextLine no="16" top="1424" bottom="1504" left="422" right="654" shear="0">
-        <Word no="1" top="1447" bottom="1504" left="422" right="474" shear="0" text="d">
+        <Word no="1" top="1447" bottom="1504" left="422" right="474" shear="0" text="b">
             <Character no="1" top="1447" bottom="1504" left="422" right="430" shear="0" text=";"/>
             <Character no="2" top="1447" bottom="1504" left="430" right="459" shear="0" text="d"/>
             <Character no="3" top="1447" bottom="1504" left="459" right="475" shear="0" text="i"/>

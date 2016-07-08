@@ -65,7 +65,7 @@
             <Character no="4" top="258" bottom="314" left="513" right="531" shear="0" text="i"/>
             <Character no="5" top="258" bottom="314" left="531" right="558" shear="0" text="o"/>
         </Word>
-        <Word no="6" top="251" bottom="307" left="563" right="647" shear="0" text="a">
+        <Word no="6" top="251" bottom="307" left="563" right="647" shear="0" text="d">
             <Character no="1" top="251" bottom="307" left="563" right="590" shear="0" text="i"/>
             <Character no="2" top="251" bottom="307" left="590" right="631" shear="0" text="d"/>
             <Character no="3" top="251" bottom="307" left="631" right="648" shear="0" text=";"/>
@@ -242,7 +242,7 @@
         </Word>
     </TextLine>
     <TextLine no="15" top="1132" bottom="1208" left="308" right="1645" shear="0">
-        <Word no="1" top="1132" bottom="1197" left="308" right="406" shear="0" text="Anno">
+        <Word no="1" top="1132" bottom="1197" left="308" right="406" shear="0" text="s">
             <Character no="1" top="1132" bottom="1197" left="308" right="337" shear="0" text="f"/>
             <Character no="2" top="1132" bottom="1197" left="337" right="366" shear="0" text="u"/>
             <Character no="3" top="1132" bottom="1197" left="366" right="399" shear="0" text="u"/>
@@ -261,7 +261,7 @@
             <Character no="2" top="1132" bottom="1197" left="336" right="369" shear="0" text="u"/>
             <Character no="3" top="1132" bottom="1197" left="369" right="405" shear="0" text="u"/>
         </Word>
-        <Word no="5" top="1149" bottom="1189" left="1079" right="1175" shear="0" text="o">
+        <Word no="5" top="1149" bottom="1189" left="1079" right="1175" shear="0" text="a">
             <Character no="1" top="1149" bottom="1189" left="1079" right="1107" shear="0" text="t"/>
             <Character no="2" top="1149" bottom="1189" left="1107" right="1140" shear="0" text="u"/>
             <Character no="3" top="1149" bottom="1189" left="1140" right="1176" shear="0" text="a"/>

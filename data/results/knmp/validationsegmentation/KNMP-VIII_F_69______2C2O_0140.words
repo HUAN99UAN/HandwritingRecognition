@@ -18,7 +18,7 @@
         </Word>
     </TextLine>
     <TextLine no="3" top="549" bottom="611" left="601" right="748" shear="0">
-        <Word no="1" top="549" bottom="611" left="601" right="748" shear="0" text="o">
+        <Word no="1" top="549" bottom="611" left="601" right="748" shear="0" text="h">
             <Character no="1" top="549" bottom="611" left="601" right="631" shear="0" text="p"/>
             <Character no="2" top="549" bottom="611" left="631" right="660" shear="0" text="a"/>
             <Character no="3" top="549" bottom="611" left="660" right="672" shear="0" text="f"/>
@@ -44,7 +44,7 @@
             <Character no="5" top="560" bottom="619" left="689" right="720" shear="0" text="u"/>
             <Character no="6" top="560" bottom="619" left="720" right="745" shear="0" text="s"/>
         </Word>
-        <Word no="2" top="560" bottom="619" left="601" right="748" shear="0" text="o">
+        <Word no="2" top="560" bottom="619" left="601" right="748" shear="0" text="h">
             <Character no="1" top="560" bottom="619" left="601" right="630" shear="0" text="p"/>
             <Character no="2" top="560" bottom="619" left="630" right="661" shear="0" text="a"/>
             <Character no="3" top="560" bottom="619" left="661" right="675" shear="0" text="f"/>
@@ -121,7 +121,7 @@
         </Word>
     </TextLine>
     <TextLine no="12" top="962" bottom="1012" left="404" right="486" shear="0">
-        <Word no="1" top="962" bottom="1012" left="404" right="486" shear="0" text="Anno">
+        <Word no="1" top="962" bottom="1012" left="404" right="486" shear="0" text="c">
             <Character no="1" top="962" bottom="1012" left="404" right="437" shear="0" text="u"/>
             <Character no="2" top="962" bottom="1012" left="437" right="467" shear="0" text="b"/>
             <Character no="3" top="962" bottom="1012" left="467" right="487" shear="0" text="i"/>

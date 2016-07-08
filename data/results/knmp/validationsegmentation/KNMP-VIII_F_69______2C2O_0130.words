@@ -29,7 +29,7 @@
         </Word>
     </TextLine>
     <TextLine no="4" top="554" bottom="601" left="992" right="1025" shear="0">
-        <Word no="1" top="554" bottom="601" left="992" right="1025" shear="0" text="die">
+        <Word no="1" top="554" bottom="601" left="992" right="1025" shear="0" text="to">
             <Character no="1" top="554" bottom="601" left="992" right="1026" shear="0" text="e"/>
         </Word>
     </TextLine>
@@ -55,7 +55,7 @@
         <Word no="3" top="889" bottom="933" left="1167" right="1210" shear="0" text="x">
             <Character no="1" top="889" bottom="933" left="1167" right="1211" shear="0" text="x"/>
         </Word>
-        <Word no="4" top="879" bottom="939" left="1672" right="1706" shear="0" text="a">
+        <Word no="4" top="879" bottom="939" left="1672" right="1706" shear="0" text="Q">
             <Character no="1" top="879" bottom="939" left="1672" right="1707" shear="0" text="q"/>
         </Word>
     </TextLine>
