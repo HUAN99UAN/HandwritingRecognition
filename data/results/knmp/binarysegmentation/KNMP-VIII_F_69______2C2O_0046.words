@@ -215,12 +215,12 @@
         </Word>
     </TextLine>
     <TextLine no="20" top="2012" bottom="2050" left="409" right="440" shear="0">
-        <Word no="1" top="2012" bottom="2050" left="409" right="440" shear="0" text="c">
+        <Word no="1" top="2012" bottom="2050" left="409" right="440" shear="0" text="o">
             <Character no="1" top="2012" bottom="2050" left="409" right="441" shear="0" text="o"/>
         </Word>
     </TextLine>
     <TextLine no="21" top="2065" bottom="2154" left="477" right="913" shear="0">
-        <Word no="1" top="2065" bottom="2133" left="477" right="522" shear="0" text="B">
+        <Word no="1" top="2065" bottom="2133" left="477" right="522" shear="0" text="b">
             <Character no="1" top="2065" bottom="2133" left="477" right="523" shear="0" text="B"/>
         </Word>
         <Word no="2" top="2066" bottom="2129" left="808" right="913" shear="0" text="s">

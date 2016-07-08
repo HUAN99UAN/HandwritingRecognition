@@ -14,7 +14,7 @@
         <Word no="1" top="100" bottom="150" left="1494" right="1534" shear="0" text="d">
             <Character no="1" top="100" bottom="150" left="1498" right="1533" shear="0" text="d"/>
         </Word>
-        <Word no="2" top="116" bottom="173" left="380" right="480" shear="0" text="o">
+        <Word no="2" top="116" bottom="173" left="380" right="480" shear="0" text="h">
             <Character no="1" top="116" bottom="173" left="384" right="398" shear="0" text="s"/>
             <Character no="2" top="116" bottom="173" left="398" right="426" shear="0" text="u"/>
             <Character no="3" top="116" bottom="173" left="426" right="448" shear="0" text="o"/>
@@ -213,7 +213,7 @@
             <Character no="6" top="1732" bottom="1809" left="1701" right="1719" shear="0" text="e"/>
             <Character no="7" top="1732" bottom="1809" left="1719" right="1746" shear="0" text="t"/>
         </Word>
-        <Word no="2" top="1732" bottom="1809" left="1573" right="1753" shear="0" text="a">
+        <Word no="2" top="1732" bottom="1809" left="1573" right="1753" shear="0" text="d">
             <Character no="1" top="1732" bottom="1809" left="1576" right="1612" shear="0" text="d"/>
             <Character no="2" top="1732" bottom="1809" left="1612" right="1639" shear="0" text="e"/>
             <Character no="3" top="1732" bottom="1809" left="1639" right="1665" shear="0" text="p"/>

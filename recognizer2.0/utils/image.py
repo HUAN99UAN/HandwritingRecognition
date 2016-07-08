@@ -137,8 +137,7 @@ class Image(np.ndarray):
         }
         mapping.get(chr(key), lambda x: None)(self)
 
-    @classmethod
-    def close(cls):
+    def close(self):
         cv2.destroyAllWindows()
 
     def show(self, wait_key=_default_wait_key, window_name=None, close_window=True, **kwargs):
@@ -305,6 +304,10 @@ class Image(np.ndarray):
         new_image_pixels[0:self.height, 0:self.width] = self
         new_image_pixels[0:self.height, self.width:new_width] = right
         return Image(new_image_pixels, color_mode=self.color_mode)
+
+    def __copy__(self, order=None):
+        pixels = super(Image, self).__copy__(order)
+        return Image(pixels, color_mode=self.color_mode)
 
 
 if __name__ == '__main__':

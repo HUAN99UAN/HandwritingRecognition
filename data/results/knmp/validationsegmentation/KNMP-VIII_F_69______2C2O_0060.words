@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding = "UTF-8"?>
 <Image name="KNMP-VIII_F_69______2C2O_0060">
     <TextLine no="1" top="85" bottom="143" left="460" right="592" shear="0">
-        <Word no="1" top="85" bottom="143" left="460" right="592" shear="0" text="a">
+        <Word no="1" top="85" bottom="143" left="460" right="592" shear="0" text="o">
             <Character no="1" top="85" bottom="143" left="462" right="493" shear="0" text="h"/>
             <Character no="2" top="85" bottom="143" left="493" right="527" shear="0" text="a"/>
             <Character no="3" top="85" bottom="143" left="527" right="558" shear="0" text="n"/>
@@ -96,7 +96,7 @@
             <Character no="9" top="2024" bottom="2090" left="762" right="787" shear="0" text="t"/>
             <Character no="10" top="2024" bottom="2090" left="787" right="832" shear="0" text="e"/>
         </Word>
-        <Word no="4" top="2024" bottom="2075" left="847" right="1156" shear="0" text="a">
+        <Word no="4" top="2024" bottom="2075" left="847" right="1156" shear="0" text="d">
             <Character no="1" top="2024" bottom="2075" left="851" right="906" shear="0" text="K"/>
             <Character no="2" top="2024" bottom="2075" left="906" right="949" shear="0" text="a"/>
             <Character no="3" top="2024" bottom="2075" left="949" right="990" shear="0" text="z"/>
@@ -112,7 +112,7 @@
         </Word>
     </TextLine>
     <TextLine no="10" top="2105" bottom="2152" left="1557" right="1602" shear="0">
-        <Word no="1" top="2105" bottom="2152" left="1557" right="1602" shear="0" text="B">
+        <Word no="1" top="2105" bottom="2152" left="1557" right="1602" shear="0" text="o">
             <Character no="1" top="2105" bottom="2152" left="1562" right="1600" shear="0" text="B"/>
         </Word>
     </TextLine>

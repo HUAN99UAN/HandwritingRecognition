@@ -41,7 +41,7 @@
             <Character no="6" top="292" bottom="361" left="473" right="489" shear="0" text="i"/>
             <Character no="7" top="292" bottom="361" left="489" right="508" shear="0" text="t"/>
         </Word>
-        <Word no="3" top="287" bottom="359" left="690" right="866" shear="0" text="Anno">
+        <Word no="3" top="287" bottom="359" left="690" right="866" shear="0" text="c">
             <Character no="1" top="287" bottom="359" left="693" right="718" shear="0" text="c"/>
             <Character no="2" top="287" bottom="359" left="718" right="732" shear="0" text="l"/>
             <Character no="3" top="287" bottom="359" left="732" right="761" shear="0" text="a"/>
@@ -146,7 +146,7 @@
         <Word no="1" top="819" bottom="859" left="1539" right="1570" shear="0" text="o">
             <Character no="1" top="819" bottom="859" left="1541" right="1569" shear="0" text="o"/>
         </Word>
-        <Word no="2" top="818" bottom="859" left="1570" right="1598" shear="0" text="c">
+        <Word no="2" top="818" bottom="859" left="1570" right="1598" shear="0" text="e">
             <Character no="1" top="818" bottom="859" left="1571" right="1596" shear="0" text="e"/>
         </Word>
         <Word no="3" top="792" bottom="862" left="1497" right="1541" shear="0" text="B">

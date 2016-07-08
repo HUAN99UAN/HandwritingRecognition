@@ -31,7 +31,7 @@
         <Word no="3" top="365" bottom="409" left="1205" right="1238" shear="0" text="o">
             <Character no="1" top="365" bottom="409" left="1205" right="1239" shear="0" text="o"/>
         </Word>
-        <Word no="4" top="334" bottom="406" left="1035" right="1067" shear="0" text="s">
+        <Word no="4" top="334" bottom="406" left="1035" right="1067" shear="0" text="c">
             <Character no="1" top="334" bottom="406" left="1035" right="1068" shear="0" text="s"/>
         </Word>
         <Word no="5" top="343" bottom="415" left="1075" right="1317" shear="0" text="e">
@@ -181,7 +181,7 @@
         </Word>
     </TextLine>
     <TextLine no="14" top="1426" bottom="1487" left="767" right="805" shear="0">
-        <Word no="1" top="1426" bottom="1487" left="767" right="805" shear="0" text="c">
+        <Word no="1" top="1426" bottom="1487" left="767" right="805" shear="0" text="p">
             <Character no="1" top="1426" bottom="1487" left="767" right="806" shear="0" text="p"/>
         </Word>
     </TextLine>

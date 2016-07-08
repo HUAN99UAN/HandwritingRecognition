@@ -204,7 +204,7 @@
         </Word>
     </TextLine>
     <TextLine no="18" top="1732" bottom="1809" left="1573" right="1753" shear="0">
-        <Word no="1" top="1732" bottom="1809" left="1573" right="1753" shear="0" text="o">
+        <Word no="1" top="1732" bottom="1809" left="1573" right="1753" shear="0" text="a">
             <Character no="1" top="1732" bottom="1809" left="1576" right="1615" shear="0" text="d"/>
             <Character no="2" top="1732" bottom="1809" left="1615" right="1637" shear="0" text="e"/>
             <Character no="3" top="1732" bottom="1809" left="1637" right="1665" shear="0" text="p"/>
@@ -213,7 +213,7 @@
             <Character no="6" top="1732" bottom="1809" left="1701" right="1719" shear="0" text="e"/>
             <Character no="7" top="1732" bottom="1809" left="1719" right="1746" shear="0" text="t"/>
         </Word>
-        <Word no="2" top="1732" bottom="1809" left="1573" right="1753" shear="0" text="o">
+        <Word no="2" top="1732" bottom="1809" left="1573" right="1753" shear="0" text="a">
             <Character no="1" top="1732" bottom="1809" left="1576" right="1612" shear="0" text="d"/>
             <Character no="2" top="1732" bottom="1809" left="1612" right="1639" shear="0" text="e"/>
             <Character no="3" top="1732" bottom="1809" left="1639" right="1665" shear="0" text="p"/>

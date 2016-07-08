@@ -57,7 +57,7 @@
             <Character no="5" top="341" bottom="411" left="567" right="584" shear="0" text="t"/>
             <Character no="6" top="341" bottom="411" left="584" right="618" shear="0" text="a"/>
         </Word>
-        <Word no="2" top="341" bottom="411" left="454" right="632" shear="0" text="a">
+        <Word no="2" top="341" bottom="411" left="454" right="632" shear="0" text="o">
             <Character no="1" top="341" bottom="411" left="459" right="493" shear="0" text="h"/>
             <Character no="2" top="341" bottom="411" left="493" right="518" shear="0" text="a"/>
             <Character no="3" top="341" bottom="411" left="518" right="543" shear="0" text="b"/>
@@ -248,7 +248,7 @@
             <Character no="5" top="1658" bottom="1720" left="686" right="720" shear="0" text="a"/>
             <Character no="6" top="1658" bottom="1720" left="720" right="754" shear="0" text="t"/>
         </Word>
-        <Word no="3" top="1658" bottom="1720" left="583" right="757" shear="0" text="a">
+        <Word no="3" top="1658" bottom="1720" left="583" right="757" shear="0" text="d">
             <Character no="1" top="1658" bottom="1720" left="589" right="608" shear="0" text="f"/>
             <Character no="2" top="1658" bottom="1720" left="608" right="641" shear="0" text="u"/>
             <Character no="3" top="1658" bottom="1720" left="641" right="669" shear="0" text="e"/>
