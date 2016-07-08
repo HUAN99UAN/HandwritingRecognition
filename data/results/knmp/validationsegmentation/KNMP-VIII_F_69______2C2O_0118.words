@@ -6,7 +6,7 @@
         </Word>
     </TextLine>
     <TextLine no="2" top="287" bottom="343" left="711" right="894" shear="0">
-        <Word no="1" top="299" bottom="341" left="711" right="750" shear="0" text="r">
+        <Word no="1" top="299" bottom="341" left="711" right="750" shear="0" text="a">
             <Character no="1" top="299" bottom="341" left="711" right="715" shear="0" text=":"/>
             <Character no="2" top="299" bottom="341" left="715" right="751" shear="0" text="a"/>
         </Word>
@@ -216,7 +216,7 @@
         </Word>
     </TextLine>
     <TextLine no="19" top="1493" bottom="1561" left="518" right="1052" shear="0">
-        <Word no="1" top="1493" bottom="1556" left="970" right="1052" shear="0" text="dux">
+        <Word no="1" top="1493" bottom="1556" left="970" right="1052" shear="0" text="s">
             <Character no="1" top="1493" bottom="1556" left="970" right="996" shear="0" text="s"/>
             <Character no="2" top="1493" bottom="1556" left="996" right="1029" shear="0" text="u"/>
             <Character no="3" top="1493" bottom="1556" left="1029" right="1053" shear="0" text="i"/>

@@ -93,7 +93,7 @@
         </Word>
     </TextLine>
     <TextLine no="7" top="670" bottom="741" left="641" right="813" shear="0">
-        <Word no="1" top="670" bottom="741" left="641" right="813" shear="0" text="p">
+        <Word no="1" top="670" bottom="741" left="641" right="813" shear="0" text="o">
             <Character no="1" top="670" bottom="741" left="641" right="646" shear="0" text=";"/>
             <Character no="2" top="670" bottom="741" left="646" right="679" shear="0" text="p"/>
             <Character no="3" top="670" bottom="741" left="679" right="704" shear="0" text="l"/>
@@ -102,7 +102,7 @@
             <Character no="6" top="670" bottom="741" left="759" right="797" shear="0" text="a"/>
             <Character no="7" top="670" bottom="741" left="797" right="814" shear="0" text=";"/>
         </Word>
-        <Word no="2" top="670" bottom="741" left="641" right="798" shear="0" text="p">
+        <Word no="2" top="670" bottom="741" left="641" right="798" shear="0" text="o">
             <Character no="1" top="670" bottom="741" left="641" right="646" shear="0" text=";"/>
             <Character no="2" top="670" bottom="741" left="646" right="680" shear="0" text="p"/>
             <Character no="3" top="670" bottom="741" left="680" right="699" shear="0" text="l"/>
