@@ -40,6 +40,7 @@ For the internal segmentation we have adapted the binary segmentation algorithm 
 	This process only looks at pixels between baselines, to minimize the influence of of extensive ligatures. A column of pixels in the image is only considered as a possible suspicious segmentation point if its vertical pixel density is greater than $2 \cdot \mathtt{SW}$. This threshold results in a set of possible suspicious segmentation points. From this set all suspicious regions, a group of continuous possible suspicious segmentation points, is extracted. If the width of a suspicious region is less than \texttt{SW}, a suspicious segmentation point is placed in the middle of the suspicious region. Suspicious segmentation points are placed at the start and the end of the suspicious region and at intervals of \texttt{SW} within the region, see the example in \cref{fig:method:segmentation:suspiciousSegmentationPoints}.
 
 	\begin{figure}
+		\timemachine{Create this image based on our dataset ourselves.}
 		\centering
 		\includegraphics[width=\columnwidth]{shared/img/method/suspicious_regions.png}
 		\caption{An image of a word, and the vertical pixel density histogram of the body region, the are between the baselines, of that word. The threshold for suspicious regions is shown as a line in the histogram. The shaded areas show the suspicious regions. For the two red shaded regions the suspiciosus segmentations points are drawn. The image is adapted from \cite{lee2012binary}.}
