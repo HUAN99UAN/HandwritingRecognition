@@ -133,10 +133,28 @@ class Rectangle(Shape):
         return abs(self.bottom - self.top)
 
     def paint_on(self, image, color=(0, 0, 0), width=10, filled=False, alpha=1, **kwargs):
-        copy_for_painting = image.copy()
+        paint_image = image.copy()
         if not image.color_mode.is_color:
-            copy_for_painting = preprocessing.colorspaces.ToColor().apply(copy_for_painting)
+            paint_image = preprocessing.colorspaces.ToColor().apply(paint_image)
         if filled:
             width = -1
-        cv2.rectangle(copy_for_painting, self.top_left, self.bottom_right, color=color, thickness=width)
-        return copy_for_painting
+        cv2.rectangle(paint_image, self.top_left, self.bottom_right, color=color, thickness=width)
+        if 0 <= alpha < 1:
+            paint_image = cv2.addWeighted(
+                src1=paint_image, alpha=alpha,
+                src2=image, beta=1.0,
+                gamma=0, dst=paint_image, dtype=-1
+            )
+        return paint_image
+
+
+if __name__ == '__main__':
+    from image import Image, ColorMode
+    from utils import colors
+
+    image_pixels = np.random.rand(50, 200, 3) * 255
+    rectangle = Rectangle(corner=Point(10, 10), opposite_corner=Point(190, 40))
+    image = Image(image_pixels, ColorMode.bgr)
+    new_image = rectangle.paint_on(image, color=colors.black, filled=True, alpha=0.5)
+    new_image.show(wait_key=0, window_name='New image')
+    image.show(wait_key=0, window_name='Old image')
