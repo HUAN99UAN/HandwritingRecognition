@@ -116,7 +116,7 @@ class SegmentationLine(CommonEqualityMixin):
     def x(self):
         return self._x
 
-    def paint_on(self, image, color=(0,0,0), width=1, top=None, bottom=None, **kwargs):
+    def paint_on(self, image, color=(0, 0, 0), width=1, top=None, bottom=None, **kwargs):
         top = top or 0
         bottom = bottom or image.height
         return VerticalLine(

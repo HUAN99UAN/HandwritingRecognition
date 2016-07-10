@@ -21,7 +21,7 @@ We use binary over segmentation to segment the words into images, the pseudo cod
 
 The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:algorithm} contain the maximum character length and the minimum, average and maximum image width and height. The maximum word length is the length of the longest word in the data set. The other six values are determined based on the data. Before computing the minimum, average or maximum all widths, or heights, that are not within two standard deviations of the mean of the character widths, or heights, are discarded as outliers. 
 
-The different functions referenced in \cref{alg:method:segmentation:algorithm} are discussed in \crefrange{sss:method:segmentaton:bodyregion}{sss:method:segmentaton:segmentfurther}.
+The different functions referenced in \cref{alg:method:segmentation:algorithm} are discussed in \crefrange{sss:method:segmentaton:bodyregion}{sss:method:segmentaton:termination}.
 
 \begin{figure}
 	\centering
@@ -113,22 +113,57 @@ The different functions referenced in \cref{alg:method:segmentation:algorithm} a
 
 	The resulting set of segmentation points is used for the actual segmentation. 
 
-\subsubsection{Continue}
-\label{sss:method:segmentaton:termination}
-\todo[inline]{Wanneer stoppen we met ons lusje}
-
 \subsubsection{Select Sub-Image}
 \label{sss:method:segmentaton:selectsubimage}
-\todo[inline]{How to select the next sub image}
+As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track of two lists, one with character images, \characters, and one with images that need to be segmented further, \segmentfurther. At the start of each iteration an image is selected for further segmentation for the second list. From this list the image with the highest width over height ratio is selected. This is done on the assumption that the widest image is the most likely to contain multiple characters. It should be noted that the height of the images is not the same for all images, as white borders are from \leftsubimage and \rightsubimage before they are stored in the either \characters or \segmentfurther. This reduces the influence of sloppy word bounding boxes on the segmentation.
 
-\subsubsection{Select SP}
+\subsubsection{Select Segmentation Point}
 \label{sss:method:segmentaton:selectssp}
-\todo[inline]{How to select the next SSP }
+	Given an image for further segmentation with multiple segmentation lines one needs to select along which segmentation line the image should be split. This is done based on two scores: the distance score and the vertical pixel density score. 
+
+	The first promotes the selection of a segmentation line near the center of the image. This should avoid the chain failure problems. Let the $x$-coordinates of the segmentation line and the center of the image be represented by $l_x$ and $c_x$, respectively, the distance score is then defined as
+		\begin{equation}\label{eq:method:segmenation:selectSP:distancecriterion}
+			s_{\text{distance}} = \frac{\abs{c_x - l_x}}{c_x}.
+		\end{equation}
+
+	The second scores promotes the selection of segmentation points that indicate spaces where white space separates two characters. Let the height of the sub image be $w$ and $l_d$ the pixel density in the image underneath the line, the density score is then:
+		\begin{equation}
+			s-{\text{density}} = \frac{l_d}{w}.
+		\end{equation}a
+	Both scores are summed, the line with the lowest score is selected as the segmentation point.
 
 \subsubsection{Split}
 \label{sss:method:segmentaton:splitimage}
+
+	\begin{figure}
+		\centering
+		\subfloat[]{
+			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_straight_path.png}%
+			\raisebox{1em}{\hspace{2em} $\to$ \hspace{2em}}
+			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_straight_left.png}%
+			\raisebox{1em}{\hspace{2em} $\&$ \hspace{2em}}
+			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_straigt_right.png}%
+			\label{fig:method:segmentation:splitting:straight}%
+		}
+		
+		\subfloat[]{
+			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_astar_path.png}%
+			\raisebox{1em}{\hspace{2em} $\to$ \hspace{2em}}
+			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_astar_left.png}%
+			\raisebox{1em}{\hspace{2em} $\&$ \hspace{2em}}
+			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_astar_right.png}%
+			\label{fig:method:segmentation:splitting:astar}%
+		}
+		\caption{}
+		\label{fig:method:segmentation:splitting:comparison}
+	\end{figure}
+
 \todo[inline]{How to split an image, compare our approach with the splitting along a straight line. Mention A* parameters.}
 
 \subsubsection{Is Character}
 \label{sss:method:segmentaton:segmentfurther}
 \todo[inline]{How to determine if an image should be segmented further, or if it is an character.}
+
+\subsubsection{Continue}
+\label{sss:method:segmentaton:termination}
+\todo[inline]{Wanneer stoppen we met ons lusje}

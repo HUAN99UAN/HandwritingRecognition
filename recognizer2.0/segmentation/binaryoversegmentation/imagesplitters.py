@@ -11,6 +11,7 @@ from utils.mixins import CommonEqualityMixin
 from utils.shapes import Rectangle
 from utils.things import Point
 
+
 def default_distance_function(origin, destination,
                               is_fully_accessible, is_accessible_with_intersecting,
                               intersection_penalty=5, maximum_distance=sys.maxint):
@@ -35,10 +36,11 @@ def default_neighbour_filter(node, segmentation_line, character_width):
 
 class _AbstractImageSplitter(CommonEqualityMixin):
 
-    def __init__(self, background_color=255, foreground_color=0):
+    def __init__(self, background_color=255, foreground_color=0, return_path=False):
         self._image = None
         self._segmentation_line = None
         self._pixel_path = None
+        self._return_path = return_path
 
         self._foreground_pixel_color = foreground_color
         self._background_color = background_color
@@ -106,17 +108,20 @@ class StraightLineSplitter(_AbstractImageSplitter):
         right_bounding_box = Rectangle(corner=Point(x=self._segmentation_line.x, y=0), opposite_corner=Point(x=self._image.width -1, y=self._image.height -1))
         right_sub_image = self._image.sub_image(right_bounding_box, remove_white_borders=False)
 
-        return left_sub_image, right_sub_image
+        if self._return_path:
+            return self._segmentation_line, (left_sub_image, right_sub_image)
+        else:
+            return left_sub_image, right_sub_image
 
 
 class ForegroundPixelContourTracing(_AbstractImageSplitter):
     """Use foreground get_pixel contour tracing to split segment the image into two along the passed line."""
 
-    def __init__(self, character_width=7,
+    def __init__(self, return_path=False, character_width=7,
                  distance_function=default_distance_function,
                  heuristic=default_heuristic,
                  neighbour_filter=default_neighbour_filter):
-        super(ForegroundPixelContourTracing, self).__init__()
+        super(ForegroundPixelContourTracing, self).__init__(return_path=return_path)
         self._character_width = character_width
         self._distance_function = lambda origin, destination: distance_function(
             origin, destination,
@@ -133,7 +138,10 @@ class ForegroundPixelContourTracing(_AbstractImageSplitter):
                                            neighbour_filter=self._neighbour_filter,
                                            distance_function=self._distance_function,
                                            heuristic=self._heuristic).path)
-        return self._split_images()
+        if self._return_path:
+            return self._pixel_path, self._split_images()
+        else:
+            return self._split_images()
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
