@@ -145,7 +145,7 @@ The different functions referenced in \cref{alg:method:segmentation:algorithm} a
 
 	\Cref{eq:method:segmentation:costFunction} allows the path along which the characters are separated to only intersect foreground pixels on the segmentation line. Furthermore the intersection penalty ensures that the characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
 
-\subsubsection{Character or Segment Further}
+\subsubsection{Detecting a Character Image}
 \label{sss:method:segmentaton:segmentfurther}
 Essential to assign a sub image to the correct path is determining if it is an image of a character or if it should be segmented further. This determination is made based on three properties of the sub image: the width, the height and the number of foreground pixels. 
 
