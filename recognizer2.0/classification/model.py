@@ -23,6 +23,11 @@ class GeneralModel(object):
         return getattr(self._model, key)
 
     @property
+    def classes(self):
+        for item in self._model:
+            yield self._model.get(item)
+
+    @property
     def patterns_and_labels(self):
         labels = self._extract_label_vector()
         patterns = self._extract_pattern_matrix()
