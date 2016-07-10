@@ -1,2 +1,24 @@
 %!TEX root = ../main.tex
-n.a.
+
+\begin{table*}[!t]
+\caption{LOOCV results}
+\label{tab:results:loocv}
+\centering
+	\begin{tabular}{lcccccccc}
+		\toprule
+					& \multicolumn{4}{c}{Validation} & \multicolumn{4}{c}{Binary}\\
+					\cmidrule(r){2-5} \cmidrule(r){6-9}
+		~ 			& $\mu$ 	& $\sigma$ 	& min 	& max 	& $\mu$ 	& $\sigma$ 	& min 	& max \\
+		\midrule
+		All 		& 0.694 	& 0.165 	& 0.3 	& 1.0 	& 0.718 	& 0.133 	& 0.25 	& 1.0 \\
+		Bohemians 	& 0.731 	& 0.131 	& 0.44 	& 0.982 & 0.737 	& 0.11 		& 0.5 	& 0.982 \\
+		Homilies 	& 0.647 	& 0.194 	& 0.214 & 1.0 	& 0.686 	& 0.171 	& 0.25 	& 1.0 \\
+		\bottomrule
+	\end{tabular}
+\end{table*}
+
+To measure how well the binary over segmentation performed we have compared this algorithm with a base line, `validation segmentation'. This baseline uses the character boundaries provided by the annotation files in the training data. When computing the error we only considered words that of which the internal segmentation was complete in the annotation file. We have defined the error of one file as the number of incorrectly classified words divided by the number of completely internally segmented words in the annotation file.  The results of this experiment are presented in \cref{tab:results:loocv}. 
+
+We observe that the validation segmentation gets better results than the binary over segmentation. Furthermore independent of the segmentation algorithm the recognizer performs better on the pages from ``Chronicles of the Bohemians" than on pages from ``Old English Homilies".
+
+Testing the results on previously unseen test data we find that the recognition rate for ``Chronicles of the Bohemians" is 2.28\%, for ``Old English Homilies" it is $3.88\%$ and on both books combined it is $2.56\%$. It should be noted that these results were gathered using an earlier version of the classifier that did not move segmentation points based on the width between neighboring segmentation points.
