@@ -56,18 +56,18 @@ def visualize_distance_matrix(distance_matrix):
 if __name__ == '__main__':
     model_file = '/Users/laura/Repositories/HandwritingRecognition/recognizer2.0/model.pkl'
     distance_matrix_file = '/Users/laura/Desktop/distance_matrix.pkl'
-    output_file = '/Users/laura/Repositories/HandwritingRecognition/report/individual/img/discussion/distance.png'
+    image_output_file = '/Users/laura/Repositories/HandwritingRecognition/report/individual/img/discussion/distance.png'
 
-    model = GeneralModel.read_from_file(model_file)
-    distance_matrix = compute_difference_matrix(model)
+    # model = GeneralModel.read_from_file(model_file)
+    # distance_matrix = compute_difference_matrix(model)
 
-    with open(distance_matrix_file, 'wb+') as output_file:
-        pickle.dump(distance_matrix, output_file)
+    # with open(distance_matrix_file, 'wb+') as output_file:
+    #     pickle.dump(distance_matrix, output_file)
 
-    # with open(distance_matrix_file) as input_file:
-    #     distance_matrix = pickle.load(input_file)
-
+    with open(distance_matrix_file) as input_file:
+        distance_matrix = pickle.load(input_file)
+    
     image = visualize_distance_matrix(distance_matrix)
     image.show(window_name='Final result', wait_key=0)
-    image.to_file(output_file)
+    image.to_file(image_output_file)
 
