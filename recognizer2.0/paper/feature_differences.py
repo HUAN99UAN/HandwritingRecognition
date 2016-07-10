@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
     with open(distance_matrix_file) as input_file:
         distance_matrix = pickle.load(input_file)
-    
+
     image = visualize_distance_matrix(distance_matrix)
     image.show(window_name='Final result', wait_key=0)
     image.to_file(image_output_file)
