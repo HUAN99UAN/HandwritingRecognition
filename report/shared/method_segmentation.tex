@@ -145,10 +145,16 @@ The different functions referenced in \cref{alg:method:segmentation:algorithm} a
 
 	\Cref{eq:method:segmentation:costFunction} allows the path along which the characters are separated to only intersect foreground pixels on the segmentation line. Furthermore the intersection penalty ensures that the characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
 
-\subsubsection{Is Character}
+\subsubsection{Character or Segment Further}
 \label{sss:method:segmentaton:segmentfurther}
-\todo[inline]{How to determine if an image should be segmented further, or if it is an character.}
+Essential to assign a sub image to the correct path is determining if it is an image of a character or if it should be segmented further. This determination is made based on three properties of the sub image: the width, the height and the number of foreground pixels. 
+
+The sub image should satisfy two conditions to be considered a character: The width of the sub image should be between between the minimum and maximum image width. And the number of foreground pixels should be greater than the minimum number of foreground pixels.
+
+An image is considered for further segmentation if it satisfies three conditions: it should have segmentation lines, the number of foreground pixels and the image width should be greater than twice the minimum number of foreground pixels and the minimum image width, respectively. 
+
+If neither of the preceding sets of conditions are satisfied the image is considered for further segmentation if its width is greater than the mean character width and it has segmentation lines. If its width is less than two standard deviations away from the mean character width it is added to \characters, otherwise it is discarded.
 
 \subsubsection{Continue}
 \label{sss:method:segmentaton:termination}
-\todo[inline]{Wanneer stoppen we met ons lusje}
+Segmentation is continued as long as the following conditions are satisfied: we have not yet found more characters than the length of the longest word in the lexicon and there are still images in the list \segmentfurther. The first condition aims to reduce over segmentation.

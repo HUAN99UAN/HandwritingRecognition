@@ -14,11 +14,8 @@
 	\label{alg:line:selectSegmentationPoint}\State $\segmentationpoint \gets$ \Call{select\_sp}{\segmentationpoints} 
 	\label{alg:line:split}\State \leftsubimage, \rightsubimage $\gets$ \Call{split}{\subimage, \segmentationpoint}
 	%
-   \label{alg:line:assigntolist}\If {\Call{is\_character}{\leftsubimage}}
-      \State \characters.add(\leftsubimage)
-   \Else
-		\State \segmentfurther.add(\leftsubimage)
-   \EndIf \Comment{Repeat the \textbf{if}-\textbf{else} for \rightsubimage.}
+	\State \Call{add\_to\_correct\_list}{\leftsubimage, \characters, \segmentfurther}
+	\State \Call{add\_to\_correct\_list}{\rightsubimage, \characters, \segmentfurther}
 \EndWhile
 \label{alg:line:merge}\State \textbf{return} \Call{merge}{\segmentfurther, \characters}
 \EndFunction
