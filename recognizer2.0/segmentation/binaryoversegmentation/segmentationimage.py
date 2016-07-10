@@ -108,6 +108,14 @@ class SegmentationImage(Image):
         image_with_ssp = self.segmentation_lines.paint_on(image_with_ssp, **kwargs)
         image_with_ssp.show(**kwargs)
 
+    def to_file(self, output_file=None, show_ssp=True, **kwargs):
+        if show_ssp:
+            image_with_ssp = self.to_image(make_copy=True)
+            image_with_ssp = self.segmentation_lines.paint_on(image_with_ssp, **kwargs)
+            image_with_ssp.to_file(output_file)
+        else:
+            super(SegmentationImage, self).to_file(output_file)
+
     def sub_image(self, bounding_box, remove_white_borders=True):
         """
         Returns the sub_image, the borders of the bounding box are null-indexed and inclusive!
