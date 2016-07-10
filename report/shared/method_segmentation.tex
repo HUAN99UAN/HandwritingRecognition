@@ -33,9 +33,9 @@ The different functions referenced in \cref{alg:method:segmentation:algorithm} a
 
 \subsubsection{Body Region}
 \label{sss:method:segmentaton:bodyregion}
-The body region is the part of the image that is between the lower and the upper base line. To compute the low base line for each column in the image the lowest row with a foreground pixel is computed. The low base line is the mode of the these rows. The high baseline is computed in the same way, but uses the highest row of each column with a foreground pixel. 
+	The body region is the part of the image that is between the lower and the upper base line. To compute the low base line for each column in the image the lowest row with a foreground pixel is computed. The low base line is the mode of the these rows. The high baseline is computed in the same way, but uses the highest row of each column with a foreground pixel. 
 
-The part of the image between the low and high base line is the body region. Using this region for the computation of the segmentation points reduces the influence of extensive ligatures. \Cref{fig:method:segmentation:baseline} illustrates examples of the determination of the baselines. \Cref{fig:method:segmentation:baseline:succes} reflects the intended outcome, the second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high because of the extra curve on the last letter.
+	The part of the image between the low and high base line is the body region. Using this region for the computation of the segmentation points reduces the influence of extensive ligatures. \Cref{fig:method:segmentation:baseline} illustrates examples of the determination of the baselines. \Cref{fig:method:segmentation:baseline:succes} reflects the intended outcome, the second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high because of the extra curve on the last letter.
 
 	\begin{figure}
 		\centering
@@ -54,17 +54,68 @@ The part of the image between the low and high base line is the body region. Usi
 
 \subsubsection{Stroke Width}
 \label{sss:method:segmentaton:strokwidth}
-The stroke width refers to how thick the stroke of a pen is. We compute the stroke width as the mode of the number of sequential foreground pixels in one row or column of pixels in the horizontal and the vertical direction respectively. The stroke width is computed per image instead of per page or data set word to be able to handle text written by different authors or with different pens on the same page.
+	The stroke width refers to how thick the stroke of a pen is. We compute the stroke width as the mode of the number of sequential foreground pixels in one row or column of pixels in the horizontal and the vertical direction respectively. The stroke width is computed per image instead of per page or data set word to be able to handle text written by different authors or with different pens on the same page.
 
 \subsubsection{Segmentation Points}
 \label{sss:method:segmentaton:segmentationpoints}
-\todo[inline]{Computation, based on Fig 3 in old version}
-\todo[inline]{Filtering SSP, subsubsection per filter method. Show results, succesful and failure.}
+	To find the segmentation lines we first determine the suspicious regions. A suspicious region is a region in the body of the word image where the vertical pixel density is greater than some threshold, we have set this threshold to $2 \cdot \strokewidth$, \cref{fig:method:segmentation:suspiciousRegions} illustrates the suspicious regions found in a word. 
+
+	\begin{figure}
+		\timemachine{Create this image based on our dataset ourselves.}
+		\centering
+		\includegraphics[width=\columnwidth]{shared/img/method/suspicious_regions.png}
+		\caption{The vertical pixel density of the body of the image above the word image.  The threshold for suspicious regions is shown as a line in the histogram. The shaded areas show the suspicious regions. For the regions shaded in a color the lines associated with the segmentations points are drawn. The image is adapted from \cite{lee2012binary}.}
+		\label{fig:method:segmentation:suspiciousRegions}
+	\end{figure}
+
+	Based on these regions the initial set of segmentation points is determined. If the width of a region is smaller than the minimum character width, the region results in one segmentation line in the middle of the regions, this case is illustrated by the blue region in \cref{fig:method:segmentation:suspiciousRegions}. In regions with a width that is equal to or greater than the minimum character width, the red region in \cref{fig:method:segmentation:suspiciousRegions}, segmentation points are placed at the end of the region and on intervals of the minimum character width that start at the beginning of the region. Before starting the segmentation these lines are filtered to ensure optimal placement. 
+
+	Firstly all segmentation lines over a hole in the image are removed. This filtering is restricted to Latin alphabet, which as a number of letters with. It also assumes that it  does not occur that two letters are connected via a whole, although noise that was not removed could cause the occurrence of a hole between two letters. Holes are detected via region growing algorithm. Region growing algorithms require as input an image array $f(x,y)$, a seed array $s(x,y)$ of the same size as $f(x,y)$ and a predicate that is to be applied to one pixel. The seed array contains all suspicious segmentation points. Connected components in $s(x,y)$ are eroded to one pixel. A binary image $f_Q(x,y)$ is formed, such that
+	\begin{equation}
+		f_Q(x,y) = 
+		\begin{cases}
+			1 & \text{if }Q(f(x,y)) = 1,\\
+			0 & \text{otherwise.}
+		\end{cases}
+	\end{equation}
+	The final image $g$ is formed by appending to each seed point all the 1-valued points in $f_Q$ that are eight connected to the seed point \cite{gonzalez2002digitalCh10}. All connected components in $g$ that do not reach th e boundary of the image are considered holes. This process is illustrated for one letter in \cref{fig:method:segmentation:holeDetection}. This example also shows a problem with this algorithm, namely that holes that are not completely closed are not seen as holes. 
+
+	\timemachine{Show result with an image}
+
+	\begin{figure}
+		\centering
+		\subfloat[]{
+			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_fxy.png}%
+			\label{fig:method:segmentation:holeDetection:fxy}%
+		}
+		\hfil
+		\subfloat[]{
+			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_sxy.png}%
+			\label{fig:method:segmentation:holeDetection:seed}%
+		}
+		\hfil
+		\subfloat[]{
+			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_fqxy.png}%
+			\label{fig:method:segmentation:holeDetection:fqxy}%
+		}
+		\hfil
+		\subfloat[]{
+			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_g.png}%
+			\label{fig:method:segmentation:holeDetection:g}%
+		}				
+		\caption{An example of hole detection on \protect\subref{fig:method:segmentation:holeDetection:fxy} the image array $f(x,y)$ representing the letter `b', with \protect\subref{fig:method:segmentation:holeDetection:seed} the seed array $s(x,y)$ which contains the suspicious segmentation points. Filtering the \protect\subref{fig:method:segmentation:holeDetection:fqxy} connected components, that were found after applying predicate $Q$ to $f(x,y)$ results in \protect\subref{fig:method:segmentation:holeDetection:g} one of the holes of the letter.}
+		\label{fig:method:segmentation:holeDetection}
+	\end{figure}
+
+	After all segmentation lines crossing a hole have been removed we move some of the segmentation lines in such a way that in the final image the distance between two segmentation lines is always greater than the minimum character width. This is done as follows: iterate over all pairs of lines that are present when you move from left to right through the image. If the distance between the lines that make up the pair is smaller than the the minimum character width remove the lines, and place a new line in the middle between those two lines. This process is then recursively repeated for the segmentation lines to the left of the new line and for the lines to the right of this line. 
+
+	\timemachine{Show with an image.}
+
+	The resulting set of segmentation points is used for the actual segmentation. 
 
 \subsubsection{Continue}
 \label{sss:method:segmentaton:termination}
 \todo[inline]{Wanneer stoppen we met ons lusje}
-\todo[inline]{Waarom nemen we langste woord op basis van alle data, i.pv. alleen niet outliers.}
 
 \subsubsection{Select Sub-Image}
 \label{sss:method:segmentaton:selectsubimage}
