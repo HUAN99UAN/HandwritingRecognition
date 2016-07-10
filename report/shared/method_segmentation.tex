@@ -70,42 +70,7 @@ The different functions referenced in \cref{alg:method:segmentation:algorithm} a
 
 	Based on these regions the initial set of segmentation points is determined. If the width of a region is smaller than the minimum character width, the region results in one segmentation line in the middle of the regions, this case is illustrated by the blue region in \cref{fig:method:segmentation:suspiciousRegions}. In regions with a width that is equal to or greater than the minimum character width, the red region in \cref{fig:method:segmentation:suspiciousRegions}, segmentation points are placed at the end of the region and on intervals of the minimum character width that start at the beginning of the region. Before starting the segmentation these lines are filtered to ensure optimal placement. 
 
-	Firstly all segmentation lines over a hole in the image are removed. This filtering is restricted to Latin alphabet, which as a number of letters with. It also assumes that it  does not occur that two letters are connected via a whole, although noise that was not removed could cause the occurrence of a hole between two letters. Holes are detected via region growing algorithm. Region growing algorithms require as input an image array $f(x,y)$, a seed array $s(x,y)$ of the same size as $f(x,y)$ and a predicate that is to be applied to one pixel. The seed array contains all suspicious segmentation points. Connected components in $s(x,y)$ are eroded to one pixel. A binary image $f_Q(x,y)$ is formed, such that
-	\begin{equation}
-		f_Q(x,y) = 
-		\begin{cases}
-			1 & \text{if }Q(f(x,y)) = 1,\\
-			0 & \text{otherwise.}
-		\end{cases}
-	\end{equation}
-	The final image $g$ is formed by appending to each seed point all the 1-valued points in $f_Q$ that are eight connected to the seed point \cite{gonzalez2002digitalCh10}. All connected components in $g$ that do not reach th e boundary of the image are considered holes. This process is illustrated for one letter in \cref{fig:method:segmentation:holeDetection}. This example also shows a problem with this algorithm, namely that holes that are not completely closed are not seen as holes. 
-
-	\timemachine{Show result with an image}
-
-	\begin{figure}
-		\centering
-		\subfloat[]{
-			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_fxy.png}%
-			\label{fig:method:segmentation:holeDetection:fxy}%
-		}
-		\hfil
-		\subfloat[]{
-			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_sxy.png}%
-			\label{fig:method:segmentation:holeDetection:seed}%
-		}
-		\hfil
-		\subfloat[]{
-			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_fqxy.png}%
-			\label{fig:method:segmentation:holeDetection:fqxy}%
-		}
-		\hfil
-		\subfloat[]{
-			\includegraphics[width=0.23\linewidth]{shared/img/method/hole_detection_g.png}%
-			\label{fig:method:segmentation:holeDetection:g}%
-		}				
-		\caption{An example of hole detection on \protect\subref{fig:method:segmentation:holeDetection:fxy} the image array $f(x,y)$ representing the letter `b', with \protect\subref{fig:method:segmentation:holeDetection:seed} the seed array $s(x,y)$ which contains the suspicious segmentation points. Filtering the \protect\subref{fig:method:segmentation:holeDetection:fqxy} connected components, that were found after applying predicate $Q$ to $f(x,y)$ results in \protect\subref{fig:method:segmentation:holeDetection:g} one of the holes of the letter.}
-		\label{fig:method:segmentation:holeDetection}
-	\end{figure}
+	Firstly all segmentation lines over a hole in the image are removed. This filtering is restricted to Latin alphabet, which as a number of letters with. It also assumes that it  does not occur that two letters are connected via a whole, although noise that was not removed could cause the occurrence of a hole between two letters. Holes are detected via region growing algorithm. 
 
 	After all segmentation lines crossing a hole have been removed we move some of the segmentation lines in such a way that in the final image the distance between two segmentation lines is always greater than the minimum character width. This is done as follows: iterate over all pairs of lines that are present when you move from left to right through the image. If the distance between the lines that make up the pair is smaller than the the minimum character width remove the lines, and place a new line in the middle between those two lines. This process is then recursively repeated for the segmentation lines to the left of the new line and for the lines to the right of this line. 
 
@@ -115,7 +80,7 @@ The different functions referenced in \cref{alg:method:segmentation:algorithm} a
 
 \subsubsection{Select Sub-Image}
 \label{sss:method:segmentaton:selectsubimage}
-As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track of two lists, one with character images, \characters, and one with images that need to be segmented further, \segmentfurther. At the start of each iteration an image is selected for further segmentation for the second list. From this list the image with the highest width over height ratio is selected. This is done on the assumption that the widest image is the most likely to contain multiple characters. It should be noted that the height of the images is not the same for all images, as white borders are from \leftsubimage and \rightsubimage before they are stored in the either \characters or \segmentfurther. This reduces the influence of sloppy word bounding boxes on the segmentation.
+	As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track of two lists, one with character images, \characters, and one with images that need to be segmented further, \segmentfurther. At the start of each iteration an image is selected for further segmentation for the second list. From this list the image with the highest width over height ratio is selected. This is done on the assumption that the widest image is the most likely to contain multiple characters. It should be noted that the height of the images is not the same for all images, as white borders are from \leftsubimage and \rightsubimage before they are stored in the either \characters or \segmentfurther. This reduces the influence of sloppy word bounding boxes on the segmentation.
 
 \subsubsection{Select Segmentation Point}
 \label{sss:method:segmentaton:selectssp}
@@ -128,37 +93,57 @@ As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track o
 
 	The second scores promotes the selection of segmentation points that indicate spaces where white space separates two characters. Let the height of the sub image be $w$ and $l_d$ the pixel density in the image underneath the line, the density score is then:
 		\begin{equation}
-			s-{\text{density}} = \frac{l_d}{w}.
-		\end{equation}a
+			s_{\text{density}} = \frac{l_d}{w}.
+		\end{equation}
 	Both scores are summed, the line with the lowest score is selected as the segmentation point.
 
 \subsubsection{Split}
 \label{sss:method:segmentaton:splitimage}
 
 	\begin{figure}
+		\timemachine{Indicate $g$ and $s$ in the image.}
 		\centering
 		\subfloat[]{
-			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_straight_path.png}%
+			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_straight_path.png}%
 			\raisebox{1em}{\hspace{2em} $\to$ \hspace{2em}}
-			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_straight_left.png}%
+			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_straight_left.png}%
 			\raisebox{1em}{\hspace{2em} $\&$ \hspace{2em}}
-			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_straigt_right.png}%
+			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_straigt_right.png}%
 			\label{fig:method:segmentation:splitting:straight}%
 		}
-		
+
 		\subfloat[]{
-			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_astar_path.png}%
+			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_astar_path.png}%
 			\raisebox{1em}{\hspace{2em} $\to$ \hspace{2em}}
-			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_astar_left.png}%
+			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_astar_left.png}%
 			\raisebox{1em}{\hspace{2em} $\&$ \hspace{2em}}
-			\includegraphics[width=5em, height=3em, keepaspectratio=True]{shared/img/method/split_astar_right.png}%
+			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_astar_right.png}%
 			\label{fig:method:segmentation:splitting:astar}%
 		}
-		\caption{}
+		\caption{Splitting based on a segmentation point, shown as a blue line, along \protect\subref{fig:method:segmentation:splitting:straight} a straight path and \protect\subref{fig:method:segmentation:splitting:astar} a path found with \astar. The used paths are shown in red. The original image is shown on the left of the arrow, the resulting sub images are shown on the right side of the arrow.}
 		\label{fig:method:segmentation:splitting:comparison}
 	\end{figure}
 
-\todo[inline]{How to split an image, compare our approach with the splitting along a straight line. Mention A* parameters.}
+	The simplest way to split the image along the segmentation line, $l$, is to designate all pixel to the left of the line to \leftsubimage, and all pixels to the right of the line to \rightsubimage. However this can result in artifacts as illustrated in \cref{fig:method:segmentation:splitting:straight}, where part of the `n' is added to the `i', resulting in a letter that looks more like a `c' than an `i' in \leftsubimage.
+
+	In \cref{fig:method:segmentation:splitting:astar} the image are split along a path that keeps both characters intact. This path is found by looking for a path from $s$ to $g$, the pixels on the segmentation line on the first and last row, respectively. From some pixel only its four-connected neighbors can be reached. The path is searched in an area with width minimum character width centered on the segmentation line, to restrict the path and computation time. The heuristic distance from pixel $n$ to the goal pixel, $g$:
+	\begin{equation}\label{eq:method:segmentation:heuristic}
+		h(n) = \abs{g_x - n_x} + \abs{g_y - n_y}.
+	\end{equation}
+	We chose the Manhattan distance as that best represents possible paths taken when walking along pixels in an image.
+
+	The cost of getting from the start pixel, $s$, to pixel $n$ is defined as:
+	\begin{equation}\label{eq:method:segmentation:costFunction}
+		g(n) = 
+		\begin{cases}
+			g(n') + 1	& \text{if } n \text{ is a background pixel.}\\
+			g(n') + i 	& \text{if } n \text{ is a foreground pixel on $l$.}\\
+			\infty 		& \text{otherwise.}
+		\end{cases}
+	\end{equation}
+	where $i$ is the intersection penalty and $n'$ is the four connected neighbor from which we reached $n$.
+
+	\Cref{eq:method:segmentation:costFunction} allows the path along which the characters are separated to only intersect foreground pixels on the segmentation line. Furthermore the intersection penalty ensures that the characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
 
 \subsubsection{Is Character}
 \label{sss:method:segmentaton:segmentfurther}
