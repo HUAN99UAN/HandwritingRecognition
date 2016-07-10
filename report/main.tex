@@ -68,6 +68,16 @@
 \crefname{enumi}{stage}{stages}  
 \Crefname{enumi}{Stage}{Stages}
 
+%Math
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
 %Custom commands
 \newcommand{\bigOh}[1]{\ensuremath{\mathcal{O}\left(#1\right)}}
 \renewcommand{\t}[1]{\ensuremath{\mathit{#1}}}
