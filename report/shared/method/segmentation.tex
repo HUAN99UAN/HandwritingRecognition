@@ -11,7 +11,7 @@
 \newcommand{\characters}{\ensuremath{\t{done}}\xspace}
 \newcommand{\parameters}{\ensuremath{\t{parameters}}\xspace}
 
-\begin{figure}
+\begin{figure}[t]
 	\input{shared/method/segmentation_algorithm}
 	\caption{The Binary Over Segmentation Algorithm.}
 	\label{alg:method:segmentation:algorithm}
@@ -28,21 +28,6 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 	The body region is the part of the image between the lower and upper base line. The lower base line is computed as the mode of the minimum row index with a foreground pixel in each column. The upper baseline is computed similarly, but uses the maximum row index.
 
 	Using the body region for the computation of the segmentation points reduces the influence of extensive ligatures \cite{lee2012binary}. \Cref{fig:method:segmentation:baseline} presents some examples of computed baselines. The first example, \Cref{fig:method:segmentation:baseline:succes}, reflects the intended outcome. The second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high, probably due too the extra curve on the last letter.
-
-	\begin{figure}
-		\centering
-		\subfloat[]{
-			\includegraphics[height=7em]{shared/img/method/base_line_succes.png}%
-			\label{fig:method:segmentation:baseline:succes}%
-		}
-		\hspace{0.05\columnwidth}
-		\subfloat[]{
-			\includegraphics[height=7em]{shared/img/method/base_line_fail.png}%
-			\label{fig:method:segmentation:baseline:failure}%
-		}
-		\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect found baselines. The computed baselines are shown in red. If the found baselines were incorrect, the expected baselines are shown in blue.}
-		\label{fig:method:segmentation:baseline}
-	\end{figure}
 
 \subsubsection{Stroke Width}
 \label{sss:method:segmentaton:strokwidth}
@@ -65,6 +50,21 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 
 	After all segmentation lines crossing a hole have been removed we move the segmentation lines in such a way that in the final positioning the distance between two segmentation lines is always greater than the minimum character width. To this end we iterate over all neighboring pairs of segmentation lines from left to right. If the distance between the two lines that make up the pair is smaller than the the minimum character width, the two lines are replaced by one line in the horizontal center of the regions defined by the pair.  This process is recursively repeated recursively for the segmentation lines to the left and to right of the new line. The resulting set of lines is used for the segmentation.
 
+	\begin{figure}[t]
+		\centering
+		\subfloat[]{
+			\includegraphics[height=7em]{shared/img/method/base_line_succes.png}%
+			\label{fig:method:segmentation:baseline:succes}%
+		}
+		\hspace{0.05\columnwidth}
+		\subfloat[]{
+			\includegraphics[height=7em]{shared/img/method/base_line_fail.png}%
+			\label{fig:method:segmentation:baseline:failure}%
+		}
+		\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect found baselines. The computed baselines are shown in red. If the found baselines were incorrect, the expected baselines are shown in blue.}
+		\label{fig:method:segmentation:baseline}
+	\end{figure}
+
 \subsubsection{Select Sub-Image}
 \label{sss:method:segmentaton:selectsubimage}
 	As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track of two lists, one with character images, \characters, and one with images that need to be segmented further, \segmentfurther. At the start of each iteration the image with the highest width over height ratio is selected for further segmentation from the second list. This selection criterion assumes that the widest image is the most likely to contain multiple characters. It should be noted that the height of the images is not the same for all images, as white borders are removed from \image,\leftsubimage and \rightsubimage before they are returned from \function{SPLIT}{}. This reduces the influence of sloppy word bounding boxes or segmentation lines on the segmentation.
@@ -86,7 +86,7 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 
 	The simplest way to split the image along the segmentation line, $l$, is to designate all pixel to the left of the line to \leftsubimage, and all pixels to the right of the line to \rightsubimage. However this can result in artifacts as illustrated in \cref{fig:method:segmentation:splitting:straight}, where part of the `n' is added to the `i', resulting in a letter that looks more like a `c' than an `i' in \leftsubimage.
 
-	\begin{figure}
+	\begin{figure}[t]
 		\centering
 		\subfloat[]{
 			\resizebox {0.45\columnwidth} {!} {
