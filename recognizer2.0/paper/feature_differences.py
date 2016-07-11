@@ -9,7 +9,7 @@ from classification import GeneralModel
 from utils.image import Image, ColorMode
 
 
-required_image_width_in_pixels = 252
+required_image_width_in_pixels = 200
 
 
 def compute_feature_set_differences(a, b):
@@ -55,12 +55,12 @@ def visualize_distance_matrix(distance_matrix):
 
 if __name__ == '__main__':
     model_file = '/Users/laura/Repositories/HandwritingRecognition/recognizer2.0/model.pkl'
-    distance_matrix_file = '/Users/laura/Desktop/distance_matrix.pkl'
+    distance_matrix_file = '/Users/laura/Repositories/HandwritingRecognition/recognizer2.0/distance_matrixre.pkl'
     image_output_file = '/Users/laura/Repositories/HandwritingRecognition/report/individual/img/discussion/distance.png'
 
     # model = GeneralModel.read_from_file(model_file)
     # distance_matrix = compute_difference_matrix(model)
-
+    #
     # with open(distance_matrix_file, 'wb+') as output_file:
     #     pickle.dump(distance_matrix, output_file)
 
