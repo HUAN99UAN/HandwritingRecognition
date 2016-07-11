@@ -84,6 +84,8 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 \subsubsection{Split}
 \label{sss:method:segmentaton:splitimage}
 
+	The simplest way to split the image along the segmentation line, $l$, is to designate all pixel to the left of the line to \leftsubimage, and all pixels to the right of the line to \rightsubimage. However this can result in artifacts as illustrated in \cref{fig:method:segmentation:splitting:straight}, where part of the `n' is added to the `i', resulting in a letter that looks more like a `c' than an `i' in \leftsubimage.
+
 	\begin{figure}
 		\centering
 		\subfloat[]{
@@ -100,12 +102,12 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 			  		}]
 				    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_straight_path.png}};
 				    \begin{scope}[x={(image.south east)},y={(image.north west)}]
-				    	\node [anchor=south, noname] (s) at (0.4130434783,1.15) {$s$}; 
-				    	\node[draw=none] (saux) at (0.4130434783,1) {};
+				    	\node [anchor=south, noname] (s) at (0.4130434783,1.1) {$s$}; 
+				    	\node[draw=none] (saux) at (0.4130434783,0.95) {};
 						\draw[->] (s) edge (saux);
 						%
-				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.15) {$g$}; 
-				    	\node[draw=none] (gaux) at (0.4130434783,0) {};
+				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.1) {$g$}; 
+				    	\node[draw=none] (gaux) at (0.4130434783,0.05) {};
 						\draw[->] (g) edge (gaux);						
 				    \end{scope}
 				\end{tikzpicture}
@@ -127,31 +129,28 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 			  		}]
 				    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_astar_path.png}};
 				    \begin{scope}[x={(image.south east)},y={(image.north west)}]
-				    	\node [anchor=south, noname] (s) at (0.4130434783,1.15) {$s$}; 
-				    	\node[draw=none] (saux) at (0.4130434783,1) {};
+				    	\node [anchor=south, noname] (s) at (0.4130434783,1.1) {$s$}; 
+				    	\node[draw=none] (saux) at (0.4130434783,0.95) {};
 						\draw[->] (s) edge (saux);
 						%
-				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.15) {$g$}; 
-				    	\node[draw=none] (gaux) at (0.4130434783,0) {};
+				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.1) {$g$}; 
+				    	\node[draw=none] (gaux) at (0.4130434783,0.05) {};
 						\draw[->] (g) edge (gaux);						
 				    \end{scope}
 				\end{tikzpicture}
 			}			
 			\label{fig:method:segmentation:splitting:astar}%			
 		}
-		\caption{Splitting based on a segmentation point, shown as a blue line, along \protect\subref{fig:method:segmentation:splitting:straight} a straight path and \protect\subref{fig:method:segmentation:splitting:astar} a path found with \astar. The used path are shown in red.}
+		\caption{Splitting based on a segmentation point, shown as a blue line, along \protect\subref{fig:method:segmentation:splitting:straight} a straight path and \protect\subref{fig:method:segmentation:splitting:astar} a path found with \astar. The used path are shown in red. The arrows indicate the position of the goal and destination pixels, $s$ and $g$ respectively.}
 		\label{fig:method:segmentation:splitting:comparison}
 	\end{figure}
 
-	The simplest way to split the image along the segmentation line, $l$, is to designate all pixel to the left of the line to \leftsubimage, and all pixels to the right of the line to \rightsubimage. However this can result in artifacts as illustrated in \cref{fig:method:segmentation:splitting:straight}, where part of the `n' is added to the `i', resulting in a letter that looks more like a `c' than an `i' in \leftsubimage.
-
-	In \cref{fig:method:segmentation:splitting:astar} the image are split along a path that keeps both characters intact. This path is found by looking for a path from $s$ to $g$, the pixels on the segmentation line on the first and last row, respectively. From some pixel only its four-connected neighbors can be reached. The path is searched in an area with width minimum character width centered on the segmentation line, to restrict the path and computation time. The heuristic distance from pixel $n$ to the goal pixel, $g$:
+	In \cref{fig:method:segmentation:splitting:astar} the image is split along a path that keeps both characters intact. This path is found by looking for a path from $s$ to $g$ with \astar. From some pixel only its four-connected neighbors can be reached. The path is searched in the area defined by a rectangle with minimum character width and image height centered on the segmentation line. The heuristic distance from pixel $n$ to the goal pixel, $g$ is the Manhattan distance between the two pixels:
 	\begin{equation}\label{eq:method:segmentation:heuristic}
-		h(n) = \abs{g_x - n_x} + \abs{g_y - n_y}.
+		h(n) = \abs{g_x - n_x} + \abs{g_y - n_y},
 	\end{equation}
-	We chose the Manhattan distance as that best represents possible paths taken when walking along pixels in an image.
-
-	The cost of getting from the start pixel, $s$, to pixel $n$ is defined as:
+	as we are traversing a four connected pixel grid.
+	The cost of getting from pixel $s$, to pixel $n$ is defined as:
 	\begin{equation}\label{eq:method:segmentation:costFunction}
 		g(n) = 
 		\begin{cases}
@@ -160,20 +159,16 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 			\infty 		& \text{otherwise.}
 		\end{cases}
 	\end{equation}
-	where $i$ is the intersection penalty and $n'$ is the four connected neighbor from which we reached $n$.
-
-	\Cref{eq:method:segmentation:costFunction} allows the path along which the characters are separated to only intersect foreground pixels on the segmentation line. Furthermore the intersection penalty ensures that the characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
+	where $i$ is the intersection penalty and $n'$ is the four connected neighbor from which we reached $n$. \Cref{eq:method:segmentation:costFunction} ensurers that the path only intersects foreground pixels if they lie on the segmentation line. Furthermore the intersection penalty ensures that characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
 
 \subsubsection{Detecting a Character Image}
 \label{sss:method:segmentaton:segmentfurther}
-	Essential to assign a sub image to the correct path is determining if it is an image of a character or if it should be segmented further. This determination is made based on three properties of the sub image: the width, the height and the number of foreground pixels. 
+	We decide if a sub image is a character or if it should be segmented further based on three properties of the sub image: the width, the height and the number of foreground pixels. The sub image should satisfy two conditions to be considered a character: Its width should be between between the minimum and maximum image width. And the number of foreground pixels should be greater than the minimum number of foreground pixels.
 
-	The sub image should satisfy two conditions to be considered a character: The width of the sub image should be between between the minimum and maximum image width. And the number of foreground pixels should be greater than the minimum number of foreground pixels.
-
-	An image is considered for further segmentation if it satisfies three conditions: it should have segmentation lines, the number of foreground pixels and the image width should be greater than twice the minimum number of foreground pixels and the minimum image width, respectively. 
+	An image is considered for further segmentation if it satisfies three conditions: it should have segmentation lines, the number of foreground pixels and the image width should be greater than twice the minimum of these values in the train data.
 
 	If neither of the preceding sets of conditions are satisfied the image is considered for further segmentation if its width is greater than the mean character width and it has segmentation lines. If its width is less than two standard deviations away from the mean character width it is added to \characters, otherwise it is discarded.
 
 \subsubsection{Continue}
 \label{sss:method:segmentaton:termination}
-	Segmentation is continued as long as the following conditions are satisfied: we have not yet found more characters than the length of the longest word in the lexicon and there are still images in the list \segmentfurther. The first condition aims to reduce over segmentation.
+	Segmentation is continued as long as the following conditions are satisfied: we have not yet found more characters than the length of the longest word in the lexicon and there are still images in the list \segmentfurther. 
