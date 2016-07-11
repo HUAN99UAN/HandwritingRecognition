@@ -46,7 +46,7 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 
 \subsubsection{Stroke Width}
 \label{sss:method:segmentaton:strokwidth}
-	The stroke width refers to how thick the stroke of a pen is. We compute the stroke width as the mode of the number of sequential foreground pixels in one row or column of pixels in the horizontal and the vertical direction respectively. The stroke width is computed per image instead of per page or data set word to be able to handle text written by different authors or with different pens on the same page.
+	The stroke width refers to how thick the stroke of a pen is. It is computed as the mode of the number of sequential foreground pixels in one row or column of pixels. As different pens or authors can write on the same page it is more robust to compute the stroke width per word image instead of per page image.
 
 \subsubsection{Segmentation Points}
 \label{sss:method:segmentaton:segmentationpoints}
