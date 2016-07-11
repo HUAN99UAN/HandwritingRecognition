@@ -3,6 +3,7 @@ from utils.shapes import Rectangle
 from utils.things import Point, BoundingBox
 from utils import colors
 from inputOutput import wordio
+from preprocessing import Pipe
 
 
 class BoundingBoxPainter:
@@ -71,6 +72,31 @@ if __name__ == '__main__':
         lambda image: BoundingBox(left=0, right=image.width - 1, top=1250, bottom=2100)
     ]
 
+    files = [{
+        'image file':
+            '/Users/laura/Repositories/HandwritingRecognition/data/images/jpg/KNMP-VIII_F_69______2C2O_0004.jpg',
+        'annotation file':
+            '/Users/laura/Repositories/HandwritingRecognition/data/labels/KNMP-VIII_F_69______2C2O_0004.words',
+        'bounding box output file':
+            '/Users/laura/Dropbox/Studie/Handwriting Recognition/individual/img/introduction/bohemians.png',
+        'preprocessing output file':
+            '/Users/laura/Dropbox/Studie/Handwriting Recognition/individual/img/discussion/bohemians.png',
+        'bounding box':
+            lambda image: BoundingBox(left=0, right=image.width - 1, top=1100, bottom=1950)
+        }, {
+        'image file':
+            '/Users/laura/Repositories/HandwritingRecognition/data/images/jpg/Stanford-CCCC_0072.jpg',
+        'annotation file':
+            '/Users/laura/Repositories/HandwritingRecognition/data/labels/Stanford-CCCC_0072.words',
+        'bounding box output file':
+            '/Users/laura/Dropbox/Studie/Handwriting Recognition/individual/img/introduction/oldEnglishHomilies.png',
+        'preprocessing output file':
+            '/Users/laura/Dropbox/Studie/Handwriting Recognition/individual/img/discussion/oldEnglishHomilies.png',
+        'bounding box':
+            lambda image: BoundingBox(left=0, right=image.width - 1, top=1250, bottom=2100)
+        }
+    ]
+
     internal_settings = {
         'color': colors.red,
         'width': 2,
@@ -89,10 +115,18 @@ if __name__ == '__main__':
         internal_parameters=internal_settings
     )
 
-    for idx, image_file in enumerate(image_files):
-        image = painter.paint(image_file=image_file, annotation_file=annotation_files[idx])
+    for input_file in files:
+        image = Image.from_file(input_file.get('image file'))
+        bounding_box_image = painter.paint(image=image, annotation_file=input_file.get('annotation file'))
         section = image.sub_image(
-            bounding_box=bounding_boxes[idx](image),
+            bounding_box=input_file.get('bounding box')(bounding_box_image),
             remove_white_borders=False
         )
-        section.to_file(output_file=output_files[idx])
+        section.to_file(output_file=input_file.get('bounding box output file'))
+
+        preprocessed = Pipe().apply(image)
+        preprocessed = preprocessed.sub_image(
+            bounding_box=input_file.get('bounding box')(image),
+            remove_white_borders=False
+        )
+        preprocessed.to_file(output_file=input_file.get('preprocessing output file'))
