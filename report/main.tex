@@ -1,4 +1,4 @@
-\documentclass[10pt,journal,compsoc, draft]{IEEEtran}
+\documentclass[10pt,journal,compsoc]{IEEEtran}
 \usepackage[utf8]{inputenc}
 
 %Language
@@ -86,8 +86,9 @@
 
 %Shortcuts
 \newcommand{\astar}{A*\xspace}
-\newcommand{\knn}{$k$-NN\xspace}
-\newcommand{\Knn}{$K$-NN\xspace}
+\newcommand{\knnk}{\ensuremath{\mathcal{K}}\xspace}
+\newcommand{\knn}{\knnk-NN\xspace}
+\newcommand{\Knn}{\knnk-nearest neighbor\xspace}
 
 %Temporary
 \usepackage{layouts}
@@ -121,6 +122,10 @@
 \section{Discussion}
 \label{s:discussion}
 \input{individual/discussion}
+
+\section{Conclusion}
+\label{s:conclusion}
+\input{individual/conclusion}
 
 \bibliographystyle{IEEEtran}
 \bibliography{biblio}
