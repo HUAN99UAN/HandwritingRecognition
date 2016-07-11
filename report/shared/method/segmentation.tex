@@ -13,15 +13,15 @@
 
 \begin{figure}
 	\input{shared/method/segmentation_algorithm}
-	\caption{Binary Over Segmentation Algorithm.}
+	\caption{The Binary Over Segmentation Algorithm.}
 	\label{alg:method:segmentation:algorithm}
 \end{figure}
 
-We use binary over segmentation to segment the words into images, the pseudo code of this algorithm is presented in \cref{alg:method:segmentation:algorithm}. This algorithm aims to segment an image into two sub-images on the segmentation point that is most likely. One of these sub images is then selected and segmented again into two new sub-images, if it is not a character. This is repeated until the termination condition has been reached, i.e. \function{continue}{} is not longer true. If the segmentation has finished the list with images that could be segmented further, \segmentfurther, and the list with characters, \characters, are merged by \function{merge}. This function ensures that the final returned list of character images is in the same order as the characters occur in the word image. \Cref{fig:method:segmentation:tree} illustrates how the algorithm segments an images of a word into images of characters.
+We use a form of binary over segmentation to recognize characters in the word, see \cref{alg:method:segmentation:algorithm}. This algorithm aims to segment an image on the most likely segmentation point. If these sub images are not characters they can be selected again for further segmentation. This segmenting of sub images is repeated until the termination condition has been reached. The final list of characters is the list of characters, \characters, merged with the list of images that could be segmented further, \segmentfurther. This merge also ensures that the order of the images is correct.
 
-The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:algorithm} contain the maximum character length and the minimum, average and maximum image width and height. The maximum word length is the length of the longest word in the data set. The other six values are determined based on the data. Before computing the minimum, average or maximum all widths, or heights, that are not within two standard deviations of the mean of the character widths, or heights, are discarded as outliers. 
+The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:algorithm} contain the maximum word length and the minimum, mean and maximum image width, height and number of foreground pixels. Other than maximum word length, these parameters are computed based on the train data, by collecting these data from each character image, the minimum, mean and maximum are computed over all measurements that fall within two standard deviations of the mean. The maximum word length is simply the length of the longest word in the train data.
 
-The different functions referenced in \cref{alg:method:segmentation:algorithm} are discussed in \crefrange{sss:method:segmentaton:bodyregion}{sss:method:segmentaton:termination}.
+The different functions used in \cref{alg:method:segmentation:algorithm} are discussed in \crefrange{sss:method:segmentaton:bodyregion}{sss:method:segmentaton:termination}.
 
 \begin{figure}
 	\centering
