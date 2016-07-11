@@ -1,0 +1,53 @@
+%!TEX root = ../../main.tex
+\subfloat[]{
+	\resizebox {0.45\columnwidth} {!} {
+		\begin{tikzpicture}
+			[
+				noname/.style={%
+				rectangle,
+				text height=1.5ex,
+				text depth=.25ex,
+				text width=1em,
+				text centered,
+				minimum height=1em
+	  		}]
+		    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_straight_path.png}};
+		    \begin{scope}[x={(image.south east)},y={(image.north west)}]
+		    	\node [anchor=south, noname] (s) at (0.4130434783,1.1) {$s$}; 
+		    	\node[draw=none] (saux) at (0.4130434783,0.95) {};
+				\draw[->] (s) edge (saux);
+				%
+		    	\node [anchor=north, noname] (g) at (0.4130434783,-0.1) {$g$}; 
+		    	\node[draw=none] (gaux) at (0.4130434783,0.05) {};
+				\draw[->] (g) edge (gaux);						
+		    \end{scope}
+		\end{tikzpicture}
+	}			
+	\label{fig:method:segmentation:splitting:straight}%			
+}
+\hfill
+\subfloat[]{
+	\resizebox {0.45\columnwidth} {!} {
+		\begin{tikzpicture}
+			[
+				noname/.style={%
+				rectangle,
+				text height=1.5ex,
+				text depth=.25ex,
+				text width=1em,
+				text centered,
+				minimum height=1em
+	  		}]
+		    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_astar_path.png}};
+		    \begin{scope}[x={(image.south east)},y={(image.north west)}]
+		    	\node [anchor=south, noname] (s) at (0.4130434783,1.1) {$s$}; 
+		    	\node[draw=none] (saux) at (0.4130434783,0.95) {};
+				\draw[->] (s) edge (saux);
+				%
+		    	\node [anchor=north, noname] (g) at (0.4130434783,-0.1) {$g$}; 
+		    	\node[draw=none] (gaux) at (0.4130434783,0.05) {};
+				\draw[->] (g) edge (gaux);						
+		    \end{scope}
+		\end{tikzpicture}
+	}
+}
