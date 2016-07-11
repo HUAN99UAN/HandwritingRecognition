@@ -23,19 +23,11 @@ The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:
 
 The different functions used in \cref{alg:method:segmentation:algorithm} are discussed in \crefrange{sss:method:segmentaton:bodyregion}{sss:method:segmentaton:termination}.
 
-\begin{figure}
-	\centering
-	\timemachine{Create this image, as a tree with the word image as the root and the character image as the leaf. In the images mark the used segmentation line. Don't show left over segmentation lines in the leaves.}
-	\missingfigure{Visualize how a word is segmented, using a tree view. Sort of like \cref{fig:introduction:binaryOversegmentation:chainfailure}.}
-	\caption{Caption here}
-	\label{fig:method:segmentation:tree}
-\end{figure}
-
 \subsubsection{Body Region}
 \label{sss:method:segmentaton:bodyregion}
-	The body region is the part of the image that is between the lower and the upper base line. To compute the low base line for each column in the image the lowest row with a foreground pixel is computed. The low base line is the mode of the these rows. The high baseline is computed in the same way, but uses the highest row of each column with a foreground pixel. 
+	The body region is the part of the image between the lower and upper base line. The lower base line is computed as the mode of the minimum row index with a foreground pixel in each column. The upper baseline is computed similarly, but uses the maximum row index.
 
-	The part of the image between the low and high base line is the body region. Using this region for the computation of the segmentation points reduces the influence of extensive ligatures. \Cref{fig:method:segmentation:baseline} illustrates examples of the determination of the baselines. \Cref{fig:method:segmentation:baseline:succes} reflects the intended outcome, the second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high because of the extra curve on the last letter.
+	Using the body region for the computation of the segmentation points reduces the influence of extensive ligatures \cite{lee2012binary}. \Cref{fig:method:segmentation:baseline} presents some examples of computed baselines. The first example, \Cref{fig:method:segmentation:baseline:succes}, reflects the intended outcome. The second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high, probably due too the extra curve on the last letter.
 
 	\begin{figure}
 		\centering
@@ -48,7 +40,7 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 			\includegraphics[height=7em]{shared/img/method/base_line_fail.png}%
 			\label{fig:method:segmentation:baseline:failure}%
 		}
-		\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect baselines found with the described method. The found baselines are shown in red. If the found baselines were incorrect, the correct baselines are shown in blue.}
+		\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect found baselines. The computed baselines are shown in red. If the found baselines were incorrect, the expected baselines are shown in blue.}
 		\label{fig:method:segmentation:baseline}
 	\end{figure}
 
@@ -147,14 +139,14 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 
 \subsubsection{Detecting a Character Image}
 \label{sss:method:segmentaton:segmentfurther}
-Essential to assign a sub image to the correct path is determining if it is an image of a character or if it should be segmented further. This determination is made based on three properties of the sub image: the width, the height and the number of foreground pixels. 
+	Essential to assign a sub image to the correct path is determining if it is an image of a character or if it should be segmented further. This determination is made based on three properties of the sub image: the width, the height and the number of foreground pixels. 
 
-The sub image should satisfy two conditions to be considered a character: The width of the sub image should be between between the minimum and maximum image width. And the number of foreground pixels should be greater than the minimum number of foreground pixels.
+	The sub image should satisfy two conditions to be considered a character: The width of the sub image should be between between the minimum and maximum image width. And the number of foreground pixels should be greater than the minimum number of foreground pixels.
 
-An image is considered for further segmentation if it satisfies three conditions: it should have segmentation lines, the number of foreground pixels and the image width should be greater than twice the minimum number of foreground pixels and the minimum image width, respectively. 
+	An image is considered for further segmentation if it satisfies three conditions: it should have segmentation lines, the number of foreground pixels and the image width should be greater than twice the minimum number of foreground pixels and the minimum image width, respectively. 
 
-If neither of the preceding sets of conditions are satisfied the image is considered for further segmentation if its width is greater than the mean character width and it has segmentation lines. If its width is less than two standard deviations away from the mean character width it is added to \characters, otherwise it is discarded.
+	If neither of the preceding sets of conditions are satisfied the image is considered for further segmentation if its width is greater than the mean character width and it has segmentation lines. If its width is less than two standard deviations away from the mean character width it is added to \characters, otherwise it is discarded.
 
 \subsubsection{Continue}
 \label{sss:method:segmentaton:termination}
-Segmentation is continued as long as the following conditions are satisfied: we have not yet found more characters than the length of the longest word in the lexicon and there are still images in the list \segmentfurther. The first condition aims to reduce over segmentation.
+	Segmentation is continued as long as the following conditions are satisfied: we have not yet found more characters than the length of the longest word in the lexicon and there are still images in the list \segmentfurther. The first condition aims to reduce over segmentation.
