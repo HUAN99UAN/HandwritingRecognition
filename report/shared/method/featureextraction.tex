@@ -1,14 +1,14 @@
-%!TEX root = ../main.tex
+%!TEX root = ../../main.tex
 While we considered using various features for the character recognition such as crossing, projection histograms and celled projections \cite{HWR:features1}\cite{HWR:features2}. From all the above the celled projections report the best results (7\% and 10\% better than crossings and projections respectively) \cite{HWR:features1}. At this point it is also worth mentioning that we scaled the character pictures relatively to their height before extracting the features.
 
 
 \subsubsection{Projection histogram}
-Projection histogram \cite{Chacko2015} is simply the hystogram of the letter on $x$ or $y$ axis or both. In figure \ref{fig:method:features:hist_proj} we see an example of projection histogram on a character.
+Projection histogram \cite{Chacko2015} is simply the histogram of the letter on $x$ or $y$ axis or both. In \cref{fig:method:features:hist_proj} we see an example of projection histogram on a character.
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=8em]{shared/img/hist_project.png}
-	\caption{Projection histogram of number 5. \footnote{Projection histogram image: http://www.olivier-augereau.com/blog/?p=257}}
+	\caption{Projection histogram of number 5. Image taken form \cite{oliveraugereau}.}
 	\label{fig:method:features:hist_proj}
 \end{figure}
 
