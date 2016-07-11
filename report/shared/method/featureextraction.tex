@@ -18,7 +18,7 @@ Projection histogram \cite{Chacko2015} is simply the hystogram of the letter on 
 \subsubsection{Celled projection}
 Celled projections are extracted as follows. First the area of the character is split into regions, vertically, horizontally or mixed. In \ref{fig:method:features:feature} we see an example of vertical projection. Then for each of the regions we acquire the projections of the pixels on the left border of the region. This way binary vectors are created which then we concatenate.
 
-\begin{figure}[ht]
+\begin{figure}[t!]
 	\includegraphics[width=8cm]{shared/img/projection_letter.jpg}
 	\caption{In the above picture we see that even if the characters are differently written the projection feature will still extract consistent vectors.}
 	\label{fig:method:features:feature}

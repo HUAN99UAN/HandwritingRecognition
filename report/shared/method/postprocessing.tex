@@ -1,4 +1,6 @@
 %!TEX root = ../../main.tex
-\todo[inline]{How do we do post processing}
-\todo[inline]{How are priors computed}
-\todo[inline]{Which distance measure is used}
+For post processing we build a lexicon of the words that occur in the train data, for each of these words we compute a prior probability based on their occurrence in the train data. Given some read word $w$ we compute a similarity score
+\begin{equation}
+	s_{\text{similarity}} = (1 - d_H(w, x)) \cdot P(x)
+\end{equation}
+for each entry $x$ in the lexicon. The similarity score is the normalized hamming distance between the words $w$ and $x$ multiplied with the prior probability of $x$. The lexicon entry with the highest score is assumed to be the read word.

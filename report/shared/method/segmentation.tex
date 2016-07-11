@@ -17,17 +17,28 @@
 	\label{alg:method:segmentation:algorithm}
 \end{figure}
 
+\begin{figure}[t]
+	\centering
+	\subfloat[]{
+		\includegraphics[height=7em]{shared/img/method/base_line_succes.png}%
+		\label{fig:method:segmentation:baseline:succes}%
+	}
+	\hspace{0.05\columnwidth}
+	\subfloat[]{
+		\includegraphics[height=7em]{shared/img/method/base_line_fail.png}%
+		\label{fig:method:segmentation:baseline:failure}%
+	}
+	\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect found baselines. The computed baselines are shown in red. If the found baselines were incorrect, the expected baselines are shown in blue.}
+	\label{fig:method:segmentation:baseline}
+\end{figure}
+
 We use a form of binary over segmentation to recognize characters in the word, see \cref{alg:method:segmentation:algorithm}. This algorithm aims to segment an image on the most likely segmentation point. If these sub images are not characters they can be selected again for further segmentation. This segmenting of sub images is repeated until the termination condition has been reached. The final list of characters is the list of characters, \characters, merged with the list of images that could be segmented further, \segmentfurther. This merge also ensures that the order of the images is correct.
 
-The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:algorithm} contain the maximum word length and the minimum, mean and maximum image width, height and number of foreground pixels. Other than maximum word length, these parameters are computed based on the train data, by collecting these data from each character image, the minimum, mean and maximum are computed over all measurements that fall within two standard deviations of the mean. The maximum word length is simply the length of the longest word in the train data.
-
-The different functions used in \cref{alg:method:segmentation:algorithm} are discussed in \crefrange{sss:method:segmentaton:bodyregion}{sss:method:segmentaton:termination}.
+The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:algorithm} contain the maximum word length and the minimum, mean and maximum image width, height and number of foreground pixels. Other than maximum word length, these parameters are computed based on the train data, by collecting these data from each character image, the minimum, mean and maximum are computed over all measurements that fall within two standard deviations of the mean. The maximum word length is simply the length of the longest word in the train data. The different functions used in \cref{alg:method:segmentation:algorithm} are discussed in \crefrange{sss:method:segmentaton:bodyregion}{sss:method:segmentaton:termination}.
 
 \subsubsection{Body Region}
 \label{sss:method:segmentaton:bodyregion}
-	The body region is the part of the image between the lower and upper base line. The lower base line is computed as the mode of the minimum row index with a foreground pixel in each column. The upper baseline is computed similarly, but uses the maximum row index.
-
-	Using the body region for the computation of the segmentation points reduces the influence of extensive ligatures \cite{lee2012binary}. \Cref{fig:method:segmentation:baseline} presents some examples of computed baselines. The first example, \Cref{fig:method:segmentation:baseline:succes}, reflects the intended outcome. The second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high, probably due too the extra curve on the last letter.
+	The body region is the part of the image between the lower and upper base line. The lower base line is computed as the mode of the minimum row index with a foreground pixel in each column. The upper baseline is computed similarly, but uses the maximum row index. Using the body region for the computation of the segmentation points reduces the influence of extensive ligatures \cite{lee2012binary}. \Cref{fig:method:segmentation:baseline} presents some examples of computed baselines. The first example, \Cref{fig:method:segmentation:baseline:succes}, reflects the intended outcome. The second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high, probably due too the extra curve on the last letter.
 
 \subsubsection{Stroke Width}
 \label{sss:method:segmentaton:strokwidth}
@@ -50,21 +61,6 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 
 	After all segmentation lines crossing a hole have been removed we move the segmentation lines in such a way that in the final positioning the distance between two segmentation lines is always greater than the minimum character width. To this end we iterate over all neighboring pairs of segmentation lines from left to right. If the distance between the two lines that make up the pair is smaller than the the minimum character width, the two lines are replaced by one line in the horizontal center of the regions defined by the pair.  This process is recursively repeated recursively for the segmentation lines to the left and to right of the new line. The resulting set of lines is used for the segmentation.
 
-	\begin{figure}[t]
-		\centering
-		\subfloat[]{
-			\includegraphics[height=7em]{shared/img/method/base_line_succes.png}%
-			\label{fig:method:segmentation:baseline:succes}%
-		}
-		\hspace{0.05\columnwidth}
-		\subfloat[]{
-			\includegraphics[height=7em]{shared/img/method/base_line_fail.png}%
-			\label{fig:method:segmentation:baseline:failure}%
-		}
-		\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect found baselines. The computed baselines are shown in red. If the found baselines were incorrect, the expected baselines are shown in blue.}
-		\label{fig:method:segmentation:baseline}
-	\end{figure}
-
 \subsubsection{Select Sub-Image}
 \label{sss:method:segmentaton:selectsubimage}
 	As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track of two lists, one with character images, \characters, and one with images that need to be segmented further, \segmentfurther. At the start of each iteration the image with the highest width over height ratio is selected for further segmentation from the second list. This selection criterion assumes that the widest image is the most likely to contain multiple characters. It should be noted that the height of the images is not the same for all images, as white borders are removed from \image,\leftsubimage and \rightsubimage before they are returned from \function{SPLIT}{}. This reduces the influence of sloppy word bounding boxes or segmentation lines on the segmentation.
@@ -84,66 +80,15 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 \subsubsection{Split}
 \label{sss:method:segmentaton:splitimage}
 
-	The simplest way to split the image along the segmentation line, $l$, is to designate all pixel to the left of the line to \leftsubimage, and all pixels to the right of the line to \rightsubimage. However this can result in artifacts as illustrated in \cref{fig:method:segmentation:splitting:straight}, where part of the `n' is added to the `i', resulting in a letter that looks more like a `c' than an `i' in \leftsubimage.
-
-	\begin{figure}[t]
+	\begin{figure}[t!]
 		\centering
-		\subfloat[]{
-			\resizebox {0.45\columnwidth} {!} {
-				\begin{tikzpicture}
-					[
-						noname/.style={%
-						rectangle,
-						text height=1.5ex,
-						text depth=.25ex,
-						text width=1em,
-						text centered,
-						minimum height=1em
-			  		}]
-				    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_straight_path.png}};
-				    \begin{scope}[x={(image.south east)},y={(image.north west)}]
-				    	\node [anchor=south, noname] (s) at (0.4130434783,1.1) {$s$}; 
-				    	\node[draw=none] (saux) at (0.4130434783,0.95) {};
-						\draw[->] (s) edge (saux);
-						%
-				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.1) {$g$}; 
-				    	\node[draw=none] (gaux) at (0.4130434783,0.05) {};
-						\draw[->] (g) edge (gaux);						
-				    \end{scope}
-				\end{tikzpicture}
-			}			
-			\label{fig:method:segmentation:splitting:straight}%			
-		}
-		\hfill
-		\subfloat[]{
-			\resizebox {0.45\columnwidth} {!} {
-				\begin{tikzpicture}
-					[
-						noname/.style={%
-						rectangle,
-						text height=1.5ex,
-						text depth=.25ex,
-						text width=1em,
-						text centered,
-						minimum height=1em
-			  		}]
-				    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_astar_path.png}};
-				    \begin{scope}[x={(image.south east)},y={(image.north west)}]
-				    	\node [anchor=south, noname] (s) at (0.4130434783,1.1) {$s$}; 
-				    	\node[draw=none] (saux) at (0.4130434783,0.95) {};
-						\draw[->] (s) edge (saux);
-						%
-				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.1) {$g$}; 
-				    	\node[draw=none] (gaux) at (0.4130434783,0.05) {};
-						\draw[->] (g) edge (gaux);						
-				    \end{scope}
-				\end{tikzpicture}
-			}			
-			\label{fig:method:segmentation:splitting:astar}%			
-		}
+		\input{segmentation_split}
+		\label{fig:method:segmentation:splitting:astar}%			
 		\caption{Splitting based on a segmentation point, shown as a blue line, along \protect\subref{fig:method:segmentation:splitting:straight} a straight path and \protect\subref{fig:method:segmentation:splitting:astar} a path found with \astar. The used path are shown in red. The arrows indicate the position of the goal and destination pixels, $s$ and $g$ respectively.}
 		\label{fig:method:segmentation:splitting:comparison}
 	\end{figure}
+
+	The simplest way to split the image along the segmentation line, $l$, is to designate all pixel to the left of the line to \leftsubimage, and all pixels to the right of the line to \rightsubimage. However this can result in artifacts as illustrated in \cref{fig:method:segmentation:splitting:straight}, where part of the `n' is added to the `i', resulting in a letter that looks more like a `c' than an `i' in \leftsubimage.
 
 	In \cref{fig:method:segmentation:splitting:astar} the image is split along a path that keeps both characters intact. This path is found by looking for a path from $s$ to $g$ with \astar. From some pixel only its four-connected neighbors can be reached. The path is searched in the area defined by a rectangle with minimum character width and image height centered on the segmentation line. The heuristic distance from pixel $n$ to the goal pixel, $g$ is the Manhattan distance between the two pixels:
 	\begin{equation}\label{eq:method:segmentation:heuristic}
@@ -159,7 +104,7 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 			\infty 		& \text{otherwise.}
 		\end{cases}
 	\end{equation}
-	where $i$ is the intersection penalty and $n'$ is the four connected neighbor from which we reached $n$. \Cref{eq:method:segmentation:costFunction} ensurers that the path only intersects foreground pixels if they lie on the segmentation line. Furthermore the intersection penalty ensures that characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
+	where $i$ is the intersection penalty and $n'$ is the four connected neighbor from which we reached $n$. \Cref{eq:method:segmentation:costFunction} ensures that the path only intersects foreground pixels if they lie on the segmentation line. Furthermore the intersection penalty ensures that characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
 
 \subsubsection{Detecting a Character Image}
 \label{sss:method:segmentaton:segmentfurther}
