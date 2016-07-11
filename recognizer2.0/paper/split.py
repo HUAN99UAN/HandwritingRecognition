@@ -13,7 +13,7 @@ def split_along_straight_line(image, line):
     binary_image = ToBinary().apply(image)
     left, right = StraightLineSplitter().split(binary_image, line)
 
-    output_image = line.paint_on(image, color=colors.blue)
+    output_image = line.paint_on(image, color=colors.yellow)
     output_image = line.paint_on(output_image, color=colors.red)
     output_image.to_file(os.path.join(wd, 'split_straight_path.png'))
 
@@ -26,7 +26,7 @@ def split_along_a_star_path(image, line):
 
     path, (left, right) = ForegroundPixelContourTracing(return_path=True).split(binary_image, line)
 
-    output_image = line.paint_on(image, color=colors.blue)
+    output_image = line.paint_on(image, color=colors.yellow)
     output_image = path.paint_on(output_image, color=colors.red)
     output_image.to_file(os.path.join(wd, 'split_astar_path.png'))
 
