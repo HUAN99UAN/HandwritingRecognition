@@ -1,14 +1,9 @@
-import argparse
-
 import msgpack_numpy as m
 from sklearn.neighbors import KNeighborsClassifier
 
 import classification as config
 import interface
-import utils.actions as actions
 from classification.model import GeneralModel
-from featureExtraction.crossings import Crossings
-from preprocessing.pipe import Pipe
 
 m.patch()
 
