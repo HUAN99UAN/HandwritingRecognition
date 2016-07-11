@@ -50,29 +50,24 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 
 \subsubsection{Segmentation Points}
 \label{sss:method:segmentaton:segmentationpoints}
-	To find the segmentation lines we first determine the suspicious regions. A suspicious region is a region in the body of the word image where the vertical pixel density is greater than some threshold, we have set this threshold to $2 \cdot \strokewidth$, \cref{fig:method:segmentation:suspiciousRegions} illustrates the suspicious regions found in a word. 
+	To find the segmentation lines we first determine the suspicious regions. A suspicious region is a region in the body of the word image where the vertical pixel density is greater than some threshold, $2 \cdot \strokewidth$. \Cref{fig:method:segmentation:suspiciousRegions} illustrates the suspicious regions found in a word. 
 
 	\begin{figure}
-		\timemachine{Create this image based on our dataset ourselves.}
 		\centering
 		\includegraphics[width=\columnwidth]{shared/img/method/suspicious_regions.png}
-		\caption{The vertical pixel density of the body of the image above the word image.  The threshold for suspicious regions is shown as a line in the histogram. The shaded areas show the suspicious regions. For the regions shaded in a color the lines associated with the segmentations points are drawn. The image is adapted from \cite{lee2012binary}.}
+		\caption{The vertical pixel density of the body of the image is shown above the word image.  The threshold for suspicious regions is shown as a line in this histogram. The shaded areas show the suspicious regions. For the regions shaded in a color the lines associated with the segmentations points are drawn. The image is adapted from \cite{lee2012binary}.}
 		\label{fig:method:segmentation:suspiciousRegions}
 	\end{figure}
 
-	Based on these regions the initial set of segmentation points is determined. If the width of a region is smaller than the minimum character width, the region results in one segmentation line in the middle of the regions, this case is illustrated by the blue region in \cref{fig:method:segmentation:suspiciousRegions}. In regions with a width that is equal to or greater than the minimum character width, the red region in \cref{fig:method:segmentation:suspiciousRegions}, segmentation points are placed at the end of the region and on intervals of the minimum character width that start at the beginning of the region. Before starting the segmentation these lines are filtered to ensure optimal placement. 
+	The initial set of segmentation points is determined based on these regions. If the width of a region is smaller than the minimum character width a segmentation point is placed in the middle of this region, as illustrated by the blue region in \cref{fig:method:segmentation:suspiciousRegions}. In regions with a width greater than or equal to the minimum character width, such as the red region in \cref{fig:method:segmentation:suspiciousRegions}, segmentation points are placed at the start and the end of the region. Between these boundaries segmentation points are placed with an intervals of minimum character width. These initial segmentation points are filtered before the actual segmentation commences.
 
-	Firstly all segmentation lines over a hole in the image are removed. This filtering is restricted to Latin alphabet, which as a number of letters with. It also assumes that it  does not occur that two letters are connected via a whole, although noise that was not removed could cause the occurrence of a hole between two letters. Holes are detected via region growing algorithm. 
+	Firstly all segmentation lines that cross a hole, i.e. a region of background pixels completely surrounded by foreground pixels, are removed. Holes are detected via region growing algorithm. 
 
-	After all segmentation lines crossing a hole have been removed we move some of the segmentation lines in such a way that in the final image the distance between two segmentation lines is always greater than the minimum character width. This is done as follows: iterate over all pairs of lines that are present when you move from left to right through the image. If the distance between the lines that make up the pair is smaller than the the minimum character width remove the lines, and place a new line in the middle between those two lines. This process is then recursively repeated for the segmentation lines to the left of the new line and for the lines to the right of this line. 
-
-	\timemachine{Show with an image.}
-
-	The resulting set of segmentation points is used for the actual segmentation. 
+	After all segmentation lines crossing a hole have been removed we move the segmentation lines in such a way that in the final positioning the distance between two segmentation lines is always greater than the minimum character width. To this end we iterate over all neighboring pairs of segmentation lines from left to right. If the distance between the two lines that make up the pair is smaller than the the minimum character width, the two lines are replaced by one line in the horizontal center of the regions defined by the pair.  This process is recursively repeated recursively for the segmentation lines to the left and to right of the new line. The resulting set of lines is used for the segmentation.
 
 \subsubsection{Select Sub-Image}
 \label{sss:method:segmentaton:selectsubimage}
-	As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track of two lists, one with character images, \characters, and one with images that need to be segmented further, \segmentfurther. At the start of each iteration an image is selected for further segmentation for the second list. From this list the image with the highest width over height ratio is selected. This is done on the assumption that the widest image is the most likely to contain multiple characters. It should be noted that the height of the images is not the same for all images, as white borders are from \leftsubimage and \rightsubimage before they are stored in the either \characters or \segmentfurther. This reduces the influence of sloppy word bounding boxes on the segmentation.
+	As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track of two lists, one with character images, \characters, and one with images that need to be segmented further, \segmentfurther. At the start of each iteration the image with the highest width over height ratio is selected for further segmentation from the second list. This selection criterion assumes that the widest image is the most likely to contain multiple characters. It should be noted that the height of the images is not the same for all images, as white borders are removed from \image,\leftsubimage and \rightsubimage before they are returned from \function{SPLIT}{}. This reduces the influence of sloppy word bounding boxes or segmentation lines on the segmentation.
 
 \subsubsection{Select Segmentation Point}
 \label{sss:method:segmentaton:selectssp}
