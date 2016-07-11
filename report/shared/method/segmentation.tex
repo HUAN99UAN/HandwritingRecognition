@@ -1,0 +1,174 @@
+%!TEX root = ../../main.tex
+\newcommand{\body}{\ensuremath{\t{body}}\xspace}
+\newcommand{\strokewidth}{\ensuremath{\t{stroke\_w}}\xspace}
+\newcommand{\segmentationpoints}{\ensuremath{\t{sps}}\xspace}
+\newcommand{\segmentationpoint}{\ensuremath{\t{sp}}\xspace}
+\newcommand{\image}{\ensuremath{\t{image}}\xspace}
+\newcommand{\subimage}{\ensuremath{\t{sub\_image}}\xspace}
+\newcommand{\leftsubimage}{\ensuremath{\t{left}}\xspace}
+\newcommand{\rightsubimage}{\ensuremath{\t{right}}\xspace}
+\newcommand{\segmentfurther}{\ensuremath{\t{todo}}\xspace}
+\newcommand{\characters}{\ensuremath{\t{done}}\xspace}
+\newcommand{\parameters}{\ensuremath{\t{parameters}}\xspace}
+
+\begin{figure}[t]
+	\input{shared/method/segmentation_algorithm}
+	\caption{The Binary Over Segmentation Algorithm.}
+	\label{alg:method:segmentation:algorithm}
+\end{figure}
+
+We use a form of binary over segmentation to recognize characters in the word, see \cref{alg:method:segmentation:algorithm}. This algorithm aims to segment an image on the most likely segmentation point. If these sub images are not characters they can be selected again for further segmentation. This segmenting of sub images is repeated until the termination condition has been reached. The final list of characters is the list of characters, \characters, merged with the list of images that could be segmented further, \segmentfurther. This merge also ensures that the order of the images is correct.
+
+The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:algorithm} contain the maximum word length and the minimum, mean and maximum image width, height and number of foreground pixels. Other than maximum word length, these parameters are computed based on the train data, by collecting these data from each character image, the minimum, mean and maximum are computed over all measurements that fall within two standard deviations of the mean. The maximum word length is simply the length of the longest word in the train data.
+
+The different functions used in \cref{alg:method:segmentation:algorithm} are discussed in \crefrange{sss:method:segmentaton:bodyregion}{sss:method:segmentaton:termination}.
+
+\subsubsection{Body Region}
+\label{sss:method:segmentaton:bodyregion}
+	The body region is the part of the image between the lower and upper base line. The lower base line is computed as the mode of the minimum row index with a foreground pixel in each column. The upper baseline is computed similarly, but uses the maximum row index.
+
+	Using the body region for the computation of the segmentation points reduces the influence of extensive ligatures \cite{lee2012binary}. \Cref{fig:method:segmentation:baseline} presents some examples of computed baselines. The first example, \Cref{fig:method:segmentation:baseline:succes}, reflects the intended outcome. The second example, \cref{fig:method:segmentation:baseline:failure}, draws the upper baseline too high, probably due too the extra curve on the last letter.
+
+\subsubsection{Stroke Width}
+\label{sss:method:segmentaton:strokwidth}
+	The stroke width refers to how thick the stroke of a pen is. It is computed as the mode of the number of sequential foreground pixels in one row or column of pixels. As different pens or authors can write on the same page it is more robust to compute the stroke width per word image instead of per page image.
+
+\subsubsection{Segmentation Points}
+\label{sss:method:segmentaton:segmentationpoints}
+	To find the segmentation lines we first determine the suspicious regions. A suspicious region is a region in the body of the word image where the vertical pixel density is greater than some threshold, $2 \cdot \strokewidth$. \Cref{fig:method:segmentation:suspiciousRegions} illustrates the suspicious regions found in a word. 
+
+	\begin{figure}
+		\centering
+		\includegraphics[width=\columnwidth]{shared/img/method/suspicious_regions.png}
+		\caption{The vertical pixel density of the body of the image is shown above the word image.  The threshold for suspicious regions is shown as a line in this histogram. The shaded areas show the suspicious regions. For the regions shaded in a color the lines associated with the segmentations points are drawn. The image is adapted from \cite{lee2012binary}.}
+		\label{fig:method:segmentation:suspiciousRegions}
+	\end{figure}
+
+	The initial set of segmentation points is determined based on these regions. If the width of a region is smaller than the minimum character width a segmentation point is placed in the middle of this region, as illustrated by the blue region in \cref{fig:method:segmentation:suspiciousRegions}. In regions with a width greater than or equal to the minimum character width, such as the red region in \cref{fig:method:segmentation:suspiciousRegions}, segmentation points are placed at the start and the end of the region. Between these boundaries segmentation points are placed with an intervals of minimum character width. These initial segmentation points are filtered before the actual segmentation commences.
+
+	Firstly all segmentation lines that cross a hole, i.e. a region of background pixels completely surrounded by foreground pixels, are removed. Holes are detected via region growing algorithm. 
+
+	After all segmentation lines crossing a hole have been removed we move the segmentation lines in such a way that in the final positioning the distance between two segmentation lines is always greater than the minimum character width. To this end we iterate over all neighboring pairs of segmentation lines from left to right. If the distance between the two lines that make up the pair is smaller than the the minimum character width, the two lines are replaced by one line in the horizontal center of the regions defined by the pair.  This process is recursively repeated recursively for the segmentation lines to the left and to right of the new line. The resulting set of lines is used for the segmentation.
+
+	\begin{figure}[t]
+		\centering
+		\subfloat[]{
+			\includegraphics[height=7em]{shared/img/method/base_line_succes.png}%
+			\label{fig:method:segmentation:baseline:succes}%
+		}
+		\hspace{0.05\columnwidth}
+		\subfloat[]{
+			\includegraphics[height=7em]{shared/img/method/base_line_fail.png}%
+			\label{fig:method:segmentation:baseline:failure}%
+		}
+		\caption{An example of \protect\subref{fig:method:segmentation:baseline:succes} correct and \protect\subref{fig:method:segmentation:baseline:failure} incorrect found baselines. The computed baselines are shown in red. If the found baselines were incorrect, the expected baselines are shown in blue.}
+		\label{fig:method:segmentation:baseline}
+	\end{figure}
+
+\subsubsection{Select Sub-Image}
+\label{sss:method:segmentaton:selectsubimage}
+	As shown in \cref{alg:method:segmentation:algorithm} the algorithm keeps track of two lists, one with character images, \characters, and one with images that need to be segmented further, \segmentfurther. At the start of each iteration the image with the highest width over height ratio is selected for further segmentation from the second list. This selection criterion assumes that the widest image is the most likely to contain multiple characters. It should be noted that the height of the images is not the same for all images, as white borders are removed from \image,\leftsubimage and \rightsubimage before they are returned from \function{SPLIT}{}. This reduces the influence of sloppy word bounding boxes or segmentation lines on the segmentation.
+
+\subsubsection{Select Segmentation Point}
+\label{sss:method:segmentaton:selectssp}
+	\segmentationpoint is selected according to two scores: the distance score, $s_{\text{distance}}$ and the vertical pixel density score, $s_{\text{density}}$. The distance score of segmentation $l_x$ in an image with horizontal center $c_x$ is defined as
+		\begin{equation}\label{eq:method:segmenation:selectSP:distancecriterion}
+			s_{\text{distance}} = \frac{\abs{c_x - l_x}}{c_x}.
+		\end{equation}
+	This score score promotes the selection of a segmentation line near the center of the image, which should reduce chain failure. The pixel density score promotes the selection of segmentation points at white space that separates two characters. Let the height of the sub image be $w$ and $l_d$ the pixel density underneath the segmentation line $l$, then
+		\begin{equation}
+			s_{\text{density}} = \frac{l_d}{w}.
+		\end{equation}
+	Both scores are summed, the line with the lowest score is selected as the segmentation point.
+
+\subsubsection{Split}
+\label{sss:method:segmentaton:splitimage}
+
+	The simplest way to split the image along the segmentation line, $l$, is to designate all pixel to the left of the line to \leftsubimage, and all pixels to the right of the line to \rightsubimage. However this can result in artifacts as illustrated in \cref{fig:method:segmentation:splitting:straight}, where part of the `n' is added to the `i', resulting in a letter that looks more like a `c' than an `i' in \leftsubimage.
+
+	\begin{figure}[t]
+		\centering
+		\subfloat[]{
+			\resizebox {0.45\columnwidth} {!} {
+				\begin{tikzpicture}
+					[
+						noname/.style={%
+						rectangle,
+						text height=1.5ex,
+						text depth=.25ex,
+						text width=1em,
+						text centered,
+						minimum height=1em
+			  		}]
+				    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_straight_path.png}};
+				    \begin{scope}[x={(image.south east)},y={(image.north west)}]
+				    	\node [anchor=south, noname] (s) at (0.4130434783,1.1) {$s$}; 
+				    	\node[draw=none] (saux) at (0.4130434783,0.95) {};
+						\draw[->] (s) edge (saux);
+						%
+				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.1) {$g$}; 
+				    	\node[draw=none] (gaux) at (0.4130434783,0.05) {};
+						\draw[->] (g) edge (gaux);						
+				    \end{scope}
+				\end{tikzpicture}
+			}			
+			\label{fig:method:segmentation:splitting:straight}%			
+		}
+		\hfill
+		\subfloat[]{
+			\resizebox {0.45\columnwidth} {!} {
+				\begin{tikzpicture}
+					[
+						noname/.style={%
+						rectangle,
+						text height=1.5ex,
+						text depth=.25ex,
+						text width=1em,
+						text centered,
+						minimum height=1em
+			  		}]
+				    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_astar_path.png}};
+				    \begin{scope}[x={(image.south east)},y={(image.north west)}]
+				    	\node [anchor=south, noname] (s) at (0.4130434783,1.1) {$s$}; 
+				    	\node[draw=none] (saux) at (0.4130434783,0.95) {};
+						\draw[->] (s) edge (saux);
+						%
+				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.1) {$g$}; 
+				    	\node[draw=none] (gaux) at (0.4130434783,0.05) {};
+						\draw[->] (g) edge (gaux);						
+				    \end{scope}
+				\end{tikzpicture}
+			}			
+			\label{fig:method:segmentation:splitting:astar}%			
+		}
+		\caption{Splitting based on a segmentation point, shown as a blue line, along \protect\subref{fig:method:segmentation:splitting:straight} a straight path and \protect\subref{fig:method:segmentation:splitting:astar} a path found with \astar. The used path are shown in red. The arrows indicate the position of the goal and destination pixels, $s$ and $g$ respectively.}
+		\label{fig:method:segmentation:splitting:comparison}
+	\end{figure}
+
+	In \cref{fig:method:segmentation:splitting:astar} the image is split along a path that keeps both characters intact. This path is found by looking for a path from $s$ to $g$ with \astar. From some pixel only its four-connected neighbors can be reached. The path is searched in the area defined by a rectangle with minimum character width and image height centered on the segmentation line. The heuristic distance from pixel $n$ to the goal pixel, $g$ is the Manhattan distance between the two pixels:
+	\begin{equation}\label{eq:method:segmentation:heuristic}
+		h(n) = \abs{g_x - n_x} + \abs{g_y - n_y},
+	\end{equation}
+	as we are traversing a four connected pixel grid.
+	The cost of getting from pixel $s$, to pixel $n$ is defined as:
+	\begin{equation}\label{eq:method:segmentation:costFunction}
+		g(n) = 
+		\begin{cases}
+			g(n') + 1	& \text{if } n \text{ is a background pixel.}\\
+			g(n') + i 	& \text{if } n \text{ is a foreground pixel on $l$.}\\
+			\infty 		& \text{otherwise.}
+		\end{cases}
+	\end{equation}
+	where $i$ is the intersection penalty and $n'$ is the four connected neighbor from which we reached $n$. \Cref{eq:method:segmentation:costFunction} ensurers that the path only intersects foreground pixels if they lie on the segmentation line. Furthermore the intersection penalty ensures that characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
+
+\subsubsection{Detecting a Character Image}
+\label{sss:method:segmentaton:segmentfurther}
+	We decide if a sub image is a character or if it should be segmented further based on three properties of the sub image: the width, the height and the number of foreground pixels. The sub image should satisfy two conditions to be considered a character: Its width should be between between the minimum and maximum image width. And the number of foreground pixels should be greater than the minimum number of foreground pixels.
+
+	An image is considered for further segmentation if it satisfies three conditions: it should have segmentation lines, the number of foreground pixels and the image width should be greater than twice the minimum of these values in the train data.
+
+	If neither of the preceding sets of conditions are satisfied the image is considered for further segmentation if its width is greater than the mean character width and it has segmentation lines. If its width is less than two standard deviations away from the mean character width it is added to \characters, otherwise it is discarded.
+
+\subsubsection{Continue}
+\label{sss:method:segmentaton:termination}
+	Segmentation is continued as long as the following conditions are satisfied: we have not yet found more characters than the length of the longest word in the lexicon and there are still images in the list \segmentfurther. 
