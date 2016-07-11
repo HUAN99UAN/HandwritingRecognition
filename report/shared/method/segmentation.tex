@@ -71,14 +71,11 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 
 \subsubsection{Select Segmentation Point}
 \label{sss:method:segmentaton:selectssp}
-	Given an image for further segmentation with multiple segmentation lines one needs to select along which segmentation line the image should be split. This is done based on two scores: the distance score and the vertical pixel density score. 
-
-	The first promotes the selection of a segmentation line near the center of the image. This should avoid the chain failure problems. Let the $x$-coordinates of the segmentation line and the center of the image be represented by $l_x$ and $c_x$, respectively, the distance score is then defined as
+	\segmentationpoint is selected according to two scores: the distance score, $s_{\text{distance}}$ and the vertical pixel density score, $s_{\text{density}}$. The distance score of segmentation $l_x$ in an image with horizontal center $c_x$ is defined as
 		\begin{equation}\label{eq:method:segmenation:selectSP:distancecriterion}
 			s_{\text{distance}} = \frac{\abs{c_x - l_x}}{c_x}.
 		\end{equation}
-
-	The second scores promotes the selection of segmentation points that indicate spaces where white space separates two characters. Let the height of the sub image be $w$ and $l_d$ the pixel density in the image underneath the line, the density score is then:
+	This score score promotes the selection of a segmentation line near the center of the image, which should reduce chain failure. The pixel density score promotes the selection of segmentation points at white space that separates two characters. Let the height of the sub image be $w$ and $l_d$ the pixel density underneath the segmentation line $l$, then
 		\begin{equation}
 			s_{\text{density}} = \frac{l_d}{w}.
 		\end{equation}
@@ -88,26 +85,61 @@ The different functions used in \cref{alg:method:segmentation:algorithm} are dis
 \label{sss:method:segmentaton:splitimage}
 
 	\begin{figure}
-		\timemachine{Indicate $g$ and $s$ in the image.}
 		\centering
 		\subfloat[]{
-			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_straight_path.png}%
-			\raisebox{1em}{\hspace{2em} $\to$ \hspace{2em}}
-			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_straight_left.png}%
-			\raisebox{1em}{\hspace{2em} $\&$ \hspace{2em}}
-			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_straigt_right.png}%
-			\label{fig:method:segmentation:splitting:straight}%
+			\resizebox {0.45\columnwidth} {!} {
+				\begin{tikzpicture}
+					[
+						noname/.style={%
+						rectangle,
+						text height=1.5ex,
+						text depth=.25ex,
+						text width=1em,
+						text centered,
+						minimum height=1em
+			  		}]
+				    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_straight_path.png}};
+				    \begin{scope}[x={(image.south east)},y={(image.north west)}]
+				    	\node [anchor=south, noname] (s) at (0.4130434783,1.15) {$s$}; 
+				    	\node[draw=none] (saux) at (0.4130434783,1) {};
+						\draw[->] (s) edge (saux);
+						%
+				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.15) {$g$}; 
+				    	\node[draw=none] (gaux) at (0.4130434783,0) {};
+						\draw[->] (g) edge (gaux);						
+				    \end{scope}
+				\end{tikzpicture}
+			}			
+			\label{fig:method:segmentation:splitting:straight}%			
 		}
-
+		\hfill
 		\subfloat[]{
-			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_astar_path.png}%
-			\raisebox{1em}{\hspace{2em} $\to$ \hspace{2em}}
-			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_astar_left.png}%
-			\raisebox{1em}{\hspace{2em} $\&$ \hspace{2em}}
-			\includegraphics[width=6em, height=4em, keepaspectratio=True]{shared/img/method/split_astar_right.png}%
-			\label{fig:method:segmentation:splitting:astar}%
+			\resizebox {0.45\columnwidth} {!} {
+				\begin{tikzpicture}
+					[
+						noname/.style={%
+						rectangle,
+						text height=1.5ex,
+						text depth=.25ex,
+						text width=1em,
+						text centered,
+						minimum height=1em
+			  		}]
+				    \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=0.45\columnwidth]{shared/img/method/split_astar_path.png}};
+				    \begin{scope}[x={(image.south east)},y={(image.north west)}]
+				    	\node [anchor=south, noname] (s) at (0.4130434783,1.15) {$s$}; 
+				    	\node[draw=none] (saux) at (0.4130434783,1) {};
+						\draw[->] (s) edge (saux);
+						%
+				    	\node [anchor=north, noname] (g) at (0.4130434783,-0.15) {$g$}; 
+				    	\node[draw=none] (gaux) at (0.4130434783,0) {};
+						\draw[->] (g) edge (gaux);						
+				    \end{scope}
+				\end{tikzpicture}
+			}			
+			\label{fig:method:segmentation:splitting:astar}%			
 		}
-		\caption{Splitting based on a segmentation point, shown as a blue line, along \protect\subref{fig:method:segmentation:splitting:straight} a straight path and \protect\subref{fig:method:segmentation:splitting:astar} a path found with \astar. The used paths are shown in red. The original image is shown on the left of the arrow, the resulting sub images are shown on the right side of the arrow.}
+		\caption{Splitting based on a segmentation point, shown as a blue line, along \protect\subref{fig:method:segmentation:splitting:straight} a straight path and \protect\subref{fig:method:segmentation:splitting:astar} a path found with \astar. The used path are shown in red.}
 		\label{fig:method:segmentation:splitting:comparison}
 	\end{figure}
 
