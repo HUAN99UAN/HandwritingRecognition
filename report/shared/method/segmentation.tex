@@ -38,7 +38,7 @@ The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:
 %
 	\begin{figure}[!]
 		\centering
-		\includegraphics[width=\columnwidth]{shared/img/method/suspicious_regions.png}
+		\includegraphics[width=0.8\columnwidth]{shared/img/method/suspicious_regions.png}
 		\caption{The vertical pixel density of the body of the image is shown above the word image. The threshold for suspicious regions is shown as a line in this histogram. The shaded areas show the suspicious regions. For the regions shaded in a color the lines associated with the segmentations points are drawn. The image is adapted from \cite{lee2012binary}.}
 		\label{fig:method:segmentation:suspiciousRegions}
 	\end{figure}
@@ -88,11 +88,7 @@ The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:
 	%
 	The simplest way to split the image along the segmentation line, $l$, is to designate all pixel to the left of the line to \leftsubimage, and all pixels to the right of the line to \rightsubimage. However this can result in artifacts as illustrated in \cref{fig:method:segmentation:splitting:straight}, where part of the `n' is added to the `i', resulting in a letter that looks more like a `c' than an `i' in \leftsubimage.
 
-	In \cref{fig:method:segmentation:splitting:astar} the image is split along a path that keeps both characters intact. This path is found by looking for a path from $s$ to $g$ with \astar. From some pixel only its four-connected neighbors can be reached. The path is searched in the area defined by a rectangle with minimum character width and image height centered on the segmentation line. The heuristic distance from pixel $n$ to the goal pixel, $g$ is the Manhattan distance between the two pixels:
-	\begin{equation}\label{eq:method:segmentation:heuristic}
-		h(n) = \abs{g_x - n_x} + \abs{g_y - n_y},
-	\end{equation}
-	as we are traversing a four connected pixel grid.
+	In \cref{fig:method:segmentation:splitting:astar} the image is split along a path that keeps both characters intact. This path is found by looking for a path from $s$ to $g$ with \astar. From some pixel only its four-connected neighbors can be reached. The path is searched in the area defined by a rectangle with minimum character width and image height centered on the segmentation line. The heuristic distance from pixel $n$ to the goal pixel, $g$ is the Manhattan distance between the two pixels.
 	The cost of getting from pixel $s$, to pixel $n$ is defined as:
 	\begin{equation}\label{eq:method:segmentation:costFunction}
 		g(n) = 
@@ -102,7 +98,7 @@ The \parameters passed to \function{segment}{} in \cref{alg:method:segmentation:
 			\infty 		& \text{otherwise.}
 		\end{cases}
 	\end{equation}
-	where $i$ is the intersection penalty and $n'$ is the four connected neighbor from which we reached $n$. \Cref{eq:method:segmentation:costFunction} ensures that the path only intersects foreground pixels if they lie on the segmentation line. Furthermore the intersection penalty ensures that characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Minkowski distance with $p = 1$. 
+	where $i$ is the intersection penalty and $n'$ is the four connected neighbor from which we reached $n$. \Cref{eq:method:segmentation:costFunction} ensures that the path only intersects foreground pixels if they lie on the segmentation line. Furthermore the intersection penalty ensures that characters are only split along a winding path if a straight path is not possible. We have set the intersection penalty, $i$, to 5. If there are no foreground pixels underneath the segmentation line, the distance function reduces to the Euclidean distance.
 
 \subsubsection{Detecting a Character Image}
 \label{sss:method:segmentaton:segmentfurther}
