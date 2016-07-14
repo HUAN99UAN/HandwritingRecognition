@@ -1,0 +1,10 @@
+%!TEX root = /Users/laura/Repositories/HandwritingRecognition/report/main.tex
+\begin{figure}[t]
+	\centering
+	\input{individual/discussion/featuevectordistance}
+	\caption{Visualization of the distance matrix of the classes with lower case letters in the train data. The distance were normalized. The white the color of a cell is the smaller the distance between the two classes is.}
+	\label{fig:discussion:featureextraction:distanceMatrix}
+\end{figure}
+\Cref{fig:discussion:featureextraction:distanceMatrix} presents a visualization of the distance matrix of the feature vectors of the lower case letters in the train data. Each element in the matrix represent the mean normalized Euclidean distance between the feature vectors of the classes associated with that element. Ideally the diagonal would be white, and the other cells would be black, as that would indicate that there is no difference within a class and maximum difference between classes. Observing \cref{fig:discussion:featureextraction:distanceMatrix} we find that the `m' is reasonable distinguishable from the other characters. Furthermore based on the light color found in the row and column associated with the letter `k' we can also conclude that classifying this letter correctly is unlikely. The generally light color of the figure shows that the differences between classes are not good enough for classification.
+
+The problems with the feature vectors make it hard to see discuss the recognition.

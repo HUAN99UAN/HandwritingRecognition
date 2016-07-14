@@ -1,0 +1,15 @@
+%!TEX root = /Users/laura/Repositories/HandwritingRecognition/report/main.tex
+\Cref{tab:results:loocv} shows that the validation segmentation outperforms the binary over segmentation, ideally they would have had the same performance. Below several factors that could negatively impact the performance of the binary over segmentation are discussed.
+
+\timemachine{Plaatjes van gefaalde segmenatatie: oversegmentatie, onder segmentatie}
+
+\subsubsection{Base Line Computation}
+	As shown in \cref{fig:method:segmentation:baseline:failure} some baselines are incorrect. Consequently ligatures have more influence on the vertical pixel density histogram, this causes under segmentation of letters underneath such a ligature. A possible solution to this problem would be using a more sophisticated method to compute base lines, such as the one proposed by \citet{lee2012binary}.
+
+\subsubsection{Segmentation Point Computation}
+\timemachine{Example}
+	The filtering of the segmentation lines assumes that the written alphabet contains a number of letters with holes in them and that letters are not connected by holes. This means that we can only say with certainty that the method should work for Latin alphabets. Due to noise and the preprocessing a lot of holes that should be present, are absent in the binary image. Thus the segmentation lines over these holes are not removed, which can cause over segmentation of these characters. To avoid this problem one could do hole detection on both the original preprocessed image and that image dilated with a small structuring element. The dilation should restore original holes, and also using the original image avoids missing holes that are filled by the dilation.
+
+\subsubsection{Detecting a Character Image}
+	\timemachine{Example, of the lines found on w}
+	Observing the classification of sub images as either a character image or  as an image that should be segmented further, one observes that wider letters, especially the `m' and the `w' are often not recognized as letters. Consequently a word such as `woman' is often segmented as `uuonnan'. This problem could be reduced by improving the recognition of characters. One possibility would be to test how likely it is that a word is a character image or an image that should be segmented further, based on distributions of the image width, height and number of foreground pixel. If the likelihood of both classes below some threshold, the sub image, should be discarded otherwise it should be added to the most likely category. 
